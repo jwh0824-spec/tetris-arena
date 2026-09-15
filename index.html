@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tetris Arena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#eef0f6;
+  --surface:#ffffff;
+  --surface-2:#e3e6f0;
+  --border:#c6cade;
+  --text:#1a1d2b;
+  --text-dim:#5b6079;
+  --cyan:#0891a8;
+  --magenta:#c2246e;
+  --yellow:#b8860a;
+  --green:#1a9e5c;
+  --danger:#d6304a;
+  --shadow: 0 8px 24px rgba(20,22,40,.12);
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0d17;
+    --surface:#121627;
+    --surface-2:#1a2038;
+    --border:#2c3356;
+    --text:#e9ecf7;
+    --text-dim:#8890b0;
+    --cyan:#4dd8e6;
+    --magenta:#ff4d94;
+    --yellow:#ffd23f;
+    --green:#4dff92;
+    --danger:#ff5468;
+    --shadow: 0 8px 28px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0d17;
+  --surface:#121627;
+  --surface-2:#1a2038;
+  --border:#2c3356;
+  --text:#e9ecf7;
+  --text-dim:#8890b0;
+  --cyan:#4dd8e6;
+  --magenta:#ff4d94;
+  --yellow:#ffd23f;
+  --green:#4dff92;
+  --danger:#ff5468;
+  --shadow: 0 8px 28px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Mono',ui-monospace,monospace;
+  min-height:100vh;
+  padding:20px 16px;
+  padding-block:20px;
+}
+.pixel{ font-family:'Press Start 2P',monospace; }
+#app{ max-width:1240px; margin:0 auto; }
+.screen{ display:none; }
+.screen.active{ display:block; animation:fadein .25s ease; }
+@keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.logo{
+  font-size:clamp(20px,5vw,34px);
+  text-align:center;
+  letter-spacing:2px;
+  margin:8px 0 6px;
+  color:var(--cyan);
+  text-shadow: 2px 2px 0 var(--magenta);
+}
+.subtitle{ text-align:center; color:var(--text-dim); margin-bottom:28px; font-size:13px; }
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.pad{ padding:20px; }
+
+.mode-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:560px; margin:0 auto; }
+@media (max-width:520px){ .mode-grid{ grid-template-columns:1fr; } }
+.mode-btn{
+  cursor:pointer;
+  padding:28px 18px;
+  text-align:center;
+  transition:transform .12s ease, border-color .12s ease;
+}
+.mode-btn:hover{ transform:translateY(-3px); border-color:var(--cyan); }
+.mode-btn .icon{ font-size:36px; margin-bottom:10px; }
+.mode-btn h3{ margin:0 0 6px; font-family:'Press Start 2P'; font-size:13px; color:var(--text); }
+.mode-btn p{ margin:0; color:var(--text-dim); font-size:12px; line-height:1.5; }
+
+.diff-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; max-width:640px; margin:0 auto; }
+@media (max-width:560px){ .diff-grid{ grid-template-columns:1fr; } }
+.diff-btn{ cursor:pointer; padding:22px 14px; text-align:center; transition:transform .12s ease,border-color .12s; }
+.diff-btn:hover{ transform:translateY(-3px); }
+.diff-btn.easy:hover{ border-color:var(--green); }
+.diff-btn.normal:hover{ border-color:var(--cyan); }
+.diff-btn.hard:hover{ border-color:var(--danger); }
+.diff-btn h4{ font-family:'Press Start 2P'; font-size:12px; margin:0 0 8px; }
+.diff-btn p{ margin:0; color:var(--text-dim); font-size:11px; }
+
+.btn{
+  font-family:'Space Mono',monospace;
+  font-weight:700;
+  cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--surface-2);
+  color:var(--text);
+  padding:10px 18px;
+  border-radius:8px;
+  font-size:13px;
+  transition:background .12s,border-color .12s;
+}
+.btn:hover{ border-color:var(--cyan); }
+.btn.primary{ background:var(--cyan); color:#04141a; border-color:var(--cyan); }
+.btn.primary:hover{ filter:brightness(1.08); }
+.btn.danger{ background:transparent; border-color:var(--danger); color:var(--danger); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+.row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.center{ display:flex; justify-content:center; }
+.back-row{ max-width:640px; margin:0 auto 16px; }
+
+input[type=text]{
+  font-family:'Space Mono',monospace;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:14px;
+  width:100%;
+}
+label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:6px; }
+.field{ margin-bottom:16px; }
+
+.game-wrap{ display:flex; gap:20px; justify-content:center; flex-wrap:wrap; align-items:flex-start; }
+.board-col{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+canvas{ background:var(--surface-2); border:1px solid var(--border); border-radius:8px; image-rendering:pixelated; max-width:100%; max-height:72vh; width:auto; height:auto; }
+.side-panel{ display:flex; flex-direction:column; gap:14px; width:200px; }
+@media (max-width:640px){ .side-panel{ width:100%; flex-direction:row; flex-wrap:wrap; } }
+.panel-box{ padding:12px; text-align:center; }
+.panel-box .label{ font-size:10px; color:var(--text-dim); letter-spacing:1px; margin-bottom:6px; }
+.panel-box .value{ font-family:'Press Start 2P'; font-size:19px; color:var(--yellow); }
+.mini-canvas{ background:var(--surface-2); border:1px solid var(--border); border-radius:6px; max-height:none; }
+
+.overlay{
+  position:fixed; inset:0; background:rgba(5,7,14,.72);
+  display:none; align-items:center; justify-content:center; z-index:50;
+  padding:16px;
+}
+.overlay.active{ display:flex; }
+.overlay .card{ max-width:380px; width:100%; text-align:center; padding:28px 22px; }
+.overlay h2{ font-family:'Press Start 2P'; font-size:18px; color:var(--magenta); margin:0 0 18px; }
+.result-row{ display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--border); }
+.result-row:last-of-type{ border-bottom:none; }
+
+.lobby-players{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:640px; margin:16px auto; }
+@media (max-width:480px){ .lobby-players{ grid-template-columns:1fr; } }
+
+.chat-box{ max-width:640px; margin:18px auto 0; padding:14px; }
+.chat-log{ height:170px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:2px 4px; margin-bottom:10px; }
+.chat-msg{ font-size:12px; display:flex; gap:6px; align-items:baseline; }
+.chat-msg .avatar-chip{ width:18px; height:18px; }
+.chat-msg .who{ font-weight:700; color:var(--cyan); flex:0 0 auto; }
+.chat-msg .txt{ word-break:break-word; color:var(--text); }
+.chat-msg.system{ color:var(--text-dim); font-style:italic; }
+.player-slot{ padding:14px; text-align:center; position:relative; }
+.player-slot.empty{ opacity:.4; }
+.player-slot .nick{ font-weight:700; font-size:13px; margin-bottom:4px; }
+.player-slot .status{ font-size:11px; color:var(--text-dim); }
+.player-slot .status.ready{ color:var(--green); }
+
+.opp-grid{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+.opp-card{ padding:10px; text-align:center; width:120px; }
+.opp-card.dead{ opacity:.35; }
+.opp-card .nick{ font-size:11px; font-weight:700; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.opp-card .stat{ font-size:10px; color:var(--text-dim); }
+.skyline{ display:flex; align-items:flex-end; gap:1px; height:60px; margin:6px 0; }
+.skyline .bar{ flex:1; background:var(--cyan); border-radius:1px 1px 0 0; }
+
+.char-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+@media (max-width:360px){ .char-grid{ grid-template-columns:repeat(3,1fr); } }
+.char-btn{
+  cursor:pointer; border:2px solid var(--border); background:var(--surface-2);
+  border-radius:10px; padding:6px 4px 4px; display:flex; flex-direction:column; align-items:center; gap:2px;
+  transition:border-color .12s, transform .12s;
+}
+.char-btn:hover{ transform:translateY(-2px); }
+.char-btn.selected{ border-color:var(--magenta); box-shadow:0 0 0 2px rgba(194,109,255,.25); }
+.char-btn svg{ width:40px; height:40px; }
+.char-btn span{ font-size:9px; color:var(--text-dim); }
+.avatar-chip{ width:26px; height:26px; flex:0 0 auto; }
+.avatar-chip svg{ width:100%; height:100%; }
+.name-with-avatar{ display:flex; align-items:center; justify-content:center; gap:6px; }
+
+.attack-flash{
+  position:fixed; inset:0; pointer-events:none; z-index:40;
+  background:radial-gradient(circle,rgba(255,77,148,.35),transparent 70%);
+  opacity:0; transition:opacity .15s;
+}
+.attack-flash.show{ opacity:1; }
+
+.toast{
+  position:fixed; top:16px; left:50%; transform:translateX(-50%);
+  background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow);
+  padding:10px 18px; border-radius:8px; font-size:12px; z-index:60;
+  opacity:0; transition:opacity .2s, transform .2s;
+}
+.toast.show{ opacity:1; }
+
+.controls-hint{ text-align:center; color:var(--text-dim); font-size:11px; margin-top:10px; line-height:1.6; }
+
+.touch-controls{ display:none; grid-template-columns:repeat(4,1fr); gap:8px; max-width:340px; margin:14px auto 0; }
+.touch-controls button{ padding:14px 0; font-size:16px; }
+@media (max-width:700px){ .touch-controls{ display:grid; } }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- MENU -->
+  <div class="screen active" id="screen-menu">
+    <div class="logo pixel">TETRIS ARENA</div>
+    <div class="subtitle">싱글로 실력을 쌓거나, 4인 실시간 대전으로 공격하세요</div>
+
+    <div class="card pad" style="max-width:460px; margin:0 auto 22px;">
+      <div class="field">
+        <label>캐릭터 선택</label>
+        <div class="char-grid" id="char-grid"></div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>닉네임</label>
+        <div class="row" style="gap:8px; flex-wrap:nowrap;">
+          <input type="text" id="in-nickname" maxlength="14" placeholder="플레이어 이름" style="flex:1;">
+          <button class="btn" id="btn-random-name" title="귀여운 이름 자동 생성" style="white-space:nowrap;">🎲 이름생성</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+      <div class="card mode-btn" id="btn-goto-single">
+        <div class="icon">🎮</div>
+        <h3>SINGLE</h3>
+        <p>난이도를 골라 점수를 올리세요.<br>시간이 지날수록 조금씩 빨라집니다.</p>
+      </div>
+      <div class="card mode-btn" id="btn-goto-multi">
+        <div class="icon">⚔️</div>
+        <h3>MULTI</h3>
+        <p>최대 4명 동시 입장.<br>줄을 없애면 상대 스택이 올라갑니다.</p>
+      </div>
+    </div>
+    <div class="center" style="margin-top:16px;">
+      <button class="btn" id="btn-goto-records">🏆 기록 보기</button>
+    </div>
+    <div class="controls-hint">조작: ← → 이동 · ↓ 소프트드롭 · ↑ 회전 · Z 반대회전 · Space 하드드롭 · C 홀드 · P 일시정지</div>
+  </div>
+
+  <!-- SINGLE DIFFICULTY -->
+  <div class="screen" id="screen-diff">
+    <div class="row back-row"><button class="btn" data-back="screen-menu">← 뒤로</button></div>
+    <div class="logo pixel" style="font-size:20px;">난이도 선택</div>
+    <div class="diff-grid" style="margin-top:20px;">
+      <div class="card diff-btn easy" data-diff="easy">
+        <h4>EASY</h4>
+        <p>느린 시작, 완만한 가속</p>
+      </div>
+      <div class="card diff-btn normal" data-diff="normal">
+        <h4>NORMAL</h4>
+        <p>표준 속도와 가속</p>
+      </div>
+      <div class="card diff-btn hard" data-diff="hard">
+        <h4>HARD</h4>
+        <p>빠른 시작, 급격한 가속</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  <div class="screen" id="screen-records">
+    <div class="row back-row"><button class="btn" data-back="screen-menu">← 뒤로</button></div>
+    <div class="logo pixel" style="font-size:20px;">기록</div>
+    <p class="controls-hint" id="records-hint">불러오는 중...</p>
+    <div class="card pad" style="max-width:560px; margin:16px auto;">
+      <div class="label" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">내 최고 기록 (난이도별)</div>
+      <div id="my-best-list"></div>
+    </div>
+    <div class="card pad" style="max-width:560px; margin:16px auto;">
+      <div class="label" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">전체 TOP 10</div>
+      <div id="leaderboard-list"></div>
+    </div>
+  </div>
+
+  <!-- SINGLE GAME -->
+  <div class="screen" id="screen-single">
+    <div class="row back-row" style="justify-content:space-between;">
+      <button class="btn" id="btn-single-quit">← 메뉴로</button>
+      <button class="btn" id="btn-single-pause">일시정지 (P)</button>
+    </div>
+    <div class="game-wrap">
+      <div class="side-panel">
+        <div class="card panel-box"><div class="label">SCORE</div><div class="value" id="s-score">0</div></div>
+        <div class="card panel-box"><div class="label">LEVEL</div><div class="value" id="s-level">1</div></div>
+        <div class="card panel-box"><div class="label">LINES</div><div class="value" id="s-lines">0</div></div>
+        <div class="card panel-box">
+          <div class="label">HOLD</div>
+          <div class="center"><canvas id="s-hold" width="112" height="112" class="mini-canvas"></canvas></div>
+        </div>
+      </div>
+      <div class="board-col">
+        <canvas id="s-board" width="400" height="800"></canvas>
+      </div>
+      <div class="side-panel">
+        <div class="card panel-box">
+          <div class="label">NEXT</div>
+          <div class="center"><canvas id="s-next" width="112" height="330" class="mini-canvas"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="touch-controls">
+      <button class="btn" id="t-left">←</button>
+      <button class="btn" id="t-rotate">⟳</button>
+      <button class="btn" id="t-right">→</button>
+      <button class="btn" id="t-down">↓</button>
+      <button class="btn" id="t-hold">HOLD</button>
+      <button class="btn" id="t-drop" style="grid-column:span 3;">HARD DROP</button>
+    </div>
+  </div>
+
+  <!-- MULTI LOBBY (room code + create/join) -->
+  <div class="screen" id="screen-multi-lobby">
+    <div class="row back-row"><button class="btn" data-back="screen-menu">← 뒤로</button></div>
+    <div class="card pad" style="max-width:460px; margin:0 auto;">
+      <div class="field" id="multi-identity-summary" style="text-align:center;"></div>
+      <div class="field">
+        <label>방 코드 (참가할 경우 입력)</label>
+        <input type="text" id="in-roomcode" maxlength="6" placeholder="예: A1B2C">
+      </div>
+      <div class="field local-only" id="field-server-url" style="display:none;">
+        <label>로컬 서버 주소</label>
+        <input type="text" id="in-server-url" placeholder="http://localhost:8787">
+      </div>
+      <div class="row" style="justify-content:center; margin-top:6px;">
+        <button class="btn primary" id="btn-create-room">방 만들기</button>
+        <button class="btn" id="btn-join-room">방 참가하기</button>
+      </div>
+      <div id="multi-error" style="color:var(--danger); font-size:12px; text-align:center; margin-top:12px; min-height:16px;"></div>
+    </div>
+    <p class="controls-hint" id="multi-hint-claude">※ 실시간 대전은 같은 Claude 조직/워크스페이스의 로그인 사용자 간에만 연결됩니다.</p>
+    <p class="controls-hint local-only" id="multi-hint-local" style="display:none;">※ 로컬 파일 모드입니다. start-server.bat을 실행한 뒤, 뜨는 주소를 아래에 입력하세요. 같은 와이파이의 다른 기기는 이 PC의 LAN IP 주소로 접속하면 됩니다.</p>
+  </div>
+
+  <!-- MULTI WAIT ROOM -->
+  <div class="screen" id="screen-multi-room">
+    <div class="row back-row" style="justify-content:space-between;">
+      <button class="btn" id="btn-leave-room">← 방 나가기</button>
+      <div class="pixel" style="font-size:13px; color:var(--yellow);">ROOM <span id="room-code-label"></span></div>
+    </div>
+    <div class="lobby-players" id="lobby-players"></div>
+    <div class="center row" style="gap:8px; margin-top:4px;">
+      <label style="margin:0; font-size:12px; color:var(--text-dim);">라운드</label>
+      <select id="round-select" class="btn" style="padding:8px 12px;">
+        <option value="1">1판</option>
+        <option value="3">3판 (누적점수 합산)</option>
+        <option value="5">5판 (누적점수 합산)</option>
+      </select>
+    </div>
+    <div class="center" style="gap:10px; margin-top:10px;">
+      <button class="btn" id="btn-ready-toggle">준비하기</button>
+      <button class="btn primary" id="btn-start-game" disabled>게임 시작</button>
+    </div>
+    <p class="controls-hint" id="lobby-hint">최소 2명이 준비되면 게임을 시작할 수 있습니다.</p>
+
+    <div class="card pad chat-box">
+      <div class="chat-log" id="chat-log"></div>
+      <div class="row" style="gap:8px; flex-wrap:nowrap;">
+        <input type="text" id="in-chat" maxlength="120" placeholder="메시지 입력..." style="flex:1;">
+        <button class="btn" id="btn-chat-send">전송</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTI GAME -->
+  <div class="screen" id="screen-multi-game">
+    <div class="game-wrap">
+      <div class="side-panel">
+        <div class="card panel-box"><div class="label">SCORE</div><div class="value" id="m-score">0</div></div>
+        <div class="card panel-box"><div class="label">LINES</div><div class="value" id="m-lines">0</div></div>
+        <div class="card panel-box">
+          <div class="label">HOLD</div>
+          <div class="center"><canvas id="m-hold" width="76" height="76" class="mini-canvas"></canvas></div>
+        </div>
+      </div>
+      <div class="board-col">
+        <canvas id="m-board" width="260" height="520"></canvas>
+      </div>
+      <div class="side-panel">
+        <div class="card panel-box">
+          <div class="label">NEXT</div>
+          <div class="center"><canvas id="m-next" width="76" height="220" class="mini-canvas"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="center" style="margin-top:16px;">
+      <div class="opp-grid" id="opp-grid"></div>
+    </div>
+    <div class="touch-controls">
+      <button class="btn" id="tm-left">←</button>
+      <button class="btn" id="tm-rotate">⟳</button>
+      <button class="btn" id="tm-right">→</button>
+      <button class="btn" id="tm-down">↓</button>
+      <button class="btn" id="tm-hold">HOLD</button>
+      <button class="btn" id="tm-drop" style="grid-column:span 3;">HARD DROP</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="attack-flash" id="attack-flash"></div>
+<div class="toast" id="toast"></div>
+
+<!-- SINGLE GAME OVER -->
+<div class="overlay" id="overlay-single-over">
+  <div class="card">
+    <h2 class="pixel">GAME OVER</h2>
+    <div class="result-row"><span>점수</span><span id="ov-score">0</span></div>
+    <div class="result-row"><span>레벨</span><span id="ov-level">1</span></div>
+    <div class="result-row"><span>지운 줄</span><span id="ov-lines">0</span></div>
+    <p class="controls-hint" id="ov-save-status" style="margin:10px 0 0;"></p>
+    <div class="row" style="justify-content:center; margin-top:20px;">
+      <button class="btn primary" id="btn-retry">다시하기</button>
+      <button class="btn" id="btn-over-menu">메뉴로</button>
+    </div>
+  </div>
+</div>
+
+<!-- MULTI RESULTS -->
+<div class="overlay" id="overlay-multi-over">
+  <div class="card">
+    <h2 class="pixel" id="mo-title">RESULT</h2>
+    <p class="controls-hint" id="mo-subtitle" style="margin-top:-10px;"></p>
+    <div id="mo-list"></div>
+    <div class="row" style="justify-content:center; margin-top:20px;">
+      <button class="btn primary" id="btn-multi-menu">메뉴로</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-pause">
+  <div class="card">
+    <h2 class="pixel">PAUSED</h2>
+    <button class="btn primary" id="btn-resume">계속하기</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ===================== Utils ===================== */
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function roomCode(){
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s=""; for(let i=0;i<5;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+function $(id){ return document.getElementById(id); }
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+function toast(msg, ms){
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._h);
+  toast._h = setTimeout(()=>t.classList.remove("show"), ms||1800);
+}
+function flashAttack(){
+  const el = $("attack-flash"); el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 220);
+}
+
+/* ===================== Tetromino defs ===================== */
+const COLORS = {
+  I:"#4dd8e6", O:"#ffd23f", T:"#c26dff", S:"#4dff92", Z:"#ff4d5e", J:"#4d8bff", L:"#ff9f4d", G:"#5a5f78"
+};
+const SHAPES = {
+  I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+  O: [[1,1],[1,1]],
+  T: [[0,1,0],[1,1,1],[0,0,0]],
+  S: [[0,1,1],[1,1,0],[0,0,0]],
+  Z: [[1,1,0],[0,1,1],[0,0,0]],
+  J: [[1,0,0],[1,1,1],[0,0,0]],
+  L: [[0,0,1],[1,1,1],[0,0,0]]
+};
+const PIECE_TYPES = Object.keys(SHAPES);
+
+function rotateMatrixCW(m){
+  const n = m.length;
+  const res = Array.from({length:n},()=>Array(n).fill(0));
+  for(let y=0;y<n;y++) for(let x=0;x<n;x++) res[x][n-1-y] = m[y][x];
+  return res;
+}
+function rotateMatrixCCW(m){
+  const n = m.length;
+  const res = Array.from({length:n},()=>Array(n).fill(0));
+  for(let y=0;y<n;y++) for(let x=0;x<n;x++) res[n-1-x][y] = m[y][x];
+  return res;
+}
+
+/* ===================== Bag randomizer ===================== */
+function makeBagGen(rng){
+  let bag = [];
+  return function next(){
+    if(bag.length===0){
+      bag = PIECE_TYPES.slice();
+      for(let i=bag.length-1;i>0;i--){
+        const j = Math.floor(rng()*(i+1));
+        [bag[i],bag[j]] = [bag[j],bag[i]];
+      }
+    }
+    return bag.pop();
+  };
+}
+
+/* ===================== Difficulty presets ===================== */
+const DIFFICULTY = {
+  easy:   { start:900, min:340, rampMs:22000, rampFactor:0.93, levelStep:0.965 },
+  normal: { start:760, min:180, rampMs:16000, rampFactor:0.91, levelStep:0.945 },
+  hard:   { start:580, min:100, rampMs:11000, rampFactor:0.88, levelStep:0.92  }
+};
+
+const COLS = 10, VISIBLE_ROWS = 20, BUF = 4, ROWS = VISIBLE_ROWS + BUF;
+
+/* ===================== Core Engine ===================== */
+class Engine{
+  constructor(opts){
+    opts = opts || {};
+    this.rng = opts.rng || Math.random;
+    this.nextPiece = makeBagGen(this.rng);
+    this.grid = Array.from({length:ROWS},()=>Array(COLS).fill(null));
+    this.queue = [this.nextPiece(), this.nextPiece(), this.nextPiece()];
+    this.hold = null;
+    this.holdUsed = false;
+    this.score = 0;
+    this.lines = 0;
+    this.level = 1;
+    this.startTime = performance.now();
+    this.dropAccum = 0;
+    this.lockTimer = 0;
+    this.locking = false;
+    this.lockResets = 0;
+    this.gameOver = false;
+    this.difficulty = opts.difficulty || "normal";
+    this.pendingGarbage = 0;
+    this.onLineClear = opts.onLineClear || null;
+    this.onGameOver = opts.onGameOver || null;
+    this.softDrop = false;
+    this._spawn();
+  }
+  _newPieceObj(type){
+    return { type, m: SHAPES[type].map(r=>r.slice()), x: Math.floor((COLS - SHAPES[type].length)/2), y: 0 };
+  }
+  _spawn(){
+    if(this.pendingGarbage>0){ this._applyGarbage(this.pendingGarbage); this.pendingGarbage=0; }
+    const type = this.queue.shift();
+    this.queue.push(this.nextPiece());
+    this.cur = this._newPieceObj(type);
+    this.holdUsed = false;
+    this.locking = false; this.lockResets = 0; this.lockTimer = 0;
+    if(this._collides(this.cur.m, this.cur.x, this.cur.y)){
+      this.gameOver = true;
+      if(this.onGameOver) this.onGameOver();
+    }
+  }
+  _collides(m, px, py){
+    for(let y=0;y<m.length;y++) for(let x=0;x<m.length;x++){
+      if(!m[y][x]) continue;
+      const gx = px+x, gy = py+y;
+      if(gx<0||gx>=COLS||gy>=ROWS) return true;
+      if(gy>=0 && this.grid[gy][gx]) return true;
+    }
+    return false;
+  }
+  _applyGarbage(n){
+    for(let i=0;i<n;i++){
+      this.grid.shift();
+      const gap = Math.floor(this.rng()*COLS);
+      const row = Array.from({length:COLS},(_,c)=> c===gap? null : "G");
+      this.grid.push(row);
+    }
+  }
+  queueGarbage(n){ this.pendingGarbage += n; }
+  move(dx){
+    if(this.gameOver) return;
+    if(!this._collides(this.cur.m, this.cur.x+dx, this.cur.y)){
+      this.cur.x += dx;
+      if(this.locking) this._resetLock();
+    }
+  }
+  rotate(dir){
+    if(this.gameOver) return;
+    const nm = dir>0 ? rotateMatrixCW(this.cur.m) : rotateMatrixCCW(this.cur.m);
+    const kicks = [0,-1,1,-2,2];
+    for(const k of kicks){
+      if(!this._collides(nm, this.cur.x+k, this.cur.y)){
+        this.cur.m = nm; this.cur.x += k;
+        if(this.locking) this._resetLock();
+        return;
+      }
+    }
+  }
+  _resetLock(){ if(this.lockResets<15){ this.lockTimer=0; this.lockResets++; } }
+  softDropStep(){
+    if(this.gameOver) return;
+    if(!this._collides(this.cur.m, this.cur.x, this.cur.y+1)){
+      this.cur.y++; this.score += 1;
+    }
+  }
+  hardDrop(){
+    if(this.gameOver) return;
+    let dist = 0;
+    while(!this._collides(this.cur.m, this.cur.x, this.cur.y+1)){ this.cur.y++; dist++; }
+    this.score += dist*2;
+    this._lock();
+  }
+  holdSwap(){
+    if(this.gameOver || this.holdUsed) return;
+    this.holdUsed = true;
+    const curType = this.cur.type;
+    if(this.hold===null){
+      this.hold = curType;
+      this._spawnFresh();
+    } else {
+      const t = this.hold; this.hold = curType;
+      this.cur = this._newPieceObj(t);
+    }
+  }
+  _spawnFresh(){
+    const type = this.queue.shift();
+    this.queue.push(this.nextPiece());
+    this.cur = this._newPieceObj(type);
+  }
+  ghostY(){
+    let y = this.cur.y;
+    while(!this._collides(this.cur.m, this.cur.x, y+1)) y++;
+    return y;
+  }
+  _lock(){
+    const m = this.cur.m;
+    for(let y=0;y<m.length;y++) for(let x=0;x<m.length;x++){
+      if(!m[y][x]) continue;
+      const gy = this.cur.y+y, gx = this.cur.x+x;
+      if(gy<0) continue;
+      this.grid[gy][gx] = this.cur.type;
+    }
+    const cleared = this._clearLines();
+    if(cleared>0){
+      const table = {1:100,2:300,3:500,4:800};
+      this.score += (table[cleared]||0) * this.level;
+      this.lines += cleared;
+      this.level = Math.floor(this.lines/10)+1;
+      const attackTable = {1:0,2:1,3:2,4:4};
+      const atk = attackTable[cleared]||0;
+      if(this.onLineClear) this.onLineClear(cleared, atk);
+    }
+    if(!this.gameOver) this._spawn();
+  }
+  _clearLines(){
+    let cleared = 0;
+    for(let y=ROWS-1;y>=0;y--){
+      if(this.grid[y].every(c=>c!==null)){
+        this.grid.splice(y,1);
+        this.grid.unshift(Array(COLS).fill(null));
+        cleared++; y++;
+      }
+    }
+    return cleared;
+  }
+  currentDropInterval(){
+    const d = DIFFICULTY[this.difficulty];
+    const elapsed = (performance.now() - this.startTime)/1000;
+    const rampSteps = elapsed / (d.rampMs/1000);
+    let interval = d.start * Math.pow(d.rampFactor, rampSteps) * Math.pow(d.levelStep, this.level-1);
+    return Math.max(d.min, interval);
+  }
+  tick(dt){
+    if(this.gameOver) return;
+    const interval = this.softDrop ? Math.min(this.currentDropInterval(), 45) : this.currentDropInterval();
+    this.dropAccum += dt;
+    if(this.dropAccum >= interval){
+      this.dropAccum = 0;
+      if(!this._collides(this.cur.m, this.cur.x, this.cur.y+1)){
+        this.cur.y++;
+        if(this.softDrop) this.score += 1;
+      } else {
+        this.locking = true;
+      }
+    }
+    if(this.locking){
+      this.lockTimer += dt;
+      if(!this._collides(this.cur.m, this.cur.x, this.cur.y+1)){
+        this.locking = false; this.lockTimer = 0;
+      } else if(this.lockTimer >= 500){
+        this._lock();
+      }
+    }
+  }
+  columnHeights(){
+    const h = Array(COLS).fill(0);
+    for(let x=0;x<COLS;x++){
+      for(let y=0;y<ROWS;y++){
+        if(this.grid[y][x]){ h[x] = ROWS-y; break; }
+      }
+    }
+    return h;
+  }
+}
+
+/* ===================== Rendering ===================== */
+function drawBoard(ctx, w, h, engine){
+  ctx.clearRect(0,0,w,h);
+  const cell = w/COLS;
+  const rowOffset = BUF;
+  ctx.strokeStyle = "rgba(150,160,200,0.12)";
+  for(let x=0;x<=COLS;x++){ ctx.beginPath(); ctx.moveTo(x*cell,0); ctx.lineTo(x*cell,h); ctx.stroke(); }
+  for(let y=0;y<=VISIBLE_ROWS;y++){ ctx.beginPath(); ctx.moveTo(0,y*cell); ctx.lineTo(w,y*cell); ctx.stroke(); }
+
+  for(let y=rowOffset;y<ROWS;y++){
+    for(let x=0;x<COLS;x++){
+      const c = engine.grid[y][x];
+      if(c) drawCell(ctx, x, y-rowOffset, cell, COLORS[c]||COLORS.G);
+    }
+  }
+  if(engine.gameOver) return;
+  const gy = engine.ghostY();
+  drawPiece(ctx, engine.cur.m, engine.cur.x, gy-rowOffset, cell, COLORS[engine.cur.type], true);
+  drawPiece(ctx, engine.cur.m, engine.cur.x, engine.cur.y-rowOffset, cell, COLORS[engine.cur.type], false);
+}
+function drawCell(ctx,x,y,cell,color){
+  if(y<0) return;
+  ctx.fillStyle = color;
+  ctx.fillRect(x*cell+1, y*cell+1, cell-2, cell-2);
+  ctx.fillStyle = "rgba(255,255,255,0.18)";
+  ctx.fillRect(x*cell+1, y*cell+1, cell-2, 3);
+}
+function drawPiece(ctx, m, px, py, cell, color, ghost){
+  for(let y=0;y<m.length;y++) for(let x=0;x<m.length;x++){
+    if(!m[y][x]) continue;
+    const gy = py+y, gx = px+x;
+    if(gy<0) continue;
+    if(ghost){
+      ctx.strokeStyle = color; ctx.lineWidth=2;
+      ctx.strokeRect(gx*cell+2, gy*cell+2, cell-4, cell-4);
+    } else {
+      drawCell(ctx, gx, gy, cell, color);
+    }
+  }
+}
+function drawMiniPiece(ctx, type, w, h){
+  ctx.clearRect(0,0,w,h);
+  if(!type) return;
+  const m = SHAPES[type];
+  const cell = Math.min(w,h)/4 * 0.85;
+  const offX = (w - m.length*cell)/2;
+  const offY = (h - m.length*cell)/2;
+  for(let y=0;y<m.length;y++) for(let x=0;x<m.length;x++){
+    if(!m[y][x]) continue;
+    ctx.fillStyle = COLORS[type];
+    ctx.fillRect(offX+x*cell+1, offY+y*cell+1, cell-2, cell-2);
+  }
+}
+function drawNextQueue(ctx, queue, w, h){
+  ctx.clearRect(0,0,w,h);
+  const slotH = h/queue.length;
+  queue.forEach((type,i)=>{
+    const m = SHAPES[type];
+    const cell = Math.min(w, slotH)/4*0.8;
+    const offX = (w - m.length*cell)/2;
+    const offY = i*slotH + (slotH - m.length*cell)/2;
+    for(let y=0;y<m.length;y++) for(let x=0;x<m.length;x++){
+      if(!m[y][x]) continue;
+      ctx.fillStyle = COLORS[type];
+      ctx.fillRect(offX+x*cell+1, offY+y*cell+1, cell-2, cell-2);
+    }
+  });
+}
+
+/* ===================== Input handling (shared) ===================== */
+function makeInputController(engine, canvasRefresh){
+  const keys = {};
+  const DAS = 150, ARR = 35;
+  let dasTimer = {left:0,right:0}, dasActive={left:false,right:false};
+  let raf = null, lastT = null;
+  let paused = false;
+
+  function keydown(e){
+    if(engine.gameOver || paused) return;
+    switch(e.code){
+      case "ArrowLeft": if(!keys.ArrowLeft){ engine.move(-1); dasTimer.left=0; dasActive.left=false; } keys.ArrowLeft=true; e.preventDefault(); break;
+      case "ArrowRight": if(!keys.ArrowRight){ engine.move(1); dasTimer.right=0; dasActive.right=false; } keys.ArrowRight=true; e.preventDefault(); break;
+      case "ArrowDown": engine.softDrop = true; e.preventDefault(); break;
+      case "ArrowUp": if(!keys.ArrowUp){ engine.rotate(1); } keys.ArrowUp=true; e.preventDefault(); break;
+      case "KeyZ": if(!keys.KeyZ){ engine.rotate(-1); } keys.KeyZ=true; break;
+      case "Space": if(!keys.Space){ engine.hardDrop(); } keys.Space=true; e.preventDefault(); break;
+      case "KeyC": if(!keys.KeyC){ engine.holdSwap(); } keys.KeyC=true; break;
+    }
+  }
+  function keyup(e){
+    switch(e.code){
+      case "ArrowLeft": keys.ArrowLeft=false; dasActive.left=false; break;
+      case "ArrowRight": keys.ArrowRight=false; dasActive.right=false; break;
+      case "ArrowDown": engine.softDrop=false; break;
+      case "ArrowUp": keys.ArrowUp=false; break;
+      case "KeyZ": keys.KeyZ=false; break;
+      case "Space": keys.Space=false; break;
+      case "KeyC": keys.KeyC=false; break;
+    }
+  }
+  function loop(t){
+    if(lastT===null) lastT = t;
+    const dt = t - lastT; lastT = t;
+    if(!paused && !engine.gameOver){
+      if(keys.ArrowLeft){
+        dasTimer.left += dt;
+        if(!dasActive.left && dasTimer.left>=DAS){ dasActive.left=true; dasTimer.left=0; engine.move(-1); }
+        else if(dasActive.left && dasTimer.left>=ARR){ dasTimer.left=0; engine.move(-1); }
+      }
+      if(keys.ArrowRight){
+        dasTimer.right += dt;
+        if(!dasActive.right && dasTimer.right>=DAS){ dasActive.right=true; dasTimer.right=0; engine.move(1); }
+        else if(dasActive.right && dasTimer.right>=ARR){ dasTimer.right=0; engine.move(1); }
+      }
+      engine.tick(dt);
+      canvasRefresh();
+    }
+    raf = requestAnimationFrame(loop);
+  }
+  document.addEventListener("keydown", keydown);
+  document.addEventListener("keyup", keyup);
+  raf = requestAnimationFrame(loop);
+  return {
+    setPaused(p){ paused = p; lastT=null; },
+    destroy(){
+      document.removeEventListener("keydown", keydown);
+      document.removeEventListener("keyup", keyup);
+      if(raf) cancelAnimationFrame(raf);
+    },
+    touchMove(dx){ engine.move(dx); },
+    touchRotate(){ engine.rotate(1); },
+    touchDown(v){ engine.softDrop = v; },
+    touchDrop(){ engine.hardDrop(); },
+    touchHold(){ engine.holdSwap(); }
+  };
+}
+
+/* ===================== Screen: navigation ===================== */
+document.querySelectorAll("[data-back]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    stopAll();
+    showScreen(btn.dataset.back);
+  });
+});
+$("btn-goto-single").addEventListener("click", ()=>showScreen("screen-diff"));
+$("btn-goto-multi").addEventListener("click", ()=>{
+  $("multi-identity-summary").innerHTML = `<div class="name-with-avatar">${avatarHTML(myCharacter)}<span style="font-weight:700;">${escapeHtml(myNickname)}</span></div>`;
+  showScreen("screen-multi-lobby");
+});
+
+function stopAll(){
+  if(window._singleCtl){ window._singleCtl.destroy(); window._singleCtl=null; }
+  if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
+  if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
+  if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
+}
+
+/* ===================== SINGLE PLAYER ===================== */
+document.querySelectorAll(".diff-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=> startSingle(btn.dataset.diff));
+});
+
+let singleEngine = null;
+function startSingle(difficulty){
+  showScreen("screen-single");
+  const boardCanvas = $("s-board"), holdCanvas = $("s-hold"), nextCanvas = $("s-next");
+  const bctx = boardCanvas.getContext("2d"), hctx = holdCanvas.getContext("2d"), nctx = nextCanvas.getContext("2d");
+
+  singleEngine = new Engine({
+    difficulty,
+    onGameOver: ()=> endSingle()
+  });
+  function refresh(){
+    drawBoard(bctx, boardCanvas.width, boardCanvas.height, singleEngine);
+    drawMiniPiece(hctx, singleEngine.hold, holdCanvas.width, holdCanvas.height);
+    drawNextQueue(nctx, singleEngine.queue, nextCanvas.width, nextCanvas.height);
+    $("s-score").textContent = singleEngine.score;
+    $("s-level").textContent = singleEngine.level;
+    $("s-lines").textContent = singleEngine.lines;
+  }
+  window._singleCtl = makeInputController(singleEngine, refresh);
+  refresh();
+
+  $("btn-single-pause").onclick = ()=> togglePause(true);
+  $("btn-resume").onclick = ()=> togglePause(false);
+  function togglePause(p){
+    if(!window._singleCtl) return;
+    window._singleCtl.setPaused(p);
+    $("overlay-pause").classList.toggle("active", p);
+  }
+  window._singlePauseToggle = togglePause;
+
+  document.querySelectorAll(".touch-controls button").forEach(b=>b.onclick=null);
+  $("t-left").onclick = ()=> singleEngine.move(-1);
+  $("t-right").onclick = ()=> singleEngine.move(1);
+  $("t-rotate").onclick = ()=> singleEngine.rotate(1);
+  $("t-down").onmousedown = ()=> singleEngine.softDrop=true;
+  $("t-down").onmouseup = ()=> singleEngine.softDrop=false;
+  $("t-down").ontouchstart = (e)=>{ e.preventDefault(); singleEngine.softDrop=true; };
+  $("t-down").ontouchend = (e)=>{ e.preventDefault(); singleEngine.softDrop=false; };
+  $("t-drop").onclick = ()=> singleEngine.hardDrop();
+  $("t-hold").onclick = ()=> singleEngine.holdSwap();
+}
+async function endSingle(){
+  $("ov-score").textContent = singleEngine.score;
+  $("ov-level").textContent = singleEngine.level;
+  $("ov-lines").textContent = singleEngine.lines;
+  $("overlay-single-over").classList.add("active");
+  const statusEl = $("ov-save-status");
+  if(!scoreServerBase()){
+    statusEl.textContent = "";
+    return;
+  }
+  statusEl.textContent = "기록 저장 중...";
+  const result = await saveSingleScore(singleEngine);
+  statusEl.textContent = result.ok ? "기록이 저장되었습니다 (기록 보기에서 확인)" : "기록 저장 실패 (로컬 서버 연결 확인)";
+}
+$("btn-single-quit").addEventListener("click", ()=>{ stopAll(); showScreen("screen-menu"); });
+$("btn-retry").addEventListener("click", ()=>{
+  $("overlay-single-over").classList.remove("active");
+  stopAll();
+  startSingle(singleEngine.difficulty);
+});
+$("btn-over-menu").addEventListener("click", ()=>{
+  $("overlay-single-over").classList.remove("active");
+  stopAll();
+  showScreen("screen-menu");
+});
+document.addEventListener("keydown",(e)=>{
+  if(e.code==="KeyP" && $("screen-single").classList.contains("active") && window._singlePauseToggle){
+    const active = $("overlay-pause").classList.contains("active");
+    window._singlePauseToggle(!active);
+  }
+});
+
+/* ===================== CHARACTERS ===================== */
+const CHARACTER_DEFS = [
+  { id:"cat",     label:"고양이",   fill:"#ffd3e0", ears:"cat" },
+  { id:"bunny",   label:"토끼",     fill:"#e0d6ff", ears:"bunny" },
+  { id:"bear",    label:"곰돌이",   fill:"#ffe2b8", ears:"bear" },
+  { id:"panda",   label:"판다",     fill:"#f3f3f3", ears:"panda" },
+  { id:"fox",     label:"여우",     fill:"#ffd2ad", ears:"fox" },
+  { id:"penguin", label:"펭귄",     fill:"#cfe8ff", ears:"penguin" },
+  { id:"hamster", label:"햄스터",   fill:"#fff2b8", ears:"hamster" },
+  { id:"duck",    label:"오리",     fill:"#fff6c9", ears:"duck" }
+];
+function mascotSVG(kindId){
+  const def = CHARACTER_DEFS.find(c=>c.id===kindId) || CHARACTER_DEFS[0];
+  let ears = "", extra = "";
+  switch(def.ears){
+    case "cat":
+      ears = `<path d="M15 22 L21 5 L28 22 Z" fill="${def.fill}"/><path d="M49 22 L43 5 L36 22 Z" fill="${def.fill}"/>`;
+      break;
+    case "bunny":
+      ears = `<ellipse cx="23" cy="8" rx="6" ry="17" fill="${def.fill}"/><ellipse cx="41" cy="8" rx="6" ry="17" fill="${def.fill}"/>`;
+      break;
+    case "bear":
+      ears = `<circle cx="16" cy="15" r="9" fill="${def.fill}"/><circle cx="48" cy="15" r="9" fill="${def.fill}"/>`;
+      break;
+    case "panda":
+      ears = `<circle cx="16" cy="15" r="9" fill="#3a3a3a"/><circle cx="48" cy="15" r="9" fill="#3a3a3a"/>`;
+      extra = `<ellipse cx="23" cy="33" rx="6.5" ry="5.5" fill="#3a3a3a"/><ellipse cx="41" cy="33" rx="6.5" ry="5.5" fill="#3a3a3a"/>`;
+      break;
+    case "fox":
+      ears = `<path d="M13 24 L19 3 L29 21 Z" fill="${def.fill}"/><path d="M51 24 L45 3 L35 21 Z" fill="${def.fill}"/>`;
+      break;
+    case "hamster":
+      ears = `<circle cx="19" cy="13" r="7" fill="${def.fill}"/><circle cx="45" cy="13" r="7" fill="${def.fill}"/>`;
+      break;
+    case "duck":
+      extra = `<path d="M24 36 Q32 42 40 36 Q32 39 24 36 Z" fill="#ffb648"/>`;
+      break;
+    case "penguin":
+    default: break;
+  }
+  const faceFill = def.ears==="penguin" ? "#33415e" : def.fill;
+  const body = def.ears==="penguin"
+    ? `<ellipse cx="32" cy="34" rx="19" ry="21" fill="#33415e"/><ellipse cx="32" cy="39" rx="11" ry="13" fill="#fff"/>`
+    : `<circle cx="32" cy="34" r="19" fill="${faceFill}"/>`;
+  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    ${ears}${body}${extra}
+    <circle cx="25" cy="33" r="2.2" fill="#3a3d4a"/>
+    <circle cx="39" cy="33" r="2.2" fill="#3a3d4a"/>
+  </svg>`;
+}
+function avatarHTML(kindId){ return `<span class="avatar-chip">${mascotSVG(kindId)}</span>`; }
+
+const NAME_ADJ = ["몽글몽글","말랑말랑","포동포동","방실방실","깜찍한","산들산들","포근한","오동통","살랑살랑","반짝반짝","콩닥콩닥","몰랑몰랑","보들보들","뽀시래기"];
+const NAME_NOUN = {
+  cat:["고양이","나비","냥이"], bunny:["토끼","깡총이","래빗"], bear:["곰돌이","베어","꿀곰"],
+  panda:["판다","팬디","대나무"], fox:["여우","폭시","꼬리"], penguin:["펭귄","펭이","펭돌이"],
+  hamster:["햄스터","콩돌이","볼빵빵"], duck:["오리","꽥꽥이","오돌이"]
+};
+function randomName(kindId){
+  const adj = NAME_ADJ[Math.floor(Math.random()*NAME_ADJ.length)];
+  const nouns = NAME_NOUN[kindId] || NAME_NOUN.cat;
+  const noun = nouns[Math.floor(Math.random()*nouns.length)];
+  const num = Math.floor(Math.random()*90)+10;
+  return adj + " " + noun + num;
+}
+
+let myCharacter = CHARACTER_DEFS[Math.floor(Math.random()*CHARACTER_DEFS.length)].id;
+(function initCharacterPicker(){
+  const grid = $("char-grid");
+  grid.innerHTML = "";
+  CHARACTER_DEFS.forEach(def=>{
+    const btn = document.createElement("div");
+    btn.className = "char-btn" + (def.id===myCharacter ? " selected" : "");
+    btn.dataset.char = def.id;
+    btn.innerHTML = mascotSVG(def.id) + `<span>${def.label}</span>`;
+    btn.addEventListener("click", ()=>{
+      myCharacter = def.id;
+      grid.querySelectorAll(".char-btn").forEach(b=>b.classList.toggle("selected", b.dataset.char===myCharacter));
+    });
+    grid.appendChild(btn);
+  });
+  $("in-nickname").value = randomName(myCharacter);
+})();
+$("btn-random-name").addEventListener("click", ()=>{
+  $("in-nickname").value = randomName(myCharacter);
+  myNickname = $("in-nickname").value.trim() || myNickname;
+});
+$("in-nickname").addEventListener("input", ()=>{
+  myNickname = $("in-nickname").value.trim() || myNickname;
+});
+
+/* ===================== TRANSPORT (Claude room / local server) ===================== */
+const DEFAULT_SERVER_URL = "https://pantry-runway-mystified.ngrok-free.dev";
+const HAS_CLAUDE = !!(window.claude && typeof window.claude.use === "function");
+(function initConnectionHint(){
+  $("multi-hint-claude").style.display = HAS_CLAUDE ? "" : "none";
+  $("multi-hint-local").style.display = HAS_CLAUDE ? "none" : "";
+  $("field-server-url").style.display = HAS_CLAUDE ? "none" : "";
+  if(!HAS_CLAUDE) $("in-server-url").value = DEFAULT_SERVER_URL;
+})();
+
+function createClaudeTransport(room){
+  return {
+    kind:"claude",
+    presence(patch){ return room.presence(patch); },
+    onPeers(cb){
+      return room.onPeers((change)=>{
+        const flat = (change.peers||[]).map(p=>Object.assign({}, p.presence));
+        cb(flat);
+      });
+    },
+    emit(topic, data){ return room.emit(topic, data); },
+    on(topic, cb){
+      return room.on(topic, (msg)=>{ cb(msg.data || {}); });
+    },
+    destroy(){}
+  };
+}
+function createLocalTransport(baseUrl){
+  let peers = [];
+  let peersCb = null;
+  let myState = null;
+  let cursor = 0;
+  let alive = true;
+  const handlers = {};
+  async function post(path, body){
+    const res = await fetch(baseUrl+path, { method:"POST", headers:{"Content-Type":"application/json", "ngrok-skip-browser-warning":"true"}, body: JSON.stringify(body) });
+    if(!res.ok) throw new Error("http "+res.status);
+    return res.json();
+  }
+  async function get(path){
+    const res = await fetch(baseUrl+path, { headers:{"ngrok-skip-browser-warning":"true"} });
+    if(!res.ok) throw new Error("http "+res.status);
+    return res.json();
+  }
+  async function poll(){
+    if(!alive) return;
+    try{
+      if(myState && myState.roomId){
+        const roomData = await get("/api/room?roomId="+encodeURIComponent(myState.roomId));
+        peers = roomData.players || [];
+        if(peersCb) peersCb(peers);
+        const ev = await get("/api/events?roomId="+encodeURIComponent(myState.roomId)+"&since="+cursor);
+        (ev.events||[]).forEach(e=>{
+          cursor = Math.max(cursor, e.seq);
+          (handlers[e.topic]||[]).forEach(fn=>fn(e.data||{}));
+        });
+      }
+    }catch(e){ /* server unreachable; keep retrying silently */ }
+    if(alive) setTimeout(poll, 450);
+  }
+  poll();
+  return {
+    kind:"local",
+    presence(patch){
+      myState = Object.assign({}, myState, patch);
+      return post("/api/presence", myState).catch(()=>{});
+    },
+    onPeers(cb){ peersCb = cb; if(peers.length) cb(peers); return ()=>{ peersCb=null; }; },
+    emit(topic, data){ return post("/api/event", { roomId: myState && myState.roomId, topic, data }).catch(()=>{}); },
+    on(topic, cb){ (handlers[topic]=handlers[topic]||[]).push(cb); return ()=>{ handlers[topic]=(handlers[topic]||[]).filter(f=>f!==cb); }; },
+    destroy(){ alive=false; }
+  };
+}
+let cachedTransport = null;
+async function ensureTransport(){
+  if(cachedTransport) return cachedTransport;
+  if(HAS_CLAUDE){
+    try{
+      const room = await window.claude.use("room");
+      if(room){ cachedTransport = createClaudeTransport(room); return cachedTransport; }
+    }catch(e){}
+    return null;
+  }
+  const url = ($("in-server-url").value||"").trim().replace(/\/$/,"");
+  if(!url) return null;
+  cachedTransport = createLocalTransport(url);
+  return cachedTransport;
+}
+
+/* ===================== SINGLE-PLAYER RECORDS (DB via local server) ===================== */
+function scoreServerBase(){
+  if(HAS_CLAUDE) return null;
+  const fieldVal = $("in-server-url") ? $("in-server-url").value.trim() : "";
+  const base = (fieldVal || DEFAULT_SERVER_URL).replace(/\/$/,"");
+  return base || null;
+}
+async function saveSingleScore(engine){
+  const base = scoreServerBase();
+  if(!base) return { ok:false };
+  try{
+    const res = await fetch(base+"/api/single-score", {
+      method:"POST",
+      headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
+      body: JSON.stringify({ nickname: myNickname, character: myCharacter, difficulty: engine.difficulty, score: engine.score, level: engine.level, lines: engine.lines })
+    });
+    if(!res.ok) throw new Error("bad status");
+    return { ok:true };
+  }catch(e){ return { ok:false }; }
+}
+async function fetchScores(params){
+  const base = scoreServerBase();
+  if(!base) return null;
+  try{
+    const q = new URLSearchParams(params).toString();
+    const res = await fetch(base+"/api/single-scores?"+q, { headers:{"ngrok-skip-browser-warning":"true"} });
+    if(!res.ok) throw new Error("bad status");
+    return await res.json();
+  }catch(e){ return null; }
+}
+async function loadRecordsScreen(){
+  $("records-hint").textContent = "불러오는 중...";
+  $("my-best-list").innerHTML = "";
+  $("leaderboard-list").innerHTML = "";
+  const base = scoreServerBase();
+  if(!base){
+    $("records-hint").textContent = "기록 저장은 로컬 서버 연결 시에만 지원됩니다.";
+    return;
+  }
+  const [mine, top] = await Promise.all([
+    fetchScores({ nickname: myNickname, sort:"top", limit:50 }),
+    fetchScores({ sort:"top", limit:10 })
+  ]);
+  if(!mine && !top){
+    $("records-hint").textContent = "서버에 연결할 수 없습니다. start-server.bat 실행 상태와 주소를 확인하세요.";
+    return;
+  }
+  $("records-hint").textContent = "";
+  const diffOrder = ["easy","normal","hard"];
+  const diffLabel = { easy:"EASY", normal:"NORMAL", hard:"HARD" };
+  const byDiff = {};
+  (mine && mine.scores || []).forEach(r=>{
+    if(!byDiff[r.difficulty] || r.score > byDiff[r.difficulty].score) byDiff[r.difficulty] = r;
+  });
+  const myBestList = $("my-best-list");
+  const haveAny = diffOrder.some(d=>byDiff[d]);
+  if(!haveAny){
+    myBestList.innerHTML = `<div class="controls-hint">아직 기록이 없습니다. 싱글 모드를 플레이해보세요!</div>`;
+  } else {
+    diffOrder.forEach(d=>{
+      const r = byDiff[d];
+      if(!r) return;
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.innerHTML = `<span>${diffLabel[d]||d}</span><span>${r.score}점 · Lv.${r.level} · ${r.lines}줄</span>`;
+      myBestList.appendChild(row);
+    });
+  }
+  const lb = $("leaderboard-list");
+  const topScores = (top && top.scores) || [];
+  if(topScores.length===0){
+    lb.innerHTML = `<div class="controls-hint">아직 기록이 없습니다.</div>`;
+  } else {
+    topScores.forEach((r,i)=>{
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.innerHTML = `<span class="name-with-avatar" style="justify-content:flex-start;">${avatarHTML(r.character)}${i+1}위 ${escapeHtml(r.nickname)}</span><span>${r.score}점 (${diffLabel[r.difficulty]||r.difficulty})</span>`;
+      lb.appendChild(row);
+    });
+  }
+}
+$("btn-goto-records").addEventListener("click", ()=>{ showScreen("screen-records"); loadRecordsScreen(); });
+
+/* ===================== MULTIPLAYER ===================== */
+const MY_ID = uid();
+let myNickname = ($("in-nickname").value||"").trim() || ("Player" + Math.floor(Math.random()*1000));
+let currentRoomId = null;
+let iAmReady = false;
+let multiEngine = null;
+let multiStarted = false;
+let unsubEvents = [];
+let lastPeersSnapshot = [];
+let matchBaseSeed = 0;
+let matchRounds = 1;
+let matchRound = 1;
+let matchTotals = {};
+let matchWins = {};
+let roundDecided = false;
+let chatLogEntries = [];
+
+$("btn-create-room").addEventListener("click", async ()=>{
+  const nick = $("in-nickname").value.trim();
+  if(!nick){ $("multi-error").textContent = "닉네임을 입력하세요."; return; }
+  myNickname = nick;
+  const code = roomCode();
+  await enterRoom(code, true);
+});
+$("btn-join-room").addEventListener("click", async ()=>{
+  const nick = $("in-nickname").value.trim();
+  const code = $("in-roomcode").value.trim().toUpperCase();
+  if(!nick){ $("multi-error").textContent = "닉네임을 입력하세요."; return; }
+  if(!code){ $("multi-error").textContent = "방 코드를 입력하세요."; return; }
+  myNickname = nick;
+  await enterRoom(code, false);
+});
+
+async function enterRoom(code, isCreate){
+  $("multi-error").textContent = "";
+  if(!HAS_CLAUDE){
+    const url = ($("in-server-url").value||"").trim();
+    if(!url){ $("multi-error").textContent = "로컬 서버 주소를 입력하세요."; return; }
+    try{
+      const res = await fetch(url.replace(/\/$/,"")+"/api/room?roomId=__ping__", { headers:{"ngrok-skip-browser-warning":"true"} });
+      if(!res.ok) throw new Error("bad status");
+    }catch(e){
+      $("multi-error").textContent = "서버에 연결할 수 없습니다. start-server.bat을 실행했는지, 주소가 맞는지 확인하세요.";
+      return;
+    }
+  }
+  const room = await ensureTransport();
+  if(!room){
+    $("multi-error").textContent = "실시간 연결을 사용할 수 없습니다. 싱글 모드를 이용해주세요.";
+    return;
+  }
+  currentRoomId = code;
+  iAmReady = false;
+  multiStarted = false;
+  matchTotals = {};
+  matchWins = {};
+  matchRound = 1;
+  roundDecided = false;
+  chatLogEntries = [];
+  $("chat-log").innerHTML = "";
+
+  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, heights: Array(COLS).fill(0), inGame:false });
+
+  const offPeers = room.onPeers((peers)=>{
+    lastPeersSnapshot = peers.filter(p=> p.roomId === currentRoomId);
+    if($("screen-multi-room").classList.contains("active")) renderLobby();
+    if(multiStarted){
+      renderOpponents();
+      checkRoundDecided();
+    }
+  });
+  unsubEvents.push(offPeers);
+
+  const offStart = room.on("start", (data)=>{
+    if(data.roomId !== currentRoomId || multiStarted) return;
+    matchBaseSeed = data.seed;
+    matchRounds = data.rounds || 1;
+    matchRound = 1;
+    matchTotals = {};
+    matchWins = {};
+    beginMultiGame();
+  });
+  unsubEvents.push(offStart);
+
+  const offAttack = room.on("attack", (data)=>{
+    if(data.roomId !== currentRoomId || data.targetId !== MY_ID) return;
+    if(multiEngine && !multiEngine.gameOver){
+      multiEngine.queueGarbage(data.lines);
+      flashAttack();
+      toast((data.fromNick||"상대") + "의 공격! +" + data.lines + "줄");
+    }
+  });
+  unsubEvents.push(offAttack);
+
+  const offChat = room.on("chat", (data)=>{
+    if(data.roomId !== currentRoomId) return;
+    appendChatMessage(data.nickname, data.character, data.text, data.id===MY_ID);
+  });
+  unsubEvents.push(offChat);
+
+  $("room-code-label").textContent = currentRoomId;
+  showScreen("screen-multi-room");
+  setTimeout(renderLobby, 400);
+
+  if(window._lobbyHeartbeat) clearInterval(window._lobbyHeartbeat);
+  window._lobbyHeartbeat = setInterval(async ()=>{
+    if(multiStarted || !currentRoomId) return;
+    const t = await ensureTransport();
+    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+  }, 5000);
+}
+
+function renderLobby(){
+  const wrap = $("lobby-players");
+  wrap.innerHTML = "";
+  const slots = lastPeersSnapshot.slice(0,4);
+  for(let i=0;i<4;i++){
+    const p = slots[i];
+    const div = document.createElement("div");
+    if(p){
+      div.className = "card player-slot";
+      div.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${p.id===MY_ID?" (나)":""}</div></div>
+        <div class="status ${p.ready?'ready':''}">${p.ready?"준비 완료":"대기중"}</div>`;
+    } else {
+      div.className = "card player-slot empty";
+      div.innerHTML = `<div class="nick">빈 자리</div><div class="status">-</div>`;
+    }
+    wrap.appendChild(div);
+  }
+  const readyCount = lastPeersSnapshot.filter(p=>p.ready).length;
+  const startBtn = $("btn-start-game");
+  startBtn.disabled = !(readyCount>=2 && iAmReady);
+  $("lobby-hint").textContent = lastPeersSnapshot.length + "명 입장 / " + readyCount + "명 준비 완료 (최소 2명 필요)";
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+$("btn-ready-toggle").addEventListener("click", async ()=>{
+  iAmReady = !iAmReady;
+  $("btn-ready-toggle").textContent = iAmReady ? "준비 취소" : "준비하기";
+  const room = await ensureTransport();
+  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+  renderLobby();
+});
+$("btn-start-game").addEventListener("click", async ()=>{
+  const room = await ensureTransport();
+  if(!room) return;
+  const seed = Date.now() % 2147483647;
+  const rounds = Number($("round-select").value) || 1;
+  matchBaseSeed = seed;
+  matchRounds = rounds;
+  matchRound = 1;
+  matchTotals = {};
+  matchWins = {};
+  room.emit("start", { roomId: currentRoomId, seed, rounds });
+  beginMultiGame();
+});
+$("btn-leave-room").addEventListener("click", ()=>{
+  leaveRoom();
+  showScreen("screen-multi-lobby");
+});
+function leaveRoom(){
+  stopAll();
+  unsubEvents.forEach(fn=>{ try{ fn(); }catch(e){} });
+  unsubEvents = [];
+  if(cachedTransport && cachedTransport.destroy) cachedTransport.destroy();
+  cachedTransport = null;
+  currentRoomId = null;
+  multiStarted = false;
+}
+
+function appendChatMessage(nickname, character, text, isMe){
+  const log = $("chat-log");
+  const row = document.createElement("div");
+  row.className = "chat-msg";
+  row.innerHTML = `${avatarHTML(character)}<span class="who">${escapeHtml(nickname||"???")}${isMe?" (나)":""}</span><span class="txt">${escapeHtml(text)}</span>`;
+  log.appendChild(row);
+  chatLogEntries.push(row);
+  while(chatLogEntries.length > 60){ const old = chatLogEntries.shift(); if(old.parentNode) old.parentNode.removeChild(old); }
+  log.scrollTop = log.scrollHeight;
+}
+async function sendChat(){
+  const input = $("in-chat");
+  const text = input.value.trim();
+  if(!text || !currentRoomId) return;
+  input.value = "";
+  const room = await ensureTransport();
+  if(!room) return;
+  room.emit("chat", { roomId: currentRoomId, id: MY_ID, nickname: myNickname, character: myCharacter, text: text.slice(0,120) });
+}
+$("btn-chat-send").addEventListener("click", sendChat);
+$("in-chat").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendChat(); } });
+
+let roundStartTime = 0;
+function beginMultiGame(){
+  multiStarted = true;
+  roundDecided = false;
+  roundStartTime = Date.now();
+  if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
+  if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
+  if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
+  showScreen("screen-multi-game");
+  const roundSeed = (matchBaseSeed + matchRound*99991) % 2147483647;
+  const rng = mulberry32(roundSeed);
+  const boardCanvas = $("m-board"), holdCanvas = $("m-hold"), nextCanvas = $("m-next");
+  const bctx = boardCanvas.getContext("2d"), hctx = holdCanvas.getContext("2d"), nctx = nextCanvas.getContext("2d");
+
+  multiEngine = new Engine({
+    rng,
+    difficulty: "normal",
+    onLineClear: (cleared, atk)=>{
+      if(atk>0) sendAttack(atk);
+    },
+    onGameOver: ()=> onMultiGameOver()
+  });
+
+  function refresh(){
+    drawBoard(bctx, boardCanvas.width, boardCanvas.height, multiEngine);
+    drawMiniPiece(hctx, multiEngine.hold, holdCanvas.width, holdCanvas.height);
+    drawNextQueue(nctx, multiEngine.queue, nextCanvas.width, nextCanvas.height);
+    $("m-score").textContent = multiEngine.score;
+    $("m-lines").textContent = multiEngine.lines;
+  }
+  window._multiCtl = makeInputController(multiEngine, refresh);
+  refresh();
+  renderOpponents();
+
+  ensureTransport().then(room=>{
+    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:true, score:0, lines:0, heights: Array(COLS).fill(0) });
+  });
+  window._multiSyncTimer = setInterval(async ()=>{
+    const room = await ensureTransport();
+    if(!room || !currentRoomId) return;
+    room.presence({
+      id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true,
+      alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
+      heights: multiEngine.columnHeights()
+    });
+  }, 400);
+
+  document.querySelectorAll(".touch-controls button").forEach(b=>{});
+  $("tm-left").onclick = ()=> multiEngine.move(-1);
+  $("tm-right").onclick = ()=> multiEngine.move(1);
+  $("tm-rotate").onclick = ()=> multiEngine.rotate(1);
+  $("tm-down").onmousedown = ()=> multiEngine.softDrop=true;
+  $("tm-down").onmouseup = ()=> multiEngine.softDrop=false;
+  $("tm-down").ontouchstart = (e)=>{ e.preventDefault(); multiEngine.softDrop=true; };
+  $("tm-down").ontouchend = (e)=>{ e.preventDefault(); multiEngine.softDrop=false; };
+  $("tm-drop").onclick = ()=> multiEngine.hardDrop();
+  $("tm-hold").onclick = ()=> multiEngine.holdSwap();
+}
+
+async function sendAttack(lines){
+  const room = await ensureTransport();
+  if(!room || !currentRoomId) return;
+  const alive = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
+  if(alive.length===0) return;
+  const target = alive[Math.floor(Math.random()*alive.length)];
+  room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
+}
+
+function renderOpponents(){
+  const wrap = $("opp-grid");
+  wrap.innerHTML = "";
+  const others = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  others.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card opp-card" + (p.alive===false ? " dead":"");
+    const heights = p.heights || Array(COLS).fill(0);
+    const bars = heights.map(h=>`<div class="bar" style="height:${Math.min(100,(h/ROWS)*100)}%"></div>`).join("");
+    card.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}</div></div>
+      <div class="skyline">${bars}</div>
+      <div class="stat">점수 ${p.score||0}</div>
+      <div class="stat">${p.alive===false? "탈락" : "생존"}</div>`;
+    wrap.appendChild(card);
+  });
+}
+
+async function onMultiGameOver(){
+  const room = await ensureTransport();
+  if(room && currentRoomId){
+    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, heights: multiEngine.columnHeights() });
+    room.emit("gameover", { roomId: currentRoomId, id: MY_ID });
+  }
+  checkRoundDecided();
+}
+
+function checkRoundDecided(){
+  if(!multiStarted || roundDecided || !multiEngine) return;
+  if(Date.now() - roundStartTime < 1500) return;
+  const othersKnown = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  if(othersKnown.length===0) return;
+  const iAmAlive = !multiEngine.gameOver;
+  const othersAlive = othersKnown.filter(p=>p.alive!==false).length;
+  const totalAlive = (iAmAlive?1:0) + othersAlive;
+  if(totalAlive<=1){
+    roundDecided = true;
+    if(iAmAlive && window._multiCtl) window._multiCtl.setPaused(true);
+    setTimeout(finishRound, 1000);
+  }
+}
+
+function finishRound(){
+  matchTotals[MY_ID] = (matchTotals[MY_ID]||0) + multiEngine.score;
+  lastPeersSnapshot.filter(p=>p.id!==MY_ID).forEach(p=>{
+    matchTotals[p.id] = (matchTotals[p.id]||0) + (p.score||0);
+  });
+  const isFinalRound = matchRound >= matchRounds;
+  const roundEntries = [{ id:MY_ID, nickname:myNickname+" (나)", character:myCharacter, alive:!multiEngine.gameOver, score:multiEngine.score }]
+    .concat(lastPeersSnapshot.filter(p=>p.id!==MY_ID).map(p=>({ id:p.id, nickname:p.nickname, character:p.character, alive:p.alive!==false, score:p.score||0 })));
+
+  const winner = roundEntries.find(p=>p.alive);
+  if(winner) matchWins[winner.id] = (matchWins[winner.id]||0) + 1;
+
+  if(isFinalRound){
+    const all = roundEntries.map(p=>({ ...p, total: matchTotals[p.id]||p.score, wins: matchWins[p.id]||0 }));
+    all.sort((a,b)=> (b.wins - a.wins) || (b.total - a.total));
+    renderResultsList(all, "final");
+    $("mo-title").textContent = all[0] && all[0].id===MY_ID ? "VICTORY" : "RESULT";
+    $("mo-subtitle").textContent = matchRounds>1 ? `총 ${matchRounds}판 · 라운드 승수 기준` : "";
+    $("btn-multi-menu").style.display = "";
+    $("overlay-multi-over").classList.add("active");
+  } else {
+    const all = roundEntries.slice();
+    all.sort((a,b)=> (b.alive - a.alive) || (b.score - a.score));
+    renderResultsList(all, "round");
+    $("mo-title").textContent = `ROUND ${matchRound}/${matchRounds}`;
+    $("mo-subtitle").textContent = (winner ? (winner.id===MY_ID?"이번 라운드 승리! ":`${winner.nickname} 라운드 승리! `) : "") + "잠시 후 다음 라운드가 시작됩니다...";
+    $("btn-multi-menu").style.display = "none";
+    $("overlay-multi-over").classList.add("active");
+    setTimeout(()=>{
+      matchRound += 1;
+      $("overlay-multi-over").classList.remove("active");
+      beginMultiGame();
+    }, 3500);
+  }
+}
+
+function renderResultsList(all, mode){
+  const list = $("mo-list");
+  list.innerHTML = "";
+  all.forEach((p,i)=>{
+    const row = document.createElement("div");
+    row.className = "result-row";
+    const scoreText = mode==="final" ? `${p.wins}승 · ${p.total}점` : `${p.score}점 ${p.alive? "(생존)":""}`;
+    row.innerHTML = `<span class="name-with-avatar" style="justify-content:flex-start;">${avatarHTML(p.character)}${i+1}위 ${escapeHtml(p.nickname)}</span><span>${scoreText}</span>`;
+    list.appendChild(row);
+  });
+}
+$("btn-multi-menu").addEventListener("click", ()=>{
+  $("overlay-multi-over").classList.remove("active");
+  leaveRoom();
+  showScreen("screen-menu");
+});
+
+window.addEventListener("beforeunload", ()=>{ stopAll(); });
+
+})();
+</script>
+
+</body>
+</html>

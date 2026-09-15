@@ -1,0 +1,13 @@
+{
+  "name": "tetris-arena-server",
+  "version": "1.0.0",
+  "description": "Tetris Arena local/cloud multiplayer relay + score DB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "license": "UNLICENSED"
+}
