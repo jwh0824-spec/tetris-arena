@@ -146,6 +146,7 @@ label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:6px; 
 .field{ margin-bottom:16px; }
 
 .game-wrap{ display:flex; gap:20px; justify-content:center; flex-wrap:wrap; align-items:flex-start; }
+.multi-layout{ display:flex; gap:16px; justify-content:center; align-items:flex-start; flex-wrap:wrap; }
 .board-col{ display:flex; flex-direction:column; align-items:center; gap:10px; }
 canvas{ background:var(--surface-2); border:1px solid var(--border); border-radius:8px; image-rendering:pixelated; max-width:100%; max-height:72vh; width:auto; height:auto; }
 .side-panel{ display:flex; flex-direction:column; gap:14px; width:200px; }
@@ -182,8 +183,9 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
 .player-slot .status{ font-size:11px; color:var(--text-dim); }
 .player-slot .status.ready{ color:var(--green); }
 
-.opp-grid{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
-.opp-card{ padding:10px; text-align:center; width:100px; }
+.opp-col{ display:flex; flex-direction:column; gap:8px; width:84px; }
+@media (max-width:820px){ .opp-col{ flex-direction:row; width:100%; flex-wrap:wrap; justify-content:center; } }
+.opp-card{ padding:8px; text-align:center; width:84px; }
 .opp-card.dead{ opacity:.35; }
 .opp-card .nick{ font-size:11px; font-weight:700; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .opp-card .stat{ font-size:10px; color:var(--text-dim); }
@@ -386,6 +388,10 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
           <option value="normal" selected>보통</option>
           <option value="hard">어려움</option>
         </select>
+        <select id="test-mode-select" class="btn" style="padding:8px 12px;">
+          <option value="normal">일반전</option>
+          <option value="item">아이템전</option>
+        </select>
       </div>
       <button class="btn" id="btn-test-mode">테스트 모드 시작</button>
     </div>
@@ -429,13 +435,21 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
 
   <!-- MULTI GAME -->
   <div class="screen" id="screen-multi-game">
-    <div class="game-wrap">
+    <div class="multi-layout">
+      <div class="opp-col" id="opp-grid"></div>
+      <div class="board-col">
+        <canvas id="m-board" width="260" height="572"></canvas>
+      </div>
       <div class="side-panel">
         <div class="card panel-box"><div class="label">SCORE</div><div class="value" id="m-score">0</div></div>
         <div class="card panel-box"><div class="label">LINES</div><div class="value" id="m-lines">0</div></div>
         <div class="card panel-box">
           <div class="label">HOLD</div>
-          <div class="center"><canvas id="m-hold" width="76" height="76" class="mini-canvas"></canvas></div>
+          <div class="center"><canvas id="m-hold" width="66" height="66" class="mini-canvas"></canvas></div>
+        </div>
+        <div class="card panel-box">
+          <div class="label">NEXT</div>
+          <div class="center"><canvas id="m-next" width="66" height="150" class="mini-canvas"></canvas></div>
         </div>
         <div class="card panel-box" id="item-box" style="display:none;">
           <div class="label">ITEM</div>
@@ -443,18 +457,6 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
           <button class="btn" id="btn-use-item" style="margin-top:6px; font-size:11px; padding:6px 8px;" disabled>사용 (X)</button>
         </div>
       </div>
-      <div class="board-col">
-        <canvas id="m-board" width="260" height="572"></canvas>
-      </div>
-      <div class="side-panel">
-        <div class="card panel-box">
-          <div class="label">NEXT</div>
-          <div class="center"><canvas id="m-next" width="76" height="220" class="mini-canvas"></canvas></div>
-        </div>
-      </div>
-    </div>
-    <div class="center" style="margin-top:16px;">
-      <div class="opp-grid" id="opp-grid"></div>
     </div>
     <div class="touch-controls">
       <button class="btn" id="tm-left">←</button>
@@ -1528,6 +1530,7 @@ $("btn-join-room").addEventListener("click", async ()=>{
 $("btn-test-mode").addEventListener("click", async ()=>{
   testModeBotCount = Number($("test-bot-count").value) || 2;
   testModeDifficulty = $("test-bot-difficulty").value || "normal";
+  $("mode-select").value = $("test-mode-select").value || "normal";
   await enterRoom("BOT"+Math.floor(Math.random()*10000), true);
   if(currentRoomId) startMultiMatch();
 });
@@ -1828,7 +1831,7 @@ document.addEventListener("keydown", (e)=>{
   if(e.code==="KeyX" && $("screen-multi-game").classList.contains("active")) useItem();
 });
 
-const OPP_BOARD_W = 70, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
+const OPP_BOARD_W = 56, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
 function renderOpponents(){
   const wrap = $("opp-grid");
   wrap.innerHTML = "";
