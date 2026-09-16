@@ -182,12 +182,11 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
 .player-slot .status.ready{ color:var(--green); }
 
 .opp-grid{ display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
-.opp-card{ padding:10px; text-align:center; width:120px; }
+.opp-card{ padding:10px; text-align:center; width:100px; }
 .opp-card.dead{ opacity:.35; }
 .opp-card .nick{ font-size:11px; font-weight:700; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .opp-card .stat{ font-size:10px; color:var(--text-dim); }
-.skyline{ display:flex; align-items:flex-end; gap:1px; height:60px; margin:6px 0; }
-.skyline .bar{ flex:1; background:var(--cyan); border-radius:1px 1px 0 0; }
+.opp-board{ margin:4px 0; image-rendering:pixelated; }
 
 .char-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
 @media (max-width:360px){ .char-grid{ grid-template-columns:repeat(3,1fr); } }
@@ -319,7 +318,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         </div>
       </div>
       <div class="board-col">
-        <canvas id="s-board" width="400" height="800"></canvas>
+        <canvas id="s-board" width="400" height="880"></canvas>
       </div>
       <div class="side-panel">
         <div class="card panel-box">
@@ -403,7 +402,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         </div>
       </div>
       <div class="board-col">
-        <canvas id="m-board" width="260" height="520"></canvas>
+        <canvas id="m-board" width="260" height="572"></canvas>
       </div>
       <div class="side-panel">
         <div class="card panel-box">
@@ -548,7 +547,7 @@ const DIFFICULTY = {
   hard:   { start:580, min:100, rampMs:11000, rampFactor:0.88, levelStep:0.92  }
 };
 
-const COLS = 10, VISIBLE_ROWS = 20, BUF = 4, ROWS = VISIBLE_ROWS + BUF;
+const COLS = 10, VISIBLE_ROWS = 20, BUF = 2, ROWS = VISIBLE_ROWS + BUF;
 
 /* ===================== Core Engine ===================== */
 class Engine{
@@ -724,14 +723,14 @@ class Engine{
       }
     }
   }
-  columnHeights(){
-    const h = Array(COLS).fill(0);
-    for(let x=0;x<COLS;x++){
-      for(let y=0;y<ROWS;y++){
-        if(this.grid[y][x]){ h[x] = ROWS-y; break; }
-      }
+  boardSnapshotRows(){
+    const rows = [];
+    for(let y=0;y<ROWS;y++){
+      let s = "";
+      for(let x=0;x<COLS;x++) s += this.grid[y][x] || ".";
+      rows.push(s);
     }
-    return h;
+    return rows;
   }
 }
 
@@ -739,21 +738,28 @@ class Engine{
 function drawBoard(ctx, w, h, engine){
   ctx.clearRect(0,0,w,h);
   const cell = w/COLS;
-  const rowOffset = BUF;
+  ctx.fillStyle = "rgba(255,80,104,0.08)";
+  ctx.fillRect(0, 0, w, BUF*cell);
   ctx.strokeStyle = "rgba(150,160,200,0.12)";
   for(let x=0;x<=COLS;x++){ ctx.beginPath(); ctx.moveTo(x*cell,0); ctx.lineTo(x*cell,h); ctx.stroke(); }
-  for(let y=0;y<=VISIBLE_ROWS;y++){ ctx.beginPath(); ctx.moveTo(0,y*cell); ctx.lineTo(w,y*cell); ctx.stroke(); }
+  for(let y=0;y<=ROWS;y++){ ctx.beginPath(); ctx.moveTo(0,y*cell); ctx.lineTo(w,y*cell); ctx.stroke(); }
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,70,95,0.85)";
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(0, BUF*cell); ctx.lineTo(w, BUF*cell); ctx.stroke();
+  ctx.restore();
 
-  for(let y=rowOffset;y<ROWS;y++){
+  for(let y=0;y<ROWS;y++){
     for(let x=0;x<COLS;x++){
       const c = engine.grid[y][x];
-      if(c) drawCell(ctx, x, y-rowOffset, cell, COLORS[c]||COLORS.G);
+      if(c) drawCell(ctx, x, y, cell, COLORS[c]||COLORS.G);
     }
   }
   if(engine.gameOver) return;
   const gy = engine.ghostY();
-  drawPiece(ctx, engine.cur.m, engine.cur.x, gy-rowOffset, cell, COLORS[engine.cur.type], true);
-  drawPiece(ctx, engine.cur.m, engine.cur.x, engine.cur.y-rowOffset, cell, COLORS[engine.cur.type], false);
+  drawPiece(ctx, engine.cur.m, engine.cur.x, gy, cell, COLORS[engine.cur.type], true);
+  drawPiece(ctx, engine.cur.m, engine.cur.x, engine.cur.y, cell, COLORS[engine.cur.type], false);
 }
 function drawCell(ctx,x,y,cell,color){
   if(y<0) return;
@@ -772,6 +778,23 @@ function drawPiece(ctx, m, px, py, cell, color, ghost){
       ctx.strokeRect(gx*cell+2, gy*cell+2, cell-4, cell-4);
     } else {
       drawCell(ctx, gx, gy, cell, color);
+    }
+  }
+}
+function drawMiniBoardFromSnapshot(ctx, w, h, rows){
+  ctx.clearRect(0,0,w,h);
+  if(!rows || rows.length===0) return;
+  const cell = w/COLS;
+  ctx.fillStyle = "rgba(255,70,95,0.10)";
+  ctx.fillRect(0, 0, w, BUF*cell);
+  for(let y=0;y<rows.length;y++){
+    const rowStr = rows[y];
+    for(let x=0;x<COLS;x++){
+      const ch = rowStr[x];
+      if(ch && ch!=="."){
+        ctx.fillStyle = COLORS[ch] || COLORS.G;
+        ctx.fillRect(x*cell, y*cell, Math.max(1,cell-0.5), Math.max(1,cell-0.5));
+      }
     }
   }
 }
@@ -1294,7 +1317,7 @@ async function enterRoom(code, isCreate){
   chatLogEntries = [];
   $("chat-log").innerHTML = "";
 
-  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, heights: Array(COLS).fill(0), inGame:false });
+  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, inGame:false });
 
   const offPeers = room.onPeers((peers)=>{
     lastPeersSnapshot = peers.filter(p=> p.roomId === currentRoomId);
@@ -1460,7 +1483,7 @@ function beginMultiGame(){
   renderOpponents();
 
   ensureTransport().then(room=>{
-    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:true, score:0, lines:0, heights: Array(COLS).fill(0) });
+    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:true, score:0, lines:0, boardRows: multiEngine.boardSnapshotRows() });
   });
   window._multiSyncTimer = setInterval(async ()=>{
     const room = await ensureTransport();
@@ -1468,7 +1491,7 @@ function beginMultiGame(){
     room.presence({
       id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true,
       alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
-      heights: multiEngine.columnHeights()
+      boardRows: multiEngine.boardSnapshotRows()
     });
   }, 400);
 
@@ -1493,6 +1516,7 @@ async function sendAttack(lines){
   room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
 }
 
+const OPP_BOARD_W = 70, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
 function renderOpponents(){
   const wrap = $("opp-grid");
   wrap.innerHTML = "";
@@ -1500,20 +1524,20 @@ function renderOpponents(){
   others.forEach(p=>{
     const card = document.createElement("div");
     card.className = "card opp-card" + (p.alive===false ? " dead":"");
-    const heights = p.heights || Array(COLS).fill(0);
-    const bars = heights.map(h=>`<div class="bar" style="height:${Math.min(100,(h/ROWS)*100)}%"></div>`).join("");
     card.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}</div></div>
-      <div class="skyline">${bars}</div>
+      <div class="center"><canvas class="opp-board" width="${OPP_BOARD_W}" height="${OPP_BOARD_H}"></canvas></div>
       <div class="stat">점수 ${p.score||0}</div>
       <div class="stat">${p.alive===false? "탈락" : "생존"}</div>`;
     wrap.appendChild(card);
+    const canvas = card.querySelector(".opp-board");
+    drawMiniBoardFromSnapshot(canvas.getContext("2d"), OPP_BOARD_W, OPP_BOARD_H, p.boardRows);
   });
 }
 
 async function onMultiGameOver(){
   const room = await ensureTransport();
   if(room && currentRoomId){
-    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, heights: multiEngine.columnHeights() });
+    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, boardRows: multiEngine.boardSnapshotRows() });
     room.emit("gameover", { roomId: currentRoomId, id: MY_ID });
   }
   checkRoundDecided();
