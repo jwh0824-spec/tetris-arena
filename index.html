@@ -95,6 +95,7 @@ body{
   transition:transform .12s ease, border-color .12s ease;
 }
 .mode-btn:hover{ transform:translateY(-3px); border-color:var(--cyan); }
+.submode-btn.selected{ border-color:var(--magenta); box-shadow:0 0 0 2px rgba(194,109,255,.25); }
 .mode-btn .icon{ font-size:36px; margin-bottom:10px; }
 .mode-btn h3{ margin:0 0 6px; font-family:'Press Start 2P'; font-size:13px; color:var(--text); }
 .mode-btn p{ margin:0; color:var(--text-dim); font-size:12px; line-height:1.5; }
@@ -269,7 +270,20 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
   <!-- SINGLE DIFFICULTY -->
   <div class="screen" id="screen-diff">
     <div class="row back-row"><button class="btn" data-back="screen-menu">← 뒤로</button></div>
-    <div class="logo pixel" style="font-size:20px;">난이도 선택</div>
+    <div class="logo pixel" style="font-size:20px;">싱글 모드</div>
+    <div class="mode-grid" style="max-width:460px; margin:18px auto 0;">
+      <div class="card mode-btn submode-btn selected" data-submode="record" id="btn-submode-record">
+        <div class="icon">📈</div>
+        <h3 style="font-size:12px;">기록쌓기</h3>
+        <p>시간에 따라 조금씩 빨라지는<br>클래식 점수 모드</p>
+      </div>
+      <div class="card mode-btn submode-btn" data-submode="computer" id="btn-submode-computer">
+        <div class="icon">🤖</div>
+        <h3 style="font-size:12px;">컴퓨터 대전</h3>
+        <p>AI와 동시에 플레이,<br>줄 없애면 서로 공격</p>
+      </div>
+    </div>
+    <div class="logo pixel" style="font-size:16px; margin-top:26px;">난이도 선택</div>
     <div class="diff-grid" style="margin-top:20px;">
       <div class="card diff-btn easy" data-diff="easy">
         <h4>EASY</h4>
@@ -358,6 +372,23 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     </div>
     <p class="controls-hint" id="multi-hint-claude">※ 실시간 대전은 같은 Claude 조직/워크스페이스의 로그인 사용자 간에만 연결됩니다.</p>
     <p class="controls-hint local-only" id="multi-hint-local" style="display:none;">※ 기본 주소는 클라우드 서버라 PC를 안 켜도 항상 접속됩니다. 같은 PC끼리만 놀고 싶으면 start-server.bat 실행 후 뜨는 주소로 바꿔 입력하세요.</p>
+
+    <div class="card pad" style="max-width:460px; margin:18px auto 0; text-align:center;">
+      <div class="label" style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">🤖 혼자 테스트하기 (네트워크 없이 봇과 즉시 대전)</div>
+      <div class="row" style="justify-content:center; gap:8px; margin-bottom:10px;">
+        <select id="test-bot-count" class="btn" style="padding:8px 12px;">
+          <option value="1">봇 1명</option>
+          <option value="2" selected>봇 2명</option>
+          <option value="3">봇 3명</option>
+        </select>
+        <select id="test-bot-difficulty" class="btn" style="padding:8px 12px;">
+          <option value="easy">쉬움</option>
+          <option value="normal" selected>보통</option>
+          <option value="hard">어려움</option>
+        </select>
+      </div>
+      <button class="btn" id="btn-test-mode">테스트 모드 시작</button>
+    </div>
   </div>
 
   <!-- MULTI WAIT ROOM -->
@@ -367,7 +398,12 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
       <div class="pixel" style="font-size:13px; color:var(--yellow);">ROOM <span id="room-code-label"></span></div>
     </div>
     <div class="lobby-players" id="lobby-players"></div>
-    <div class="center row" style="gap:8px; margin-top:4px;">
+    <div class="center row" style="gap:8px; margin-top:4px; flex-wrap:wrap;">
+      <label style="margin:0; font-size:12px; color:var(--text-dim);">모드</label>
+      <select id="mode-select" class="btn" style="padding:8px 12px;">
+        <option value="normal">일반전</option>
+        <option value="item">아이템전</option>
+      </select>
       <label style="margin:0; font-size:12px; color:var(--text-dim);">라운드</label>
       <select id="round-select" class="btn" style="padding:8px 12px;">
         <option value="1">1판</option>
@@ -375,6 +411,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         <option value="5">5판 (누적점수 합산)</option>
       </select>
     </div>
+    <p class="controls-hint" id="mode-hint" style="margin-top:6px;">아이템전: 2줄 지울 때마다 랜덤 아이템 획득, X키(또는 버튼)로 상대에게 사용</p>
     <div class="center" style="gap:10px; margin-top:10px;">
       <button class="btn" id="btn-ready-toggle">준비하기</button>
       <button class="btn primary" id="btn-start-game" disabled>게임 시작</button>
@@ -399,6 +436,11 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         <div class="card panel-box">
           <div class="label">HOLD</div>
           <div class="center"><canvas id="m-hold" width="76" height="76" class="mini-canvas"></canvas></div>
+        </div>
+        <div class="card panel-box" id="item-box" style="display:none;">
+          <div class="label">ITEM</div>
+          <div class="center" id="item-icon" style="font-size:28px; height:32px; align-items:center;">-</div>
+          <button class="btn" id="btn-use-item" style="margin-top:6px; font-size:11px; padding:6px 8px;" disabled>사용 (X)</button>
         </div>
       </div>
       <div class="board-col">
@@ -573,6 +615,8 @@ class Engine{
     this.onLineClear = opts.onLineClear || null;
     this.onGameOver = opts.onGameOver || null;
     this.softDrop = false;
+    this.speedBoostUntil = 0;
+    this.fogUntil = 0;
     this._spawn();
   }
   _newPieceObj(type){
@@ -699,6 +743,7 @@ class Engine{
     const elapsed = (performance.now() - this.startTime)/1000;
     const rampSteps = elapsed / (d.rampMs/1000);
     let interval = d.start * Math.pow(d.rampFactor, rampSteps) * Math.pow(d.levelStep, this.level-1);
+    if(this.speedBoostUntil > Date.now()) interval *= 0.55;
     return Math.max(d.min, interval);
   }
   tick(dt){
@@ -732,6 +777,74 @@ class Engine{
     }
     return rows;
   }
+}
+
+/* ===================== Bot AI ===================== */
+function botRotations(type){
+  const states = [SHAPES[type].map(r=>r.slice())];
+  let m = states[0];
+  for(let i=0;i<3;i++){ m = rotateMatrixCW(m); states.push(m); }
+  const uniq = [];
+  states.forEach(s=>{ const key = JSON.stringify(s); if(!uniq.some(u=>JSON.stringify(u)===key)) uniq.push(s); });
+  return uniq;
+}
+function evaluateGrid(grid, rows, cols, linesCleared){
+  const heights = Array(cols).fill(0);
+  let holes = 0;
+  for(let x=0;x<cols;x++){
+    let found = false;
+    for(let y=0;y<rows;y++){
+      if(grid[y][x]){ if(!found){ heights[x] = rows-y; found = true; } }
+      else if(found){ holes++; }
+    }
+  }
+  const aggHeight = heights.reduce((a,b)=>a+b,0);
+  let bumpiness = 0;
+  for(let x=0;x<cols-1;x++) bumpiness += Math.abs(heights[x]-heights[x+1]);
+  const maxHeight = Math.max(0, ...heights);
+  return 1.6*linesCleared*linesCleared - 0.51*aggHeight - 0.9*holes - 0.18*bumpiness - 0.3*maxHeight;
+}
+const BOT_SKILL = { easy:{ pool:7, missChance:0.16 }, normal:{ pool:3, missChance:0.06 }, hard:{ pool:1, missChance:0 } };
+function stepBot(engine, difficulty, rng){
+  if(engine.gameOver) return;
+  rng = rng || Math.random;
+  const type = engine.cur.type;
+  const rotations = botRotations(type);
+  const candidates = [];
+  rotations.forEach((m, rotIndex)=>{
+    const size = m.length;
+    for(let x=-2;x<=COLS;x++){
+      if(engine._collides(m, x, 0)) continue;
+      let y = 0;
+      while(!engine._collides(m, x, y+1)) y++;
+      const clone = engine.grid.map(row=>row.slice());
+      for(let yy=0;yy<size;yy++) for(let xx=0;xx<size;xx++){
+        if(!m[yy][xx]) continue;
+        const gy = y+yy, gx = x+xx;
+        if(gy<0||gy>=ROWS||gx<0||gx>=COLS) continue;
+        clone[gy][gx] = type;
+      }
+      let cleared = 0;
+      for(let yy=ROWS-1;yy>=0;yy--){
+        if(clone[yy].every(c=>c!==null)){ clone.splice(yy,1); clone.unshift(Array(COLS).fill(null)); cleared++; yy++; }
+      }
+      candidates.push({ score: evaluateGrid(clone, ROWS, COLS, cleared), rotIndex, x });
+    }
+  });
+  if(candidates.length===0){ engine.hardDrop(); return; }
+  candidates.sort((a,b)=>b.score-a.score);
+  const skill = BOT_SKILL[difficulty] || BOT_SKILL.normal;
+  let move;
+  if(rng() < skill.missChance){
+    move = candidates[Math.floor(rng()*candidates.length)];
+  } else {
+    const poolSize = Math.min(skill.pool, candidates.length);
+    move = candidates[Math.floor(rng()*poolSize)];
+  }
+  for(let i=0;i<move.rotIndex;i++) engine.rotate(1);
+  const dx = move.x - engine.cur.x;
+  for(let i=0;i<Math.abs(dx);i++) engine.move(dx>0?1:-1);
+  engine.hardDrop();
 }
 
 /* ===================== Rendering ===================== */
@@ -906,9 +1019,27 @@ function stopAll(){
 }
 
 /* ===================== SINGLE PLAYER ===================== */
-document.querySelectorAll(".diff-btn").forEach(btn=>{
-  btn.addEventListener("click", ()=> startSingle(btn.dataset.diff));
+let singleSubMode = "record";
+document.querySelectorAll(".submode-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    singleSubMode = btn.dataset.submode;
+    document.querySelectorAll(".submode-btn").forEach(b=>b.classList.toggle("selected", b===btn));
+  });
 });
+document.querySelectorAll(".diff-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(singleSubMode==="computer") startVsComputer(btn.dataset.diff);
+    else startSingle(btn.dataset.diff);
+  });
+});
+async function startVsComputer(difficulty){
+  testModeBotCount = 1;
+  testModeDifficulty = difficulty;
+  $("round-select").value = "1";
+  $("mode-select").value = "normal";
+  await enterRoom("CPU"+Math.floor(Math.random()*10000), true);
+  if(currentRoomId) startMultiMatch();
+}
 
 let singleEngine = null;
 function startSingle(difficulty){
@@ -1167,9 +1298,96 @@ function createLocalTransport(baseUrl){
     destroy(){ alive=false; }
   };
 }
+const BOT_NAMES = ["말랑봇","또리봇","콩순이봇","번개봇"];
+function createBotTransport(botCount, difficulty){
+  const bots = [];
+  for(let i=0;i<botCount;i++){
+    bots.push({
+      id: "bot_"+i,
+      nickname: BOT_NAMES[i % BOT_NAMES.length],
+      character: CHARACTER_DEFS[(i+2) % CHARACTER_DEFS.length].id,
+      alive:true, score:0, lines:0, boardRows:[], engine:null
+    });
+  }
+  let peersCb = null;
+  let myState = null;
+  let roomId = null;
+  const handlers = {};
+  let loopTimer = null;
+
+  function pushPeers(){
+    if(!peersCb) return;
+    peersCb(bots.map(b=>({
+      id:b.id, roomId, nickname:b.nickname, character:b.character, ready:true,
+      alive:b.alive, inGame:true, score:b.score, lines:b.lines, boardRows:b.boardRows
+    })));
+  }
+  function fireLocal(topic, data){ (handlers[topic]||[]).forEach(fn=>{ try{ fn(data); }catch(e){} }); }
+  function pickTarget(fromBotId){
+    const opts = [];
+    if(myState && myState.alive!==false) opts.push({ id: myState.id, isMe:true });
+    bots.forEach(b=>{ if(b.id!==fromBotId && b.alive) opts.push({ id:b.id }); });
+    if(opts.length===0) return null;
+    return opts[Math.floor(Math.random()*opts.length)];
+  }
+  function startRound(round, roundSeed){
+    if(loopTimer){ clearInterval(loopTimer); loopTimer=null; }
+    bots.forEach((b,i)=>{
+      const rng = mulberry32((roundSeed + (i+1)*7919) % 2147483647);
+      b.engine = new Engine({
+        rng, difficulty:"normal",
+        onLineClear:(cleared, atk)=>{
+          if(atk<=0) return;
+          const target = pickTarget(b.id);
+          if(!target) return;
+          if(target.isMe) fireLocal("attack", { roomId, targetId: myState.id, fromNick:b.nickname, lines:atk });
+          else { const t = bots.find(x=>x.id===target.id); if(t&&t.engine) t.engine.queueGarbage(atk); }
+        },
+        onGameOver:()=>{ b.alive=false; }
+      });
+      b.alive = true; b.score = 0; b.lines = 0; b.boardRows = [];
+    });
+    const interval = { easy:900, normal:650, hard:420 }[difficulty] || 650;
+    loopTimer = setInterval(()=>{
+      bots.forEach(b=>{
+        if(!b.engine || b.engine.gameOver) return;
+        stepBot(b.engine, difficulty);
+        b.score = b.engine.score; b.lines = b.engine.lines; b.boardRows = b.engine.boardSnapshotRows();
+      });
+      pushPeers();
+    }, interval);
+  }
+  return {
+    kind:"bot",
+    presence(patch){
+      myState = Object.assign({}, myState, patch);
+      if(patch.roomId) roomId = patch.roomId;
+      pushPeers();
+    },
+    onPeers(cb){ peersCb = cb; pushPeers(); return ()=>{ peersCb=null; }; },
+    emit(topic, data){
+      if(topic==="attack"){
+        const t = bots.find(b=>b.id===data.targetId);
+        if(t && t.engine) t.engine.queueGarbage(data.lines);
+      } else if(topic==="chat"){
+        fireLocal("chat", data);
+      }
+      return Promise.resolve();
+    },
+    on(topic, cb){ (handlers[topic]=handlers[topic]||[]).push(cb); return ()=>{ handlers[topic]=(handlers[topic]||[]).filter(f=>f!==cb); }; },
+    startRound,
+    destroy(){ if(loopTimer){ clearInterval(loopTimer); loopTimer=null; } }
+  };
+}
+let testModeBotCount = 0;
+let testModeDifficulty = "normal";
 let cachedTransport = null;
 async function ensureTransport(){
   if(cachedTransport) return cachedTransport;
+  if(testModeBotCount > 0){
+    cachedTransport = createBotTransport(testModeBotCount, testModeDifficulty);
+    return cachedTransport;
+  }
   if(HAS_CLAUDE){
     try{
       const room = await window.claude.use("room");
@@ -1282,6 +1500,15 @@ let matchTotals = {};
 let matchWins = {};
 let roundDecided = false;
 let chatLogEntries = [];
+let roomGameMode = "normal";
+let myItem = null;
+let itemLineCounter = 0;
+const ITEM_DEFS = {
+  bomb: { icon:"💣", label:"폭탄" },
+  speed: { icon:"⚡", label:"스피드업" },
+  fog: { icon:"🌫️", label:"안개" }
+};
+const ITEM_KEYS = Object.keys(ITEM_DEFS);
 
 $("btn-create-room").addEventListener("click", async ()=>{
   const nick = $("in-nickname").value.trim();
@@ -1298,10 +1525,16 @@ $("btn-join-room").addEventListener("click", async ()=>{
   myNickname = nick;
   await enterRoom(code, false);
 });
+$("btn-test-mode").addEventListener("click", async ()=>{
+  testModeBotCount = Number($("test-bot-count").value) || 2;
+  testModeDifficulty = $("test-bot-difficulty").value || "normal";
+  await enterRoom("BOT"+Math.floor(Math.random()*10000), true);
+  if(currentRoomId) startMultiMatch();
+});
 
 async function enterRoom(code, isCreate){
   $("multi-error").textContent = "";
-  if(!HAS_CLAUDE){
+  if(!HAS_CLAUDE && testModeBotCount===0){
     const url = ($("in-server-url").value||"").trim();
     if(!url){ $("multi-error").textContent = "로컬 서버 주소를 입력하세요."; return; }
     try{
@@ -1346,6 +1579,7 @@ async function enterRoom(code, isCreate){
     matchRound = 1;
     matchTotals = {};
     matchWins = {};
+    roomGameMode = data.gameMode || "normal";
     beginMultiGame();
   });
   unsubEvents.push(offStart);
@@ -1359,6 +1593,12 @@ async function enterRoom(code, isCreate){
     }
   });
   unsubEvents.push(offAttack);
+
+  const offItem = room.on("item", (data)=>{
+    if(data.roomId !== currentRoomId || data.targetId !== MY_ID) return;
+    applyItemEffect(data.itemType, data.fromNick);
+  });
+  unsubEvents.push(offItem);
 
   const offChat = room.on("chat", (data)=>{
     if(data.roomId !== currentRoomId) return;
@@ -1409,19 +1649,22 @@ $("btn-ready-toggle").addEventListener("click", async ()=>{
   if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
   renderLobby();
 });
-$("btn-start-game").addEventListener("click", async ()=>{
+async function startMultiMatch(){
   const room = await ensureTransport();
   if(!room) return;
   const seed = Date.now() % 2147483647;
   const rounds = Number($("round-select").value) || 1;
+  const gameMode = $("mode-select") ? $("mode-select").value : "normal";
   matchBaseSeed = seed;
   matchRounds = rounds;
   matchRound = 1;
   matchTotals = {};
   matchWins = {};
-  room.emit("start", { roomId: currentRoomId, seed, rounds });
+  roomGameMode = gameMode;
+  room.emit("start", { roomId: currentRoomId, seed, rounds, gameMode });
   beginMultiGame();
-});
+}
+$("btn-start-game").addEventListener("click", startMultiMatch);
 $("btn-leave-room").addEventListener("click", ()=>{
   leaveRoom();
   showScreen("screen-multi-lobby");
@@ -1434,6 +1677,9 @@ function leaveRoom(){
   cachedTransport = null;
   currentRoomId = null;
   multiStarted = false;
+  testModeBotCount = 0;
+  roomGameMode = "normal";
+  myItem = null;
 }
 
 function appendChatMessage(nickname, character, text, isMe){
@@ -1468,15 +1714,28 @@ function beginMultiGame(){
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
   showScreen("screen-multi-game");
   const roundSeed = (matchBaseSeed + matchRound*99991) % 2147483647;
+  if(cachedTransport && cachedTransport.startRound) cachedTransport.startRound(matchRound, roundSeed);
   const rng = mulberry32(roundSeed);
   const boardCanvas = $("m-board"), holdCanvas = $("m-hold"), nextCanvas = $("m-next");
   const bctx = boardCanvas.getContext("2d"), hctx = holdCanvas.getContext("2d"), nctx = nextCanvas.getContext("2d");
+
+  itemLineCounter = 0;
+  setMyItem(null);
+  $("item-box").style.display = roomGameMode==="item" ? "" : "none";
 
   multiEngine = new Engine({
     rng,
     difficulty: "normal",
     onLineClear: (cleared, atk)=>{
-      if(atk>0) sendAttack(atk);
+      if(roomGameMode==="item"){
+        itemLineCounter += cleared;
+        while(itemLineCounter >= 2){
+          itemLineCounter -= 2;
+          if(!myItem) setMyItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
+        }
+      } else if(atk>0){
+        sendAttack(atk);
+      }
     },
     onGameOver: ()=> onMultiGameOver()
   });
@@ -1484,7 +1743,17 @@ function beginMultiGame(){
   function refresh(){
     drawBoard(bctx, boardCanvas.width, boardCanvas.height, multiEngine);
     drawMiniPiece(hctx, multiEngine.hold, holdCanvas.width, holdCanvas.height);
-    drawNextQueue(nctx, multiEngine.queue, nextCanvas.width, nextCanvas.height);
+    if(multiEngine.fogUntil > Date.now()){
+      nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
+      nctx.fillStyle = "rgba(60,66,90,0.5)";
+      nctx.fillRect(0,0,nextCanvas.width,nextCanvas.height);
+      nctx.fillStyle = "#fff";
+      nctx.font = "22px sans-serif";
+      nctx.textAlign = "center";
+      nctx.fillText("?", nextCanvas.width/2, nextCanvas.height/2+8);
+    } else {
+      drawNextQueue(nctx, multiEngine.queue, nextCanvas.width, nextCanvas.height);
+    }
     $("m-score").textContent = multiEngine.score;
     $("m-lines").textContent = multiEngine.lines;
   }
@@ -1525,6 +1794,39 @@ async function sendAttack(lines){
   const target = alive[Math.floor(Math.random()*alive.length)];
   room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
 }
+
+function setMyItem(itemKey){
+  myItem = itemKey;
+  const def = itemKey ? ITEM_DEFS[itemKey] : null;
+  $("item-icon").textContent = def ? def.icon : "-";
+  $("item-icon").title = def ? def.label : "";
+  $("btn-use-item").disabled = !itemKey;
+  if(itemKey) toast(def.label + " 획득! X키로 사용");
+}
+function applyItemEffect(itemType, fromNick){
+  if(!multiEngine || multiEngine.gameOver) return;
+  const def = ITEM_DEFS[itemType];
+  flashAttack();
+  toast((fromNick||"상대") + "의 " + (def?def.label:"아이템") + "!");
+  if(itemType==="bomb") multiEngine.queueGarbage(3);
+  else if(itemType==="speed") multiEngine.speedBoostUntil = Date.now()+8000;
+  else if(itemType==="fog") multiEngine.fogUntil = Date.now()+8000;
+}
+async function useItem(){
+  if(!myItem || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver) return;
+  const room = await ensureTransport();
+  if(!room || !currentRoomId) return;
+  const alive = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
+  if(alive.length===0) return;
+  const target = alive[Math.floor(Math.random()*alive.length)];
+  room.emit("item", { roomId: currentRoomId, targetId: target.id, itemType: myItem, fromNick: myNickname });
+  toast((ITEM_DEFS[myItem]||{}).label + " 사용!");
+  setMyItem(null);
+}
+$("btn-use-item").addEventListener("click", useItem);
+document.addEventListener("keydown", (e)=>{
+  if(e.code==="KeyX" && $("screen-multi-game").classList.contains("active")) useItem();
+});
 
 const OPP_BOARD_W = 70, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
 function renderOpponents(){
