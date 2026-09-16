@@ -738,8 +738,6 @@ class Engine{
 function drawBoard(ctx, w, h, engine){
   ctx.clearRect(0,0,w,h);
   const cell = w/COLS;
-  ctx.fillStyle = "rgba(255,80,104,0.08)";
-  ctx.fillRect(0, 0, w, BUF*cell);
   ctx.strokeStyle = "rgba(150,160,200,0.12)";
   for(let x=0;x<=COLS;x++){ ctx.beginPath(); ctx.moveTo(x*cell,0); ctx.lineTo(x*cell,h); ctx.stroke(); }
   for(let y=0;y<=ROWS;y++){ ctx.beginPath(); ctx.moveTo(0,y*cell); ctx.lineTo(w,y*cell); ctx.stroke(); }
@@ -779,8 +777,6 @@ function drawMiniBoardFromSnapshot(ctx, w, h, rows){
   ctx.clearRect(0,0,w,h);
   if(!rows || rows.length===0) return;
   const cell = w/COLS;
-  ctx.fillStyle = "rgba(255,70,95,0.10)";
-  ctx.fillRect(0, 0, w, BUF*cell);
   for(let y=0;y<rows.length;y++){
     const rowStr = rows[y];
     for(let x=0;x<COLS;x++){
@@ -1053,7 +1049,24 @@ function randomName(kindId){
   return adj + " " + noun + num;
 }
 
-let myCharacter = CHARACTER_DEFS[Math.floor(Math.random()*CHARACTER_DEFS.length)].id;
+const IDENTITY_STORAGE_KEY = "tetrisArenaIdentity";
+function loadSavedIdentity(){
+  try{
+    const raw = localStorage.getItem(IDENTITY_STORAGE_KEY);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    if(obj && typeof obj.nickname === "string" && typeof obj.character === "string") return obj;
+  }catch(e){}
+  return null;
+}
+function saveIdentity(){
+  try{ localStorage.setItem(IDENTITY_STORAGE_KEY, JSON.stringify({ nickname: myNickname, character: myCharacter })); }catch(e){}
+}
+
+const savedIdentity = loadSavedIdentity();
+let myCharacter = (savedIdentity && CHARACTER_DEFS.some(c=>c.id===savedIdentity.character))
+  ? savedIdentity.character
+  : CHARACTER_DEFS[Math.floor(Math.random()*CHARACTER_DEFS.length)].id;
 (function initCharacterPicker(){
   const grid = $("char-grid");
   grid.innerHTML = "";
@@ -1065,17 +1078,20 @@ let myCharacter = CHARACTER_DEFS[Math.floor(Math.random()*CHARACTER_DEFS.length)
     btn.addEventListener("click", ()=>{
       myCharacter = def.id;
       grid.querySelectorAll(".char-btn").forEach(b=>b.classList.toggle("selected", b.dataset.char===myCharacter));
+      saveIdentity();
     });
     grid.appendChild(btn);
   });
-  $("in-nickname").value = randomName(myCharacter);
+  $("in-nickname").value = (savedIdentity && savedIdentity.nickname) ? savedIdentity.nickname : randomName(myCharacter);
 })();
 $("btn-random-name").addEventListener("click", ()=>{
   $("in-nickname").value = randomName(myCharacter);
   myNickname = $("in-nickname").value.trim() || myNickname;
+  saveIdentity();
 });
 $("in-nickname").addEventListener("input", ()=>{
   myNickname = $("in-nickname").value.trim() || myNickname;
+  saveIdentity();
 });
 
 /* ===================== TRANSPORT (Claude room / local server) ===================== */
