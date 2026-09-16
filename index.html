@@ -358,7 +358,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
       <div id="multi-error" style="color:var(--danger); font-size:12px; text-align:center; margin-top:12px; min-height:16px;"></div>
     </div>
     <p class="controls-hint" id="multi-hint-claude">※ 실시간 대전은 같은 Claude 조직/워크스페이스의 로그인 사용자 간에만 연결됩니다.</p>
-    <p class="controls-hint local-only" id="multi-hint-local" style="display:none;">※ 로컬 파일 모드입니다. start-server.bat을 실행한 뒤, 뜨는 주소를 아래에 입력하세요. 같은 와이파이의 다른 기기는 이 PC의 LAN IP 주소로 접속하면 됩니다.</p>
+    <p class="controls-hint local-only" id="multi-hint-local" style="display:none;">※ 기본 주소는 클라우드 서버라 PC를 안 켜도 항상 접속됩니다. 같은 PC끼리만 놀고 싶으면 start-server.bat 실행 후 뜨는 주소로 바꿔 입력하세요.</p>
   </div>
 
   <!-- MULTI WAIT ROOM -->
@@ -1062,7 +1062,7 @@ $("in-nickname").addEventListener("input", ()=>{
 });
 
 /* ===================== TRANSPORT (Claude room / local server) ===================== */
-const DEFAULT_SERVER_URL = "https://pantry-runway-mystified.ngrok-free.dev";
+const DEFAULT_SERVER_URL = "https://tetris-arena-4spd.onrender.com";
 const HAS_CLAUDE = !!(window.claude && typeof window.claude.use === "function");
 (function initConnectionHint(){
   $("multi-hint-claude").style.display = HAS_CLAUDE ? "" : "none";
