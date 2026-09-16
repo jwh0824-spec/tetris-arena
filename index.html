@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tetris Arena</title>
+</head>
+<body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap">
 <style>
@@ -227,8 +229,6 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
 .touch-controls button{ padding:14px 0; font-size:16px; }
 @media (max-width:700px){ .touch-controls{ display:grid; } }
 </style>
-</head>
-<body>
 
 <div id="app">
 
@@ -502,7 +502,8 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     <p class="controls-hint" id="mo-subtitle" style="margin-top:-10px;"></p>
     <div id="mo-list"></div>
     <div class="row" style="justify-content:center; margin-top:20px;">
-      <button class="btn primary" id="btn-multi-menu">메뉴로</button>
+      <button class="btn primary" id="btn-multi-again">다시 하기</button>
+      <button class="btn" id="btn-multi-menu">메뉴로</button>
     </div>
   </div>
 </div>
@@ -1018,6 +1019,10 @@ $("btn-goto-single").addEventListener("click", ()=>showScreen("screen-diff"));
 $("btn-goto-multi").addEventListener("click", ()=>{
   $("multi-identity-summary").innerHTML = `<div class="name-with-avatar">${avatarHTML(myCharacter)}<span style="font-weight:700;">${escapeHtml(myNickname)}</span></div>`;
   showScreen("screen-multi-lobby");
+  if(!HAS_CLAUDE){
+    const url = (($("in-server-url").value||"").trim() || DEFAULT_SERVER_URL).replace(/\/$/,"");
+    fetch(url+"/api/room?roomId=__warmup__", { headers:{"ngrok-skip-browser-warning":"true"} }).catch(()=>{});
+  }
 });
 
 function stopAll(){
@@ -1262,6 +1267,11 @@ function createClaudeTransport(room){
     destroy(){}
   };
 }
+function fetchWithTimeout(url, opts, timeoutMs){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), timeoutMs);
+  return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(()=>clearTimeout(t));
+}
 function createLocalTransport(baseUrl){
   let peers = [];
   let peersCb = null;
@@ -1270,12 +1280,12 @@ function createLocalTransport(baseUrl){
   let alive = true;
   const handlers = {};
   async function post(path, body){
-    const res = await fetch(baseUrl+path, { method:"POST", headers:{"Content-Type":"application/json", "ngrok-skip-browser-warning":"true"}, body: JSON.stringify(body) });
+    const res = await fetchWithTimeout(baseUrl+path, { method:"POST", headers:{"Content-Type":"application/json", "ngrok-skip-browser-warning":"true"}, body: JSON.stringify(body) }, 20000);
     if(!res.ok) throw new Error("http "+res.status);
     return res.json();
   }
   async function get(path){
-    const res = await fetch(baseUrl+path, { headers:{"ngrok-skip-browser-warning":"true"} });
+    const res = await fetchWithTimeout(baseUrl+path, { headers:{"ngrok-skip-browser-warning":"true"} }, 20000);
     if(!res.ok) throw new Error("http "+res.status);
     return res.json();
   }
@@ -1546,15 +1556,22 @@ $("btn-test-mode").addEventListener("click", async ()=>{
 async function enterRoom(code, isCreate){
   $("multi-error").textContent = "";
   if(!HAS_CLAUDE && testModeBotCount===0){
-    const url = ($("in-server-url").value||"").trim();
+    const url = ($("in-server-url").value||"").trim().replace(/\/$/,"");
     if(!url){ $("multi-error").textContent = "로컬 서버 주소를 입력하세요."; return; }
-    try{
-      const res = await fetch(url.replace(/\/$/,"")+"/api/room?roomId=__ping__", { headers:{"ngrok-skip-browser-warning":"true"} });
-      if(!res.ok) throw new Error("bad status");
-    }catch(e){
+    let connected = false;
+    for(let attempt=0; attempt<4 && !connected; attempt++){
+      if(attempt>0) $("multi-error").textContent = "서버를 깨우는 중입니다... (최대 1분 정도 걸릴 수 있어요)";
+      try{
+        const res = await fetchWithTimeout(url+"/api/room?roomId=__ping__", { headers:{"ngrok-skip-browser-warning":"true"} }, 15000);
+        if(res.ok) connected = true;
+      }catch(e){ /* retry below */ }
+      if(!connected && attempt<3) await new Promise(r=>setTimeout(r, 3000));
+    }
+    if(!connected){
       $("multi-error").textContent = "서버에 연결할 수 없습니다. start-server.bat을 실행했는지, 주소가 맞는지 확인하세요.";
       return;
     }
+    $("multi-error").textContent = "";
   }
   const room = await ensureTransport();
   if(!room){
@@ -1900,6 +1917,7 @@ function finishRound(){
     $("mo-title").textContent = all[0] && all[0].id===MY_ID ? "VICTORY" : "RESULT";
     $("mo-subtitle").textContent = matchRounds>1 ? `총 ${matchRounds}판 · 라운드 승수 기준` : "";
     $("btn-multi-menu").style.display = "";
+    $("btn-multi-again").style.display = "";
     $("overlay-multi-over").classList.add("active");
   } else {
     const all = roundEntries.slice();
@@ -1908,6 +1926,7 @@ function finishRound(){
     $("mo-title").textContent = `ROUND ${matchRound}/${matchRounds}`;
     $("mo-subtitle").textContent = (winner ? (winner.id===MY_ID?"이번 라운드 승리! ":`${winner.nickname} 라운드 승리! `) : "") + "잠시 후 다음 라운드가 시작됩니다...";
     $("btn-multi-menu").style.display = "none";
+    $("btn-multi-again").style.display = "none";
     $("overlay-multi-over").classList.add("active");
     setTimeout(()=>{
       matchRound += 1;
@@ -1933,6 +1952,37 @@ $("btn-multi-menu").addEventListener("click", ()=>{
   leaveRoom();
   showScreen("screen-menu");
 });
+
+async function rematchInRoom(){
+  $("overlay-multi-over").classList.remove("active");
+  if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
+  multiStarted = false;
+  roundDecided = false;
+  matchTotals = {};
+  matchWins = {};
+  matchRound = 1;
+  iAmReady = false;
+  myItem = null;
+  const room = await ensureTransport();
+  if(room && currentRoomId){
+    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, inGame:false });
+  }
+  if(testModeBotCount>0){
+    startMultiMatch();
+    return;
+  }
+  $("btn-ready-toggle").textContent = "준비하기";
+  $("room-code-label").textContent = currentRoomId;
+  showScreen("screen-multi-room");
+  if(window._lobbyHeartbeat) clearInterval(window._lobbyHeartbeat);
+  window._lobbyHeartbeat = setInterval(async ()=>{
+    if(multiStarted || !currentRoomId) return;
+    const t = await ensureTransport();
+    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+  }, 5000);
+  setTimeout(renderLobby, 400);
+}
+$("btn-multi-again").addEventListener("click", rematchInRoom);
 
 window.addEventListener("beforeunload", ()=>{ stopAll(); });
 
