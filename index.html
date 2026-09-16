@@ -460,7 +460,10 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         </div>
         <div class="card panel-box" id="item-box" style="display:none;">
           <div class="label">ITEM</div>
-          <div class="center" id="item-icon" style="font-size:28px; height:32px; align-items:center;">-</div>
+          <div class="center" style="gap:6px; height:32px; align-items:center;">
+            <span id="item-icon-0" style="font-size:26px;">-</span>
+            <span id="item-icon-1" style="font-size:26px;">-</span>
+          </div>
           <button class="btn" id="btn-use-item" style="margin-top:6px; font-size:11px; padding:6px 8px;" disabled>사용 (X)</button>
         </div>
       </div>
@@ -1030,6 +1033,7 @@ function stopAll(){
   if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
   if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
 }
 
 /* ===================== SINGLE PLAYER ===================== */
@@ -1521,7 +1525,9 @@ let matchWins = {};
 let roundDecided = false;
 let chatLogEntries = [];
 let roomGameMode = "normal";
-let myItem = null;
+let myItems = [];
+const ITEM_INVENTORY_MAX = 2;
+const ITEM_TIMER_MS = 30000;
 let itemLineCounter = 0;
 const ITEM_DEFS = {
   bomb: { icon:"💣", label:"폭탄" },
@@ -1707,7 +1713,7 @@ function leaveRoom(){
   multiStarted = false;
   testModeBotCount = 0;
   roomGameMode = "normal";
-  myItem = null;
+  myItems = [];
 }
 
 function appendChatMessage(nickname, character, text, isMe){
@@ -1740,6 +1746,7 @@ function beginMultiGame(){
   if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
   if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
   showScreen("screen-multi-game");
   const roundSeed = (matchBaseSeed + matchRound*99991) % 2147483647;
   if(cachedTransport && cachedTransport.startRound) cachedTransport.startRound(matchRound, roundSeed);
@@ -1748,8 +1755,14 @@ function beginMultiGame(){
   const bctx = boardCanvas.getContext("2d"), hctx = holdCanvas.getContext("2d"), nctx = nextCanvas.getContext("2d");
 
   itemLineCounter = 0;
-  setMyItem(null);
+  myItems = [];
+  renderItemSlots();
   $("item-box").style.display = roomGameMode==="item" ? "" : "none";
+  if(roomGameMode==="item"){
+    window._itemTimer = setInterval(()=>{
+      if(multiEngine && !multiEngine.gameOver) grantItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
+    }, ITEM_TIMER_MS);
+  }
 
   multiEngine = new Engine({
     rng,
@@ -1759,7 +1772,7 @@ function beginMultiGame(){
         itemLineCounter += cleared;
         while(itemLineCounter >= 2){
           itemLineCounter -= 2;
-          if(!myItem) setMyItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
+          grantItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
         }
       } else if(atk>0){
         sendAttack(atk);
@@ -1823,13 +1836,21 @@ async function sendAttack(lines){
   room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
 }
 
-function setMyItem(itemKey){
-  myItem = itemKey;
-  const def = itemKey ? ITEM_DEFS[itemKey] : null;
-  $("item-icon").textContent = def ? def.icon : "-";
-  $("item-icon").title = def ? def.label : "";
-  $("btn-use-item").disabled = !itemKey;
-  if(itemKey) toast(def.label + " 획득! X키로 사용");
+function renderItemSlots(){
+  for(let i=0;i<ITEM_INVENTORY_MAX;i++){
+    const el = $("item-icon-"+i);
+    const def = myItems[i] ? ITEM_DEFS[myItems[i]] : null;
+    el.textContent = def ? def.icon : "-";
+    el.title = def ? def.label : "";
+  }
+  $("btn-use-item").disabled = myItems.length===0;
+}
+function grantItem(itemKey){
+  if(myItems.length >= ITEM_INVENTORY_MAX) return false;
+  myItems.push(itemKey);
+  renderItemSlots();
+  toast(ITEM_DEFS[itemKey].label + " 획득! X키로 사용 (" + myItems.length + "/" + ITEM_INVENTORY_MAX + ")");
+  return true;
 }
 function applyItemEffect(itemType, fromNick){
   if(!multiEngine || multiEngine.gameOver) return;
@@ -1841,15 +1862,16 @@ function applyItemEffect(itemType, fromNick){
   else if(itemType==="fog") multiEngine.fogUntil = Date.now()+8000;
 }
 async function useItem(){
-  if(!myItem || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver) return;
+  if(myItems.length===0 || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver) return;
   const room = await ensureTransport();
   if(!room || !currentRoomId) return;
   const alive = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
   if(alive.length===0) return;
   const target = alive[Math.floor(Math.random()*alive.length)];
-  room.emit("item", { roomId: currentRoomId, targetId: target.id, itemType: myItem, fromNick: myNickname });
-  toast((ITEM_DEFS[myItem]||{}).label + " 사용!");
-  setMyItem(null);
+  const itemType = myItems.shift();
+  room.emit("item", { roomId: currentRoomId, targetId: target.id, itemType, fromNick: myNickname });
+  toast((ITEM_DEFS[itemType]||{}).label + " 사용!");
+  renderItemSlots();
 }
 $("btn-use-item").addEventListener("click", useItem);
 document.addEventListener("keydown", (e)=>{
@@ -1899,6 +1921,7 @@ function checkRoundDecided(){
 }
 
 function finishRound(){
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
   matchTotals[MY_ID] = (matchTotals[MY_ID]||0) + multiEngine.score;
   lastPeersSnapshot.filter(p=>p.id!==MY_ID).forEach(p=>{
     matchTotals[p.id] = (matchTotals[p.id]||0) + (p.score||0);
@@ -1956,13 +1979,14 @@ $("btn-multi-menu").addEventListener("click", ()=>{
 async function rematchInRoom(){
   $("overlay-multi-over").classList.remove("active");
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
   multiStarted = false;
   roundDecided = false;
   matchTotals = {};
   matchWins = {};
   matchRound = 1;
   iAmReady = false;
-  myItem = null;
+  myItems = [];
   const room = await ensureTransport();
   if(room && currentRoomId){
     room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, inGame:false });
