@@ -286,7 +286,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     <div class="logo pixel">TETRIS ARENA</div>
     <div class="subtitle">싱글로 실력을 쌓거나, 4인 실시간 대전으로 공격하세요</div>
     <div class="row" style="justify-content:center; gap:8px; margin:-6px 0 14px;">
-      <button class="btn" id="btn-color-theme" style="font-size:12px; padding:7px 12px;">🎨 색상: 네온</button>
+      <button class="btn" id="btn-color-theme" style="font-size:12px; padding:7px 12px;">🎨 블록 색상: 네온</button>
       <button class="btn" id="btn-sound-toggle" style="font-size:12px; padding:7px 12px;">🔊 사운드: 켜짐</button>
     </div>
 
@@ -740,7 +740,7 @@ function applyUiTheme(theme){
 applyUiTheme(uiTheme);
 function updateSettingsButtons(){
   const themeBtn = $("btn-color-theme");
-  if(themeBtn) themeBtn.textContent = "🎨 색상: " + (COLOR_THEME_LABELS[colorTheme]||"네온");
+  if(themeBtn) themeBtn.textContent = "🎨 블록 색상: " + (COLOR_THEME_LABELS[colorTheme]||"네온");
   const soundBtn = $("btn-sound-toggle");
   if(soundBtn) soundBtn.textContent = soundOn ? "🔊 사운드: 켜짐" : "🔈 사운드: 꺼짐";
   const soundFloat = $("btn-sound-toggle-float");
