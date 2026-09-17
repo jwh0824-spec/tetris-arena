@@ -112,18 +112,20 @@ async function saveSingleScoreRow(data) {
   return info.lastInsertRowid;
 }
 
-async function getSingleScoreRows({ nickname, sort, limit }) {
+async function getSingleScoreRows({ nickname, difficulty, sort, limit }) {
   const orderCol = sort === "recent" ? "played_at" : "score";
+  const conds = [];
+  if (nickname) conds.push(["nickname", nickname]);
+  if (difficulty) conds.push(["difficulty", difficulty]);
+  const params = conds.map((c) => c[1]);
   if (pg) {
-    const q = nickname
-      ? { text: `SELECT * FROM single_scores WHERE nickname = $1 ORDER BY ${orderCol} DESC LIMIT $2`, values: [nickname, limit] }
-      : { text: `SELECT * FROM single_scores ORDER BY ${orderCol} DESC LIMIT $1`, values: [limit] };
-    const r = await pg.pool.query(q);
+    const whereSql = conds.length ? "WHERE " + conds.map((c, i) => `${c[0]} = $${i + 1}`).join(" AND ") : "";
+    const text = `SELECT * FROM single_scores ${whereSql} ORDER BY ${orderCol} DESC LIMIT $${conds.length + 1}`;
+    const r = await pg.pool.query({ text, values: [...params, limit] });
     return r.rows;
   }
-  return nickname
-    ? db.prepare(`SELECT * FROM single_scores WHERE nickname = ? ORDER BY ${orderCol} DESC LIMIT ?`).all(nickname, limit)
-    : db.prepare(`SELECT * FROM single_scores ORDER BY ${orderCol} DESC LIMIT ?`).all(limit);
+  const whereSql = conds.length ? "WHERE " + conds.map((c) => `${c[0]} = ?`).join(" AND ") : "";
+  return db.prepare(`SELECT * FROM single_scores ${whereSql} ORDER BY ${orderCol} DESC LIMIT ?`).all(...params, limit);
 }
 
 async function saveMultiResultRow(data) {
@@ -150,17 +152,19 @@ async function saveMultiResultRow(data) {
   return info.lastInsertRowid;
 }
 
-async function getMultiResultRows({ nickname, limit }) {
+async function getMultiResultRows({ nickname, mode, limit }) {
+  const conds = [];
+  if (nickname) conds.push(["nickname", nickname]);
+  if (mode) conds.push(["mode", mode]);
+  const params = conds.map((c) => c[1]);
   if (pg) {
-    const q = nickname
-      ? { text: "SELECT * FROM multi_results WHERE nickname = $1 ORDER BY played_at DESC LIMIT $2", values: [nickname, limit] }
-      : { text: "SELECT * FROM multi_results ORDER BY played_at DESC LIMIT $1", values: [limit] };
-    const r = await pg.pool.query(q);
+    const whereSql = conds.length ? "WHERE " + conds.map((c, i) => `${c[0]} = $${i + 1}`).join(" AND ") : "";
+    const text = `SELECT * FROM multi_results ${whereSql} ORDER BY played_at DESC LIMIT $${conds.length + 1}`;
+    const r = await pg.pool.query({ text, values: [...params, limit] });
     return r.rows;
   }
-  return nickname
-    ? db.prepare(`SELECT * FROM multi_results WHERE nickname = ? ORDER BY played_at DESC LIMIT ?`).all(nickname, limit)
-    : db.prepare(`SELECT * FROM multi_results ORDER BY played_at DESC LIMIT ?`).all(limit);
+  const whereSql = conds.length ? "WHERE " + conds.map((c) => `${c[0]} = ?`).join(" AND ") : "";
+  return db.prepare(`SELECT * FROM multi_results ${whereSql} ORDER BY played_at DESC LIMIT ?`).all(...params, limit);
 }
 
 /** roomId -> { players: Map(id -> presenceObject), events: [{seq,topic,data,ts}], seq } */
@@ -270,9 +274,10 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && u.pathname === "/api/single-scores") {
     if (!pg && !db) { send(res, 501, { error: "score db unavailable" }); return; }
     const nickname = u.searchParams.get("nickname");
+    const difficulty = u.searchParams.get("difficulty");
     const sort = u.searchParams.get("sort");
     const limit = Math.min(200, Math.max(1, Number(u.searchParams.get("limit")) || 50));
-    getSingleScoreRows({ nickname, sort, limit })
+    getSingleScoreRows({ nickname, difficulty, sort, limit })
       .then((rows) => send(res, 200, { scores: rows }))
       .catch(() => send(res, 500, { error: "db error" }));
     return;
@@ -294,8 +299,9 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && u.pathname === "/api/multi-results") {
     if (!pg && !db) { send(res, 501, { error: "score db unavailable" }); return; }
     const nickname = u.searchParams.get("nickname");
+    const mode = u.searchParams.get("mode");
     const limit = Math.min(200, Math.max(1, Number(u.searchParams.get("limit")) || 20));
-    getMultiResultRows({ nickname, limit })
+    getMultiResultRows({ nickname, mode, limit })
       .then((rows) => send(res, 200, { results: rows }))
       .catch(() => send(res, 500, { error: "db error" }));
     return;
