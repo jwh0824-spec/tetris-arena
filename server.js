@@ -27,6 +27,20 @@ try {
     lines INTEGER,
     played_at TEXT NOT NULL
   )`);
+  db.exec(`CREATE TABLE IF NOT EXISTS multi_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nickname TEXT NOT NULL,
+    character TEXT,
+    mode TEXT,
+    team_mode INTEGER,
+    rounds INTEGER,
+    players INTEGER,
+    wins INTEGER,
+    total_score INTEGER,
+    placement INTEGER,
+    result TEXT,
+    played_at TEXT NOT NULL
+  )`);
 } catch (e) {
   console.log("Warning: node:sqlite unavailable (" + e.message + "). Score history disabled; needs Node 22.5+.");
 }
@@ -152,6 +166,42 @@ const server = http.createServer((req, res) => {
       ? db.prepare(`SELECT * FROM single_scores WHERE nickname = ? ORDER BY ${sort} LIMIT ?`).all(nickname, limit)
       : db.prepare(`SELECT * FROM single_scores ORDER BY ${sort} LIMIT ?`).all(limit);
     send(res, 200, { scores: rows });
+    return;
+  }
+
+  if (req.method === "POST" && u.pathname === "/api/multi-result") {
+    if (!db) { send(res, 501, { error: "sqlite unavailable" }); return; }
+    readJsonBody(req, (err, data) => {
+      if (err) { send(res, 400, { error: "bad json" }); return; }
+      if (!data.nickname) { send(res, 400, { error: "nickname required" }); return; }
+      const info = db.prepare(
+        "INSERT INTO multi_results (nickname, character, mode, team_mode, rounds, players, wins, total_score, placement, result, played_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
+      ).run(
+        String(data.nickname).slice(0, 20),
+        String(data.character || "cat").slice(0, 20),
+        String(data.mode || "normal").slice(0, 10),
+        data.teamMode ? 1 : 0,
+        Math.max(1, Math.floor(data.rounds) || 1),
+        Math.max(1, Math.floor(data.players) || 1),
+        Math.max(0, Math.floor(data.wins) || 0),
+        Math.max(0, Math.floor(data.totalScore) || 0),
+        Math.max(1, Math.floor(data.placement) || 1),
+        data.result === "win" ? "win" : "lose",
+        new Date().toISOString()
+      );
+      send(res, 200, { ok: true, id: info.lastInsertRowid });
+    });
+    return;
+  }
+
+  if (req.method === "GET" && u.pathname === "/api/multi-results") {
+    if (!db) { send(res, 501, { error: "sqlite unavailable" }); return; }
+    const nickname = u.searchParams.get("nickname");
+    const limit = Math.min(200, Math.max(1, Number(u.searchParams.get("limit")) || 20));
+    const rows = nickname
+      ? db.prepare(`SELECT * FROM multi_results WHERE nickname = ? ORDER BY played_at DESC LIMIT ?`).all(nickname, limit)
+      : db.prepare(`SELECT * FROM multi_results ORDER BY played_at DESC LIMIT ?`).all(limit);
+    send(res, 200, { results: rows });
     return;
   }
 
