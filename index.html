@@ -127,6 +127,10 @@ body{
 .btn:hover{ border-color:var(--cyan); }
 .btn.primary{ background:var(--cyan); color:#04141a; border-color:var(--cyan); }
 .btn.primary:hover{ filter:brightness(1.08); }
+.btn.selected{ border-color:var(--magenta); box-shadow:0 0 0 2px rgba(194,109,255,.25); }
+.team-badge{ font-size:10px; padding:1px 6px; border-radius:8px; margin-left:6px; }
+.team-badge.team-A{ background:rgba(255,90,90,.2); color:#ff8080; }
+.team-badge.team-B{ background:rgba(90,140,255,.2); color:#80aaff; }
 .btn.danger{ background:transparent; border-color:var(--danger); color:var(--danger); }
 .btn:disabled{ opacity:.4; cursor:not-allowed; }
 
@@ -189,6 +193,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
 @media (max-width:820px){ .opp-col{ flex-direction:row; width:100%; flex-wrap:wrap; justify-content:center; } }
 .opp-card{ padding:8px; text-align:center; width:84px; }
 .opp-card.dead{ opacity:.35; }
+.opp-card.ally{ border-color:rgba(90,200,140,.5); }
 .opp-card .nick{ font-size:11px; font-weight:700; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .opp-card .stat{ font-size:10px; color:var(--text-dim); }
 .opp-board{ margin:4px 0; image-rendering:pixelated; }
@@ -236,6 +241,10 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
   <div class="screen active" id="screen-menu">
     <div class="logo pixel">TETRIS ARENA</div>
     <div class="subtitle">싱글로 실력을 쌓거나, 4인 실시간 대전으로 공격하세요</div>
+    <div class="row" style="justify-content:center; gap:8px; margin:-6px 0 14px;">
+      <button class="btn" id="btn-color-theme" style="font-size:12px; padding:7px 12px;">🎨 색상: 네온</button>
+      <button class="btn" id="btn-sound-toggle" style="font-size:12px; padding:7px 12px;">🔊 사운드: 켜짐</button>
+    </div>
 
     <div class="card pad" style="max-width:460px; margin:0 auto 22px;">
       <div class="field">
@@ -400,6 +409,9 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
           <option value="item">아이템전</option>
         </select>
       </div>
+      <label style="font-size:11px; color:var(--text-dim); display:block; margin-bottom:10px;">
+        <input type="checkbox" id="test-team-mode"> 2:2 팀전으로 테스트 (봇 3명 고정, 나+봇1 vs 봇2+봇3)
+      </label>
       <button class="btn" id="btn-test-mode">테스트 모드 시작</button>
     </div>
   </div>
@@ -424,7 +436,14 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         <option value="5">5판 (누적점수 합산)</option>
       </select>
     </div>
-    <p class="controls-hint" id="mode-hint" style="margin-top:6px;">아이템전: 2줄 지울 때마다 랜덤 아이템 획득, X키(또는 버튼)로 상대에게 사용</p>
+    <p class="controls-hint" id="mode-hint" style="margin-top:6px;">아이템전: 2줄 지울 때마다, 그리고 30초마다 랜덤 아이템 획득 (최대 2개 보유)</p>
+    <div class="center row" style="gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <label style="margin:0; font-size:12px; color:var(--text-dim);"><input type="checkbox" id="in-team-mode"> 2:2 팀전</label>
+      <span class="row" id="team-pick-row" style="display:none; gap:6px; margin:0;">
+        <button class="btn" id="btn-team-a" style="padding:6px 10px; font-size:12px;">🔴 팀 A</button>
+        <button class="btn" id="btn-team-b" style="padding:6px 10px; font-size:12px;">🔵 팀 B</button>
+      </span>
+    </div>
     <div class="center" style="gap:10px; margin-top:10px;">
       <button class="btn" id="btn-ready-toggle">준비하기</button>
       <button class="btn primary" id="btn-start-game" disabled>게임 시작</button>
@@ -553,9 +572,114 @@ function flashAttack(){
 }
 
 /* ===================== Tetromino defs ===================== */
-const COLORS = {
-  I:"#4dd8e6", O:"#ffd23f", T:"#c26dff", S:"#4dff92", Z:"#ff4d5e", J:"#4d8bff", L:"#ff9f4d", G:"#5a5f78"
+const COLOR_THEMES = {
+  neon: { I:"#4dd8e6", O:"#ffd23f", T:"#c26dff", S:"#4dff92", Z:"#ff4d5e", J:"#4d8bff", L:"#ff9f4d", G:"#5a5f78" },
+  color:{ I:"#4a9ba8", O:"#c9a23a", T:"#8f66a8", S:"#5aa473", Z:"#b8555f", J:"#4f6fa0", L:"#c07f45", G:"#6b7080" },
+  mono: { I:"#eeeeee", O:"#cfcfcf", T:"#b0b0b0", S:"#919191", Z:"#797979", J:"#626262", L:"#4a4a4a", G:"#373737" }
 };
+const COLORS = Object.assign({}, COLOR_THEMES.neon);
+let colorTheme = "neon";
+function applyColorTheme(theme){
+  if(!COLOR_THEMES[theme]) theme = "neon";
+  colorTheme = theme;
+  Object.assign(COLORS, COLOR_THEMES[theme]);
+  try{ localStorage.setItem("tetris_colorTheme", theme); }catch(e){}
+}
+(function initColorTheme(){
+  let saved = "neon";
+  try{ saved = localStorage.getItem("tetris_colorTheme") || "neon"; }catch(e){}
+  applyColorTheme(saved);
+})();
+
+/* ===================== Audio (procedural, no external files) ===================== */
+let soundOn = true;
+try{ soundOn = localStorage.getItem("tetris_soundOn") !== "0"; }catch(e){}
+let audioCtx = null;
+function ensureAudioCtx(){
+  if(!soundOn) return null;
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+  }
+  if(audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function playTone(freq, dur, type, gainVal, startDelay){
+  if(!soundOn) return;
+  const ctx = ensureAudioCtx();
+  if(!ctx) return;
+  const t0 = ctx.currentTime + (startDelay||0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || "square";
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.linearRampToValueAtTime(gainVal||0.12, t0+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+const SFX = {
+  move(){ playTone(220,0.045,"square",0.045); },
+  rotate(){ playTone(330,0.055,"square",0.055); },
+  drop(){ playTone(110,0.09,"triangle",0.12); },
+  hold(){ playTone(500,0.06,"sine",0.06); },
+  lineClear(n){
+    if(n>=4){ [523,659,784,1046].forEach((f,i)=>playTone(f,0.16,"square",0.14,i*0.06)); return; }
+    const base = 440;
+    for(let i=0;i<n;i++) playTone(base + i*140, 0.12, "square", 0.12, i*0.05);
+  },
+  attackHit(){ playTone(80,0.25,"sawtooth",0.18); },
+  itemGet(){ [660,880,1100].forEach((f,i)=>playTone(f,0.09,"triangle",0.1,i*0.05)); },
+  itemUse(){ playTone(200,0.15,"sawtooth",0.12); },
+  gameOver(){ [400,340,280,220].forEach((f,i)=>playTone(f,0.22,"triangle",0.14,i*0.14)); },
+  countGo(){ playTone(660,0.18,"square",0.14); }
+};
+const BGM_BASS = [130.81,130.81,146.83,164.81, 130.81,130.81,164.81,146.83];
+const BGM_MELODY = [523.25,587.33,659.25,587.33, 523.25,493.88,440.00,493.88, 523.25,587.33,659.25,698.46, 659.25,587.33,523.25,0];
+let bgmStep = 0;
+function startBgm(){
+  if(!soundOn || window._bgmTimer) return;
+  const ctx = ensureAudioCtx();
+  if(!ctx) return;
+  const stepMs = 260;
+  window._bgmTimer = setInterval(()=>{
+    const b = BGM_BASS[bgmStep % BGM_BASS.length];
+    const m = BGM_MELODY[bgmStep % BGM_MELODY.length];
+    playTone(b, stepMs/1000*0.9, "sine", 0.045);
+    if(m>0) playTone(m, stepMs/1000*0.8, "triangle", 0.05);
+    bgmStep++;
+  }, stepMs);
+}
+function stopBgm(){
+  if(window._bgmTimer){ clearInterval(window._bgmTimer); window._bgmTimer=null; }
+  bgmStep = 0;
+}
+function setSoundOn(on){
+  soundOn = on;
+  try{ localStorage.setItem("tetris_soundOn", on?"1":"0"); }catch(e){}
+  if(!on) stopBgm();
+}
+const COLOR_THEME_LABELS = { neon:"네온", color:"컬러", mono:"흑백" };
+const COLOR_THEME_ORDER = ["neon","color","mono"];
+function updateSettingsButtons(){
+  const themeBtn = $("btn-color-theme");
+  if(themeBtn) themeBtn.textContent = "🎨 색상: " + (COLOR_THEME_LABELS[colorTheme]||"네온");
+  const soundBtn = $("btn-sound-toggle");
+  if(soundBtn) soundBtn.textContent = soundOn ? "🔊 사운드: 켜짐" : "🔈 사운드: 꺼짐";
+}
+document.addEventListener("DOMContentLoaded", updateSettingsButtons);
+if(document.readyState !== "loading") updateSettingsButtons();
+$("btn-color-theme").addEventListener("click", ()=>{
+  const idx = COLOR_THEME_ORDER.indexOf(colorTheme);
+  const next = COLOR_THEME_ORDER[(idx+1) % COLOR_THEME_ORDER.length];
+  applyColorTheme(next);
+  updateSettingsButtons();
+});
+$("btn-sound-toggle").addEventListener("click", ()=>{
+  setSoundOn(!soundOn);
+  ensureAudioCtx();
+  updateSettingsButtons();
+});
 const SHAPES = {
   I: [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
   O: [[1,1],[1,1]],
@@ -627,9 +751,16 @@ class Engine{
     this.pendingGarbage = 0;
     this.onLineClear = opts.onLineClear || null;
     this.onGameOver = opts.onGameOver || null;
+    this.onMove = opts.onMove || null;
+    this.onRotate = opts.onRotate || null;
+    this.onHardDrop = opts.onHardDrop || null;
+    this.onHold = opts.onHold || null;
     this.softDrop = false;
     this.speedBoostUntil = 0;
     this.fogUntil = 0;
+    this.blindUntil = 0;
+    this.shieldCount = 0;
+    this.combo = -1;
     this._spawn();
   }
   _newPieceObj(type){
@@ -665,11 +796,21 @@ class Engine{
     }
   }
   queueGarbage(n){ this.pendingGarbage += n; }
+  clearBottomRow(){
+    if(this.gameOver) return;
+    this.grid.pop();
+    this.grid.unshift(Array(COLS).fill(null));
+  }
+  consumeShield(){
+    if(this.shieldCount>0){ this.shieldCount--; return true; }
+    return false;
+  }
   move(dx){
     if(this.gameOver) return;
     if(!this._collides(this.cur.m, this.cur.x+dx, this.cur.y)){
       this.cur.x += dx;
       if(this.locking) this._resetLock();
+      if(this.onMove) this.onMove();
     }
   }
   rotate(dir){
@@ -680,6 +821,7 @@ class Engine{
       if(!this._collides(nm, this.cur.x+k, this.cur.y)){
         this.cur.m = nm; this.cur.x += k;
         if(this.locking) this._resetLock();
+        if(this.onRotate) this.onRotate();
         return;
       }
     }
@@ -696,6 +838,7 @@ class Engine{
     let dist = 0;
     while(!this._collides(this.cur.m, this.cur.x, this.cur.y+1)){ this.cur.y++; dist++; }
     this.score += dist*2;
+    if(this.onHardDrop) this.onHardDrop();
     this._lock();
   }
   holdSwap(){
@@ -709,6 +852,7 @@ class Engine{
       const t = this.hold; this.hold = curType;
       this.cur = this._newPieceObj(t);
     }
+    if(this.onHold) this.onHold();
   }
   _spawnFresh(){
     const type = this.queue.shift();
@@ -734,9 +878,14 @@ class Engine{
       this.score += (table[cleared]||0) * this.level;
       this.lines += cleared;
       this.level = Math.floor(this.lines/10)+1;
+      this.combo++;
+      const comboBonus = this.combo>0 ? Math.min(4, Math.floor((this.combo+1)/2)) : 0;
+      if(comboBonus>0) this.score += comboBonus * 50 * this.level;
       const attackTable = {1:0,2:1,3:2,4:4};
-      const atk = attackTable[cleared]||0;
-      if(this.onLineClear) this.onLineClear(cleared, atk);
+      const atk = (attackTable[cleared]||0) + comboBonus;
+      if(this.onLineClear) this.onLineClear(cleared, atk, comboBonus, this.combo);
+    } else {
+      this.combo = -1;
     }
     if(!this.gameOver) this._spawn();
   }
@@ -1034,6 +1183,7 @@ function stopAll(){
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
   if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
   if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
+  stopBgm();
 }
 
 /* ===================== SINGLE PLAYER ===================== */
@@ -1068,7 +1218,12 @@ function startSingle(difficulty){
 
   singleEngine = new Engine({
     difficulty,
-    onGameOver: ()=> endSingle()
+    onLineClear: (cleared)=> SFX.lineClear(cleared),
+    onGameOver: ()=>{ SFX.gameOver(); endSingle(); },
+    onMove: ()=> SFX.move(),
+    onRotate: ()=> SFX.rotate(),
+    onHardDrop: ()=> SFX.drop(),
+    onHold: ()=> SFX.hold()
   });
   function refresh(){
     drawBoard(bctx, boardCanvas.width, boardCanvas.height, singleEngine);
@@ -1080,6 +1235,7 @@ function startSingle(difficulty){
   }
   window._singleCtl = makeInputController(singleEngine, refresh);
   refresh();
+  startBgm();
 
   $("btn-single-pause").onclick = ()=> togglePause(true);
   $("btn-resume").onclick = ()=> togglePause(false);
@@ -1102,6 +1258,7 @@ function startSingle(difficulty){
   $("t-hold").onclick = ()=> singleEngine.holdSwap();
 }
 async function endSingle(){
+  stopBgm();
   $("ov-score").textContent = singleEngine.score;
   $("ov-level").textContent = singleEngine.level;
   $("ov-lines").textContent = singleEngine.lines;
@@ -1330,27 +1487,36 @@ function createBotTransport(botCount, difficulty){
       id: "bot_"+i,
       nickname: BOT_NAMES[i % BOT_NAMES.length],
       character: CHARACTER_DEFS[(i+2) % CHARACTER_DEFS.length].id,
+      team: null,
       alive:true, score:0, lines:0, boardRows:[], engine:null
     });
   }
   let peersCb = null;
   let myState = null;
   let roomId = null;
+  let teamModeOn = false;
   const handlers = {};
   let loopTimer = null;
 
+  function setTeamMode(on){
+    teamModeOn = !!on;
+    bots.forEach((b,i)=>{ b.team = teamModeOn ? (i%2===0 ? "B" : "A") : null; });
+    pushPeers();
+  }
   function pushPeers(){
     if(!peersCb) return;
     peersCb(bots.map(b=>({
-      id:b.id, roomId, nickname:b.nickname, character:b.character, ready:true,
+      id:b.id, roomId, nickname:b.nickname, character:b.character, team:b.team, ready:true,
       alive:b.alive, inGame:true, score:b.score, lines:b.lines, boardRows:b.boardRows
     })));
   }
   function fireLocal(topic, data){ (handlers[topic]||[]).forEach(fn=>{ try{ fn(data); }catch(e){} }); }
   function pickTarget(fromBotId){
+    const fromBot = bots.find(b=>b.id===fromBotId);
+    const sameTeam = (team)=> teamModeOn && fromBot && fromBot.team && team && team===fromBot.team;
     const opts = [];
-    if(myState && myState.alive!==false) opts.push({ id: myState.id, isMe:true });
-    bots.forEach(b=>{ if(b.id!==fromBotId && b.alive) opts.push({ id:b.id }); });
+    if(myState && myState.alive!==false && !sameTeam(myState.team)) opts.push({ id: myState.id, isMe:true });
+    bots.forEach(b=>{ if(b.id!==fromBotId && b.alive && !sameTeam(b.team)) opts.push({ id:b.id }); });
     if(opts.length===0) return null;
     return opts[Math.floor(Math.random()*opts.length)];
   }
@@ -1361,7 +1527,7 @@ function createBotTransport(botCount, difficulty){
       b.engine = new Engine({
         rng, difficulty:"normal",
         onLineClear:(cleared, atk)=>{
-          if(atk<=0) return;
+          if(atk<=0 || roomGameMode==="item") return;
           const target = pickTarget(b.id);
           if(!target) return;
           if(target.isMe) fireLocal("attack", { roomId, targetId: myState.id, fromNick:b.nickname, lines:atk });
@@ -1400,6 +1566,7 @@ function createBotTransport(botCount, difficulty){
     },
     on(topic, cb){ (handlers[topic]=handlers[topic]||[]).push(cb); return ()=>{ handlers[topic]=(handlers[topic]||[]).filter(f=>f!==cb); }; },
     startRound,
+    setTeamMode,
     destroy(){ if(loopTimer){ clearInterval(loopTimer); loopTimer=null; } }
   };
 }
@@ -1439,7 +1606,7 @@ async function saveSingleScore(engine){
     const res = await fetch(base+"/api/single-score", {
       method:"POST",
       headers:{"Content-Type":"application/json","ngrok-skip-browser-warning":"true"},
-      body: JSON.stringify({ nickname: myNickname, character: myCharacter, difficulty: engine.difficulty, score: engine.score, level: engine.level, lines: engine.lines })
+      body: JSON.stringify({ nickname: myNickname, character: myCharacter, team: myTeam, difficulty: engine.difficulty, score: engine.score, level: engine.level, lines: engine.lines })
     });
     if(!res.ok) throw new Error("bad status");
     return { ok:true };
@@ -1525,14 +1692,19 @@ let matchWins = {};
 let roundDecided = false;
 let chatLogEntries = [];
 let roomGameMode = "normal";
+let roomTeamMode = false;
+let myTeam = null;
 let myItems = [];
 const ITEM_INVENTORY_MAX = 2;
 const ITEM_TIMER_MS = 30000;
 let itemLineCounter = 0;
 const ITEM_DEFS = {
-  bomb: { icon:"💣", label:"폭탄" },
-  speed: { icon:"⚡", label:"스피드업" },
-  fog: { icon:"🌫️", label:"안개" }
+  bomb:   { icon:"💣", label:"폭탄",     kind:"attack", desc:"상대 쓰레기 줄 +3" },
+  speed:  { icon:"⚡", label:"스피드업", kind:"attack", desc:"상대 낙하속도 8초간 증가" },
+  fog:    { icon:"🌫️", label:"안개",    kind:"attack", desc:"상대 다음블록 8초간 안보이게" },
+  flash:  { icon:"💥", label:"플래시",  kind:"attack", desc:"상대 화면 1초간 번쩍여서 안보이게" },
+  shield: { icon:"🛡️", label:"실드",    kind:"self",   desc:"다음 공격 1회 무효화" },
+  clear:  { icon:"🧹", label:"라인정리", kind:"self",   desc:"내 바닥 줄 1개 제거" }
 };
 const ITEM_KEYS = Object.keys(ITEM_DEFS);
 
@@ -1552,29 +1724,46 @@ $("btn-join-room").addEventListener("click", async ()=>{
   await enterRoom(code, false);
 });
 $("btn-test-mode").addEventListener("click", async ()=>{
-  testModeBotCount = Number($("test-bot-count").value) || 2;
+  const teamTest = $("test-team-mode").checked;
+  testModeBotCount = teamTest ? 3 : (Number($("test-bot-count").value) || 2);
   testModeDifficulty = $("test-bot-difficulty").value || "normal";
   $("mode-select").value = $("test-mode-select").value || "normal";
+  $("in-team-mode").checked = teamTest;
+  if(teamTest) setMyTeam("A");
   await enterRoom("BOT"+Math.floor(Math.random()*10000), true);
   if(currentRoomId) startMultiMatch();
 });
 
+async function roomOccupancy(url, code){
+  const res = await fetchWithTimeout(url+"/api/room?roomId="+encodeURIComponent(code), { headers:{"ngrok-skip-browser-warning":"true"} }, 15000);
+  if(!res.ok) throw new Error("bad status");
+  const data = await res.json();
+  return (data.players||[]).length;
+}
 async function enterRoom(code, isCreate){
   $("multi-error").textContent = "";
   if(!HAS_CLAUDE && testModeBotCount===0){
     const url = ($("in-server-url").value||"").trim().replace(/\/$/,"");
     if(!url){ $("multi-error").textContent = "로컬 서버 주소를 입력하세요."; return; }
-    let connected = false;
-    for(let attempt=0; attempt<4 && !connected; attempt++){
+    let occupancy = null;
+    for(let attempt=0; attempt<4 && occupancy===null; attempt++){
       if(attempt>0) $("multi-error").textContent = "서버를 깨우는 중입니다... (최대 1분 정도 걸릴 수 있어요)";
-      try{
-        const res = await fetchWithTimeout(url+"/api/room?roomId=__ping__", { headers:{"ngrok-skip-browser-warning":"true"} }, 15000);
-        if(res.ok) connected = true;
-      }catch(e){ /* retry below */ }
-      if(!connected && attempt<3) await new Promise(r=>setTimeout(r, 3000));
+      try{ occupancy = await roomOccupancy(url, code); }catch(e){ /* retry below */ }
+      if(occupancy===null && attempt<3) await new Promise(r=>setTimeout(r, 3000));
     }
-    if(!connected){
+    if(occupancy===null){
       $("multi-error").textContent = "서버에 연결할 수 없습니다. start-server.bat을 실행했는지, 주소가 맞는지 확인하세요.";
+      return;
+    }
+    if(isCreate){
+      let tries = 0;
+      while(occupancy>0 && tries<5){
+        code = roomCode();
+        try{ occupancy = await roomOccupancy(url, code); }catch(e){ occupancy = 0; }
+        tries++;
+      }
+    } else if(occupancy===0){
+      $("multi-error").textContent = "방을 찾을 수 없습니다. 방 코드를 다시 확인해주세요.";
       return;
     }
     $("multi-error").textContent = "";
@@ -1594,7 +1783,7 @@ async function enterRoom(code, isCreate){
   chatLogEntries = [];
   $("chat-log").innerHTML = "";
 
-  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, inGame:false });
+  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:false, alive:true, score:0, lines:0, inGame:false });
 
   const offPeers = room.onPeers((peers)=>{
     lastPeersSnapshot = peers.filter(p=> p.roomId === currentRoomId);
@@ -1614,6 +1803,7 @@ async function enterRoom(code, isCreate){
     matchTotals = {};
     matchWins = {};
     roomGameMode = data.gameMode || "normal";
+    roomTeamMode = !!data.teamMode;
     beginMultiGame();
   });
   unsubEvents.push(offStart);
@@ -1621,8 +1811,13 @@ async function enterRoom(code, isCreate){
   const offAttack = room.on("attack", (data)=>{
     if(data.roomId !== currentRoomId || data.targetId !== MY_ID) return;
     if(multiEngine && !multiEngine.gameOver){
+      if(multiEngine.consumeShield()){
+        toast("실드로 " + (data.fromNick||"상대") + "의 공격을 막음!");
+        return;
+      }
       multiEngine.queueGarbage(data.lines);
       flashAttack();
+      SFX.attackHit();
       toast((data.fromNick||"상대") + "의 공격! +" + data.lines + "줄");
     }
   });
@@ -1648,7 +1843,7 @@ async function enterRoom(code, isCreate){
   window._lobbyHeartbeat = setInterval(async ()=>{
     if(multiStarted || !currentRoomId) return;
     const t = await ensureTransport();
-    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
   }, 5000);
 }
 
@@ -1660,8 +1855,9 @@ function renderLobby(){
     const p = slots[i];
     const div = document.createElement("div");
     if(p){
+      const teamBadge = p.team ? `<span class="team-badge team-${p.team}">${p.team==="A"?"🔴 A":"🔵 B"}</span>` : "";
       div.className = "card player-slot";
-      div.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${p.id===MY_ID?" (나)":""}</div></div>
+      div.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${p.id===MY_ID?" (나)":""}${teamBadge}</div></div>
         <div class="status ${p.ready?'ready':''}">${p.ready?"준비 완료":"대기중"}</div>`;
     } else {
       div.className = "card player-slot empty";
@@ -1680,7 +1876,7 @@ $("btn-ready-toggle").addEventListener("click", async ()=>{
   iAmReady = !iAmReady;
   $("btn-ready-toggle").textContent = iAmReady ? "준비 취소" : "준비하기";
   const room = await ensureTransport();
-  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
   renderLobby();
 });
 async function startMultiMatch(){
@@ -1689,16 +1885,39 @@ async function startMultiMatch(){
   const seed = Date.now() % 2147483647;
   const rounds = Number($("round-select").value) || 1;
   const gameMode = $("mode-select") ? $("mode-select").value : "normal";
+  const teamMode = $("in-team-mode") ? $("in-team-mode").checked : false;
   matchBaseSeed = seed;
   matchRounds = rounds;
   matchRound = 1;
   matchTotals = {};
   matchWins = {};
   roomGameMode = gameMode;
-  room.emit("start", { roomId: currentRoomId, seed, rounds, gameMode });
+  roomTeamMode = teamMode;
+  if(teamMode && !myTeam) setMyTeam("A");
+  room.emit("start", { roomId: currentRoomId, seed, rounds, gameMode, teamMode });
   beginMultiGame();
 }
 $("btn-start-game").addEventListener("click", startMultiMatch);
+function setMyTeam(team){
+  myTeam = team;
+  $("btn-team-a").classList.toggle("selected", team==="A");
+  $("btn-team-b").classList.toggle("selected", team==="B");
+}
+$("in-team-mode").addEventListener("change", ()=>{
+  $("team-pick-row").style.display = $("in-team-mode").checked ? "flex" : "none";
+});
+$("btn-team-a").addEventListener("click", async ()=>{
+  setMyTeam("A");
+  const room = await ensureTransport();
+  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
+  renderLobby();
+});
+$("btn-team-b").addEventListener("click", async ()=>{
+  setMyTeam("B");
+  const room = await ensureTransport();
+  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
+  renderLobby();
+});
 $("btn-leave-room").addEventListener("click", ()=>{
   leaveRoom();
   showScreen("screen-multi-lobby");
@@ -1713,7 +1932,12 @@ function leaveRoom(){
   multiStarted = false;
   testModeBotCount = 0;
   roomGameMode = "normal";
+  roomTeamMode = false;
+  myTeam = null;
   myItems = [];
+  if($("in-team-mode")) $("in-team-mode").checked = false;
+  if($("team-pick-row")) $("team-pick-row").style.display = "none";
+  setMyTeam(null);
 }
 
 function appendChatMessage(nickname, character, text, isMe){
@@ -1733,7 +1957,7 @@ async function sendChat(){
   input.value = "";
   const room = await ensureTransport();
   if(!room) return;
-  room.emit("chat", { roomId: currentRoomId, id: MY_ID, nickname: myNickname, character: myCharacter, text: text.slice(0,120) });
+  room.emit("chat", { roomId: currentRoomId, id: MY_ID, nickname: myNickname, character: myCharacter, team: myTeam, text: text.slice(0,120) });
 }
 $("btn-chat-send").addEventListener("click", sendChat);
 $("in-chat").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendChat(); } });
@@ -1748,7 +1972,9 @@ function beginMultiGame(){
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
   if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
   showScreen("screen-multi-game");
+  startBgm();
   const roundSeed = (matchBaseSeed + matchRound*99991) % 2147483647;
+  if(cachedTransport && cachedTransport.setTeamMode) cachedTransport.setTeamMode(roomTeamMode);
   if(cachedTransport && cachedTransport.startRound) cachedTransport.startRound(matchRound, roundSeed);
   const rng = mulberry32(roundSeed);
   const boardCanvas = $("m-board"), holdCanvas = $("m-hold"), nextCanvas = $("m-next");
@@ -1767,7 +1993,9 @@ function beginMultiGame(){
   multiEngine = new Engine({
     rng,
     difficulty: "normal",
-    onLineClear: (cleared, atk)=>{
+    onLineClear: (cleared, atk, comboBonus)=>{
+      SFX.lineClear(cleared);
+      if(comboBonus>0) toast("콤보 x" + (multiEngine.combo+1) + "! 공격 +" + comboBonus);
       if(roomGameMode==="item"){
         itemLineCounter += cleared;
         while(itemLineCounter >= 2){
@@ -1778,11 +2006,25 @@ function beginMultiGame(){
         sendAttack(atk);
       }
     },
-    onGameOver: ()=> onMultiGameOver()
+    onGameOver: ()=>{ SFX.gameOver(); onMultiGameOver(); },
+    onMove: ()=> SFX.move(),
+    onRotate: ()=> SFX.rotate(),
+    onHardDrop: ()=> SFX.drop(),
+    onHold: ()=> SFX.hold()
   });
 
   function refresh(){
-    drawBoard(bctx, boardCanvas.width, boardCanvas.height, multiEngine);
+    if(multiEngine.blindUntil > Date.now()){
+      bctx.clearRect(0,0,boardCanvas.width,boardCanvas.height);
+      bctx.fillStyle = "#f4f4f8";
+      bctx.fillRect(0,0,boardCanvas.width,boardCanvas.height);
+      bctx.fillStyle = "#8890a8";
+      bctx.font = "bold 16px sans-serif";
+      bctx.textAlign = "center";
+      bctx.fillText("!", boardCanvas.width/2, boardCanvas.height/2);
+    } else {
+      drawBoard(bctx, boardCanvas.width, boardCanvas.height, multiEngine);
+    }
     drawMiniPiece(hctx, multiEngine.hold, holdCanvas.width, holdCanvas.height);
     if(multiEngine.fogUntil > Date.now()){
       nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
@@ -1803,13 +2045,13 @@ function beginMultiGame(){
   renderOpponents();
 
   ensureTransport().then(room=>{
-    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:true, score:0, lines:0, boardRows: multiEngine.boardSnapshotRows() });
+    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true, alive:true, score:0, lines:0, boardRows: multiEngine.boardSnapshotRows() });
   });
   window._multiSyncTimer = setInterval(async ()=>{
     const room = await ensureTransport();
     if(!room || !currentRoomId) return;
     room.presence({
-      id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true,
+      id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true,
       alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
       boardRows: multiEngine.boardSnapshotRows()
     });
@@ -1830,7 +2072,7 @@ function beginMultiGame(){
 async function sendAttack(lines){
   const room = await ensureTransport();
   if(!room || !currentRoomId) return;
-  const alive = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
+  const alive = targetableOpponents();
   if(alive.length===0) return;
   const target = alive[Math.floor(Math.random()*alive.length)];
   room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
@@ -1841,7 +2083,7 @@ function renderItemSlots(){
     const el = $("item-icon-"+i);
     const def = myItems[i] ? ITEM_DEFS[myItems[i]] : null;
     el.textContent = def ? def.icon : "-";
-    el.title = def ? def.label : "";
+    el.title = def ? (def.label + " - " + def.desc) : "";
   }
   $("btn-use-item").disabled = myItems.length===0;
 }
@@ -1850,28 +2092,54 @@ function grantItem(itemKey){
   myItems.push(itemKey);
   renderItemSlots();
   toast(ITEM_DEFS[itemKey].label + " 획득! X키로 사용 (" + myItems.length + "/" + ITEM_INVENTORY_MAX + ")");
+  SFX.itemGet();
   return true;
+}
+function targetableOpponents(){
+  const others = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
+  if(roomTeamMode && myTeam){
+    const enemies = others.filter(p=> p.team && p.team!==myTeam);
+    if(enemies.length>0) return enemies;
+  }
+  return others;
 }
 function applyItemEffect(itemType, fromNick){
   if(!multiEngine || multiEngine.gameOver) return;
   const def = ITEM_DEFS[itemType];
+  if(multiEngine.consumeShield()){
+    toast("실드로 " + (fromNick||"상대") + "의 " + (def?def.label:"아이템") + " 막음!");
+    return;
+  }
   flashAttack();
   toast((fromNick||"상대") + "의 " + (def?def.label:"아이템") + "!");
+  SFX.attackHit();
   if(itemType==="bomb") multiEngine.queueGarbage(3);
   else if(itemType==="speed") multiEngine.speedBoostUntil = Date.now()+8000;
   else if(itemType==="fog") multiEngine.fogUntil = Date.now()+8000;
+  else if(itemType==="flash") multiEngine.blindUntil = Date.now()+1000;
 }
 async function useItem(){
   if(myItems.length===0 || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver) return;
+  const itemType = myItems[0];
+  const def = ITEM_DEFS[itemType];
+  if(def && def.kind==="self"){
+    myItems.shift();
+    renderItemSlots();
+    SFX.itemUse();
+    if(itemType==="shield"){ multiEngine.shieldCount++; toast("실드 장착! 다음 공격을 막아줍니다"); }
+    else if(itemType==="clear"){ multiEngine.clearBottomRow(); toast("바닥 줄 정리!"); }
+    return;
+  }
   const room = await ensureTransport();
   if(!room || !currentRoomId) return;
-  const alive = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
+  const alive = targetableOpponents();
   if(alive.length===0) return;
   const target = alive[Math.floor(Math.random()*alive.length)];
-  const itemType = myItems.shift();
+  myItems.shift();
   room.emit("item", { roomId: currentRoomId, targetId: target.id, itemType, fromNick: myNickname });
-  toast((ITEM_DEFS[itemType]||{}).label + " 사용!");
+  toast((def||{}).label + " 사용!");
   renderItemSlots();
+  SFX.itemUse();
 }
 $("btn-use-item").addEventListener("click", useItem);
 document.addEventListener("keydown", (e)=>{
@@ -1882,11 +2150,16 @@ const OPP_BOARD_W = 56, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
 function renderOpponents(){
   const wrap = $("opp-grid");
   wrap.innerHTML = "";
-  const others = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  let others = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  if(roomTeamMode && myTeam){
+    others = others.slice().sort((a,b)=> (a.team===myTeam?0:1) - (b.team===myTeam?0:1));
+  }
   others.forEach(p=>{
     const card = document.createElement("div");
-    card.className = "card opp-card" + (p.alive===false ? " dead":"");
-    card.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}</div></div>
+    const isAlly = roomTeamMode && myTeam && p.team===myTeam;
+    card.className = "card opp-card" + (p.alive===false ? " dead":"") + (isAlly ? " ally":"");
+    const teamBadge = (roomTeamMode && p.team) ? `<span class="team-badge team-${p.team}">${p.team==="A"?"🔴":"🔵"}${isAlly?" 아군":""}</span>` : "";
+    card.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${teamBadge}</div></div>
       <div class="center"><canvas class="opp-board" width="${OPP_BOARD_W}" height="${OPP_BOARD_H}"></canvas></div>
       <div class="stat">점수 ${p.score||0}</div>
       <div class="stat">${p.alive===false? "탈락" : "생존"}</div>`;
@@ -1899,7 +2172,7 @@ function renderOpponents(){
 async function onMultiGameOver(){
   const room = await ensureTransport();
   if(room && currentRoomId){
-    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, boardRows: multiEngine.boardSnapshotRows() });
+    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, boardRows: multiEngine.boardSnapshotRows() });
     room.emit("gameover", { roomId: currentRoomId, id: MY_ID });
   }
   checkRoundDecided();
@@ -1907,17 +2180,12 @@ async function onMultiGameOver(){
 
 function checkRoundDecided(){
   if(!multiStarted || roundDecided || !multiEngine) return;
+  if(!multiEngine.gameOver) return;
   if(Date.now() - roundStartTime < 1500) return;
   const othersKnown = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
   if(othersKnown.length===0) return;
-  const iAmAlive = !multiEngine.gameOver;
-  const othersAlive = othersKnown.filter(p=>p.alive!==false).length;
-  const totalAlive = (iAmAlive?1:0) + othersAlive;
-  if(totalAlive<=1){
-    roundDecided = true;
-    if(iAmAlive && window._multiCtl) window._multiCtl.setPaused(true);
-    setTimeout(finishRound, 1000);
-  }
+  roundDecided = true;
+  setTimeout(finishRound, 1000);
 }
 
 function finishRound(){
@@ -1927,17 +2195,23 @@ function finishRound(){
     matchTotals[p.id] = (matchTotals[p.id]||0) + (p.score||0);
   });
   const isFinalRound = matchRound >= matchRounds;
-  const roundEntries = [{ id:MY_ID, nickname:myNickname+" (나)", character:myCharacter, alive:!multiEngine.gameOver, score:multiEngine.score }]
-    .concat(lastPeersSnapshot.filter(p=>p.id!==MY_ID).map(p=>({ id:p.id, nickname:p.nickname, character:p.character, alive:p.alive!==false, score:p.score||0 })));
+  const roundEntries = [{ id:MY_ID, nickname:myNickname+" (나)", character:myCharacter, team:myTeam, alive:!multiEngine.gameOver, score:multiEngine.score }]
+    .concat(lastPeersSnapshot.filter(p=>p.id!==MY_ID).map(p=>({ id:p.id, nickname:p.nickname, character:p.character, team:p.team||null, alive:p.alive!==false, score:p.score||0 })));
 
   const winner = roundEntries.find(p=>p.alive);
   if(winner) matchWins[winner.id] = (matchWins[winner.id]||0) + 1;
 
   if(isFinalRound){
+    stopBgm();
     const all = roundEntries.map(p=>({ ...p, total: matchTotals[p.id]||p.score, wins: matchWins[p.id]||0 }));
     all.sort((a,b)=> (b.wins - a.wins) || (b.total - a.total));
     renderResultsList(all, "final");
-    $("mo-title").textContent = all[0] && all[0].id===MY_ID ? "VICTORY" : "RESULT";
+    let victory = all[0] && all[0].id===MY_ID;
+    if(roomTeamMode && myTeam){
+      const teamTotal = (t)=> all.filter(p=>p.team===t).reduce((s,p)=>s+(p.total||0),0);
+      victory = teamTotal(myTeam) >= teamTotal(myTeam==="A"?"B":"A");
+    }
+    $("mo-title").textContent = victory ? "VICTORY" : "RESULT";
     $("mo-subtitle").textContent = matchRounds>1 ? `총 ${matchRounds}판 · 라운드 승수 기준` : "";
     $("btn-multi-menu").style.display = "";
     $("btn-multi-again").style.display = "";
@@ -1962,11 +2236,25 @@ function finishRound(){
 function renderResultsList(all, mode){
   const list = $("mo-list");
   list.innerHTML = "";
+  if(roomTeamMode && all.some(p=>p.team)){
+    const key = mode==="final" ? "total" : "score";
+    ["A","B"].forEach(t=>{
+      const members = all.filter(p=>p.team===t);
+      if(members.length===0) return;
+      const sum = members.reduce((s,p)=>s+(p[key]||0),0);
+      const row = document.createElement("div");
+      row.className = "result-row";
+      row.style.fontWeight = "700";
+      row.innerHTML = `<span class="team-badge team-${t}">${t==="A"?"🔴 팀 A":"🔵 팀 B"}</span><span>${sum}점</span>`;
+      list.appendChild(row);
+    });
+  }
   all.forEach((p,i)=>{
     const row = document.createElement("div");
     row.className = "result-row";
+    const teamBadge = (roomTeamMode && p.team) ? `<span class="team-badge team-${p.team}">${p.team}</span>` : "";
     const scoreText = mode==="final" ? `${p.wins}승 · ${p.total}점` : `${p.score}점 ${p.alive? "(생존)":""}`;
-    row.innerHTML = `<span class="name-with-avatar" style="justify-content:flex-start;">${avatarHTML(p.character)}${i+1}위 ${escapeHtml(p.nickname)}</span><span>${scoreText}</span>`;
+    row.innerHTML = `<span class="name-with-avatar" style="justify-content:flex-start;">${avatarHTML(p.character)}${i+1}위 ${escapeHtml(p.nickname)}${teamBadge}</span><span>${scoreText}</span>`;
     list.appendChild(row);
   });
 }
@@ -1989,7 +2277,7 @@ async function rematchInRoom(){
   myItems = [];
   const room = await ensureTransport();
   if(room && currentRoomId){
-    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready:false, alive:true, score:0, lines:0, inGame:false });
+    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:false, alive:true, score:0, lines:0, inGame:false });
   }
   if(testModeBotCount>0){
     startMultiMatch();
@@ -2002,7 +2290,7 @@ async function rematchInRoom(){
   window._lobbyHeartbeat = setInterval(async ()=>{
     if(multiStarted || !currentRoomId) return;
     const t = await ensureTransport();
-    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, ready: iAmReady, alive:true });
+    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
   }, 5000);
   setTimeout(renderLobby, 400);
 }
