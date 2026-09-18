@@ -25,7 +25,7 @@ async function initScoreStore() {
     try {
       const { Pool } = require("pg");
       const useSSL = !/localhost|127\.0\.0\.1/.test(DATABASE_URL);
-      const pool = new Pool({ connectionString: DATABASE_URL, ssl: useSSL ? { rejectUnauthorized: false } : false });
+      const pool = new Pool({ connectionString: DATABASE_URL, ssl: useSSL ? { rejectUnauthorized: false } : false, connectionTimeoutMillis: 10000 });
       await pool.query(`CREATE TABLE IF NOT EXISTS single_scores (
         id SERIAL PRIMARY KEY,
         nickname TEXT NOT NULL,
@@ -321,14 +321,17 @@ function lanAddresses() {
   return out;
 }
 
-initScoreStore().then(() => {
-  server.listen(PORT, () => {
-    console.log("Tetris Arena server running.");
-    console.log("  - This PC:      http://localhost:" + PORT);
-    for (const ip of lanAddresses()) {
-      console.log("  - Same Wi-Fi:   http://" + ip + ":" + PORT);
-    }
-    console.log("Enter one of the addresses above as the \"local server\" address in tetris-arena.html.");
-    console.log("Press Ctrl+C to stop.");
-  });
+// Start accepting requests immediately — room/presence endpoints don't touch the
+// score DB at all, so they must not wait on Postgres/SQLite init. The score DB
+// finishes connecting in the background; until then, score endpoints correctly
+// report 501 (score db unavailable) instead of the whole server hanging.
+server.listen(PORT, () => {
+  console.log("Tetris Arena server running.");
+  console.log("  - This PC:      http://localhost:" + PORT);
+  for (const ip of lanAddresses()) {
+    console.log("  - Same Wi-Fi:   http://" + ip + ":" + PORT);
+  }
+  console.log("Enter one of the addresses above as the \"local server\" address in tetris-arena.html.");
+  console.log("Press Ctrl+C to stop.");
 });
+initScoreStore();
