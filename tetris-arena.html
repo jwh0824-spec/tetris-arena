@@ -1928,8 +1928,16 @@ async function enterRoom(code, isCreate){
         tries++;
       }
     } else if(occupancy===0){
-      $("multi-error").textContent = "방을 찾을 수 없습니다. 방 코드를 다시 확인해주세요.";
-      return;
+      // the room may have just been created and the creator's own presence
+      // hasn't landed on the server yet — retry briefly before giving up
+      for(let retry=0; retry<3 && occupancy===0; retry++){
+        await new Promise(r=>setTimeout(r, 1500));
+        try{ occupancy = await roomOccupancy(url, code); }catch(e){ /* keep retrying */ }
+      }
+      if(occupancy===0){
+        $("multi-error").textContent = "방을 찾을 수 없습니다. 방 코드를 다시 확인해주세요.";
+        return;
+      }
     }
     $("multi-error").textContent = "";
   }
