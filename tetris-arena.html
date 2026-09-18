@@ -435,7 +435,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     <div class="card pad" style="max-width:460px; margin:0 auto;">
       <div class="field" id="multi-identity-summary" style="text-align:center;"></div>
       <div class="field">
-        <label>방 코드 (참가할 경우 입력)</label>
+        <label>방 코드 (참가할 땐 필수 입력 · 만들 때는 원하는 코드를 적거나, 비워두면 자동 생성)</label>
         <input type="text" id="in-roomcode" maxlength="6" placeholder="예: A1B2C">
       </div>
       <div class="field local-only" id="field-server-url" style="display:none;">
@@ -1876,8 +1876,9 @@ $("btn-create-room").addEventListener("click", async ()=>{
   const nick = $("in-nickname").value.trim();
   if(!nick){ $("multi-error").textContent = "닉네임을 입력하세요."; return; }
   myNickname = nick;
-  const code = roomCode();
-  await enterRoom(code, true);
+  const customCode = ($("in-roomcode").value||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6);
+  const code = customCode || roomCode();
+  await enterRoom(code, true, !!customCode);
 });
 $("btn-join-room").addEventListener("click", async ()=>{
   const nick = $("in-nickname").value.trim();
@@ -1905,7 +1906,7 @@ async function roomOccupancy(url, code){
   const data = await res.json();
   return (data.players||[]).length;
 }
-async function enterRoom(code, isCreate){
+async function enterRoom(code, isCreate, isCustomCode){
   $("multi-error").textContent = "";
   if(!HAS_CLAUDE && testModeBotCount===0){
     const url = ($("in-server-url").value||"").trim().replace(/\/$/,"");
@@ -1920,7 +1921,12 @@ async function enterRoom(code, isCreate){
       $("multi-error").textContent = "서버에 연결할 수 없습니다. start-server.bat을 실행했는지, 주소가 맞는지 확인하세요.";
       return;
     }
-    if(isCreate){
+    if(isCreate && isCustomCode){
+      if(occupancy>0){
+        $("multi-error").textContent = "이미 사용 중인 방 코드입니다. 다른 코드를 입력해주세요.";
+        return;
+      }
+    } else if(isCreate){
       let tries = 0;
       while(occupancy>0 && tries<5){
         code = roomCode();
