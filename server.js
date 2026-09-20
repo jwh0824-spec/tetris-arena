@@ -5,11 +5,12 @@
 // DATABASE_URL env var is set (e.g. a free Neon database on Render, so
 // records survive redeploys instead of living on the ephemeral disk).
 // Run: node server.js   (optional: PORT=9000 node server.js)
-// Then open tetris-arena.html and enter this PC's address (e.g. http://192.168.0.5:8787)
+// Then open http://localhost:8787/ (the server also serves tetris-arena.html) — or open tetris-arena.html and enter this PC's address (e.g. http://192.168.0.5:8787)
 // as the "local server" address. Devices on the same Wi-Fi/LAN can join too.
 
 const http = require("http");
 const os = require("os");
+const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8787;
@@ -227,10 +228,21 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "OPTIONS") { send(res, 204, {}); return; }
 
-  if (req.method === "GET" && u.pathname === "/") {
+  if (req.method === "GET" && u.pathname === "/health") {
     send(res, 200, { ok: true, name: "tetris-arena-relay", rooms: rooms.size });
     return;
   }
+
+  // serve the game itself at the bare address, so players just open https://<host>/
+  if (req.method === "GET" && (u.pathname === "/" || u.pathname === "/index.html" || u.pathname === "/tetris-arena.html")) {
+    fs.readFile(path.join(__dirname, "tetris-arena.html"), (err, html) => {
+      if (err) { send(res, 200, { ok: true, name: "tetris-arena-relay", rooms: rooms.size, note: "tetris-arena.html not found next to server.js" }); return; }
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
+      res.end(html);
+    });
+    return;
+  }
+  if (req.method === "GET" && u.pathname === "/favicon.ico") { res.writeHead(204); res.end(); return; }
 
   if (req.method === "GET" && u.pathname === "/api/room") {
     const roomId = u.searchParams.get("roomId") || "";
