@@ -208,6 +208,52 @@ label{ font-size:12px; color:var(--text-dim); display:block; margin-bottom:6px; 
   animation:spin 0.8s linear infinite;
 }
 @keyframes spin{ to{ transform:rotate(360deg); } }
+.fx-layer{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:6; border-radius:var(--radius); }
+.fx-banner{
+  position:absolute; left:50%; top:40%; transform:translate(-50%,-50%) scale(.5);
+  min-width:170px; max-width:96%; text-align:center; padding:12px 16px; border-radius:12px;
+  background:rgba(10,12,24,.9); border:2px solid var(--fx-c,#fff); box-shadow:0 0 26px var(--fx-c,#fff);
+  color:#fff; opacity:0; animation:fxpop var(--fx-dur,2s) ease-out forwards;
+}
+.fx-banner .ic{ font-size:38px; display:block; line-height:1.1; }
+.fx-banner .tt{ font-family:'Press Start 2P'; font-size:11px; margin-top:6px; color:var(--fx-c,#fff); line-height:1.5; }
+.fx-banner .ss{ font-size:11px; margin-top:6px; color:#dfe3f5; line-height:1.5; }
+.fx-out{ --fx-c:#4dd8e6; } .fx-hit{ --fx-c:#ff4d5e; } .fx-self{ --fx-c:#4dff92; } .fx-block{ --fx-c:#6ea0ff; } .fx-info{ --fx-c:#ffd23f; }
+@keyframes fxpop{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.4); }
+  10%{ opacity:1; transform:translate(-50%,-50%) scale(1.18); }
+  20%{ transform:translate(-50%,-50%) scale(1); }
+  80%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-78%) scale(1); }
+}
+.fx-tint{ position:absolute; inset:0; opacity:0; }
+.fx-tint.go{ animation:tintflash .6s ease-out; }
+@keyframes tintflash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
+.board-col.shake{ animation:boardshake .45s; }
+@keyframes boardshake{ 10%,90%{ transform:translateX(-3px); } 20%,80%{ transform:translateX(5px); } 30%,50%,70%{ transform:translateX(-8px); } 40%,60%{ transform:translateX(8px); } }
+.status-chips{ position:absolute; top:6px; left:6px; right:6px; display:flex; gap:4px; flex-wrap:wrap; z-index:4; pointer-events:none; }
+.status-chips .chip{ font-size:10px; padding:2px 7px; border-radius:10px; background:rgba(10,12,24,.85); color:#fff; border:1px solid rgba(255,255,255,.25); }
+.board-col.shielded #m-board{ box-shadow:0 0 0 3px rgba(110,160,255,.95), 0 0 26px rgba(110,160,255,.75); }
+.board-col.speedy #m-board{ box-shadow:0 0 0 3px rgba(255,159,77,.95), 0 0 26px rgba(255,159,77,.65); }
+.board-col.shielded.speedy #m-board{ box-shadow:0 0 0 3px rgba(110,160,255,.95), 0 0 0 6px rgba(255,159,77,.9), 0 0 26px rgba(110,160,255,.6); }
+.opp-card.hit{ border-color:var(--danger); box-shadow:0 0 14px rgba(255,77,94,.7); }
+.item-next{ margin-top:6px; font-size:11px; line-height:1.5; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:6px 8px; }
+.item-next b{ display:block; font-size:12px; }
+.item-next span{ color:var(--text-dim); display:block; }
+.item-slot{ font-size:26px; padding:2px 4px; border-radius:8px; border:2px solid transparent; }
+.item-slot.next{ border-color:var(--yellow); }
+.mini-help{ cursor:pointer; border:1px solid var(--border); background:var(--surface-2); color:var(--text-dim); border-radius:50%; width:18px; height:18px; font-size:11px; line-height:1; margin-left:6px; padding:0; }
+.item-guide{ text-align:left; font-size:11px; line-height:1.55; }
+.item-guide .row-i{ display:flex; gap:8px; align-items:flex-start; padding:5px 0; border-bottom:1px dashed var(--border); }
+.item-guide .row-i:last-child{ border-bottom:none; }
+.item-guide .ic{ font-size:20px; flex:0 0 auto; }
+.item-guide .kind{ font-size:9px; padding:1px 6px; border-radius:8px; margin-left:4px; vertical-align:middle; }
+.item-guide .kind.attack{ background:rgba(255,77,94,.2); color:var(--danger); }
+.item-guide .kind.self{ background:rgba(77,255,146,.18); color:var(--green); }
+.item-guide .dsc{ color:var(--text-dim); display:block; }
+.host-badge{ font-size:10px; margin-left:4px; color:var(--yellow); }
+details.item-guide-box{ max-width:640px; margin:8px auto 0; }
+details.item-guide-box summary{ cursor:pointer; text-align:center; font-size:12px; color:var(--text-dim); }
 canvas{ background:var(--surface-2); border:1px solid var(--border); border-radius:8px; image-rendering:pixelated; max-width:100%; max-height:72vh; width:auto; height:auto; }
 .side-panel{ display:flex; flex-direction:column; gap:14px; width:200px; }
 @media (max-width:640px){ .side-panel{ width:100%; flex-direction:row; flex-wrap:wrap; } }
@@ -450,8 +496,8 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     <div class="card pad" style="max-width:460px; margin:0 auto;">
       <div class="field" id="multi-identity-summary" style="text-align:center;"></div>
       <div class="field">
-        <label>방 코드 (참가할 땐 필수 입력 · 만들 때는 원하는 코드를 적거나, 비워두면 자동 생성)</label>
-        <input type="text" id="in-roomcode" maxlength="6" placeholder="예: A1B2C">
+        <label>방 코드 (한글·영문·숫자 최대 10자 · 참가할 땐 필수 / 만들 땐 비워두면 자동 생성)</label>
+        <input type="text" id="in-roomcode" maxlength="10" placeholder="예: A1B2C 또는 우리방">
       </div>
       <div class="field local-only" id="field-server-url" style="display:none;">
         <label>로컬 서버 주소</label>
@@ -499,7 +545,7 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
     </div>
     <div class="lobby-players" id="lobby-players"></div>
     <div class="center row" style="gap:8px; margin-top:4px; flex-wrap:wrap;">
-      <label style="margin:0; font-size:12px; color:var(--text-dim);">모드</label>
+      <label style="margin:0; font-size:12px; color:var(--text-dim);" id="lbl-host-settings">모드</label>
       <select id="mode-select" class="btn" style="padding:8px 12px;">
         <option value="normal">일반전</option>
         <option value="item">아이템전</option>
@@ -511,7 +557,12 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
         <option value="5">5판 (누적점수 합산)</option>
       </select>
     </div>
-    <p class="controls-hint" id="mode-hint" style="margin-top:6px;">아이템전: 2줄 지울 때마다, 그리고 30초마다 랜덤 아이템 획득 (최대 2개 보유)</p>
+    <p class="controls-hint" id="host-hint" style="margin-top:6px; color:var(--yellow);"></p>
+    <p class="controls-hint" id="mode-hint" style="margin-top:2px;"></p>
+    <details class="item-guide-box" id="lobby-item-guide" style="display:none;">
+      <summary>📖 아이템 도감 보기</summary>
+      <div class="card pad item-guide" id="lobby-item-guide-list" style="margin-top:8px;"></div>
+    </details>
     <div class="center row" style="gap:8px; margin-top:8px; flex-wrap:wrap;">
       <label style="margin:0; font-size:12px; color:var(--text-dim);"><input type="checkbox" id="in-team-mode"> 2:2 팀전</label>
       <span class="row" id="team-pick-row" style="display:none; gap:6px; margin:0;">
@@ -544,9 +595,11 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
       <div class="opp-col" id="opp-grid"></div>
       <div class="board-col">
         <canvas id="m-board" width="260" height="572"></canvas>
+        <div class="status-chips" id="status-chips"></div>
+        <div class="fx-layer" id="fx-layer"><div class="fx-tint" id="fx-tint"></div></div>
         <div class="death-status" id="death-status" style="display:none;">
           <div class="spinner"></div>
-          <div class="pixel">GAME OVER</div>
+          <div class="pixel" id="death-status-title">GAME OVER</div>
           <div class="sub" id="death-status-sub">상대를 기다리는 중...</div>
         </div>
       </div>
@@ -562,12 +615,14 @@ canvas{ background:var(--surface-2); border:1px solid var(--border); border-radi
           <div class="center"><canvas id="m-next" width="66" height="150" class="mini-canvas"></canvas></div>
         </div>
         <div class="card panel-box" id="item-box" style="display:none;">
-          <div class="label">ITEM</div>
-          <div class="center" style="gap:6px; height:32px; align-items:center;">
-            <span id="item-icon-0" style="font-size:26px;">-</span>
-            <span id="item-icon-1" style="font-size:26px;">-</span>
+          <div class="label">ITEM<button class="mini-help" id="btn-item-guide" title="아이템 도감">?</button></div>
+          <div class="center" style="gap:6px; align-items:center;">
+            <span class="item-slot" id="item-icon-0">-</span>
+            <span class="item-slot" id="item-icon-1">-</span>
           </div>
+          <div class="item-next" id="item-next"></div>
           <button class="btn" id="btn-use-item" style="margin-top:6px; font-size:11px; padding:6px 8px;" disabled>사용 (X)</button>
+          <div class="item-guide" id="ingame-item-guide" style="display:none; margin-top:8px;"></div>
         </div>
       </div>
     </div>
@@ -701,7 +756,61 @@ function playTone(freq, dur, type, gainVal, startDelay){
   osc.connect(gain); gain.connect(ctx.destination);
   osc.start(t0); osc.stop(t0+dur+0.02);
 }
+function playSweep(f0, f1, dur, type, gainVal, startDelay){
+  if(!soundOn) return;
+  const ctx = ensureAudioCtx();
+  if(!ctx) return;
+  const t0 = ctx.currentTime + (startDelay||0);
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type || "sawtooth";
+  osc.frequency.setValueAtTime(f0, t0);
+  osc.frequency.exponentialRampToValueAtTime(Math.max(20,f1), t0+dur);
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.linearRampToValueAtTime(gainVal||0.12, t0+0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+function playNoise(dur, gainVal, startDelay, cutoff){
+  if(!soundOn) return;
+  const ctx = ensureAudioCtx();
+  if(!ctx) return;
+  const t0 = ctx.currentTime + (startDelay||0);
+  const len = Math.max(1, Math.floor(ctx.sampleRate*dur));
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let i=0;i<len;i++) data[i] = (Math.random()*2-1) * (1 - i/len);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  const filt = ctx.createBiquadFilter();
+  filt.type = "lowpass"; filt.frequency.value = cutoff || 1800;
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(gainVal||0.2, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+  src.start(t0);
+}
 const SFX = {
+  // item sounds: "fire" = you used an attack item, "hit" = it landed on you, "self" = self-buff item
+  itemFire(type){
+    if(type==="bomb"){ playSweep(300,900,0.28,"triangle",0.14); }
+    else if(type==="speed"){ [500,650,800,1000].forEach((f,i)=>playTone(f,0.07,"square",0.09,i*0.05)); }
+    else if(type==="fog"){ playSweep(700,180,0.4,"sine",0.14); }
+    else if(type==="flash"){ playSweep(1600,2400,0.16,"square",0.09); }
+  },
+  itemHit(type){
+    if(type==="bomb"){ playNoise(0.5,0.32,0,900); playSweep(140,40,0.45,"sawtooth",0.22); }
+    else if(type==="speed"){ [900,700,900,700,900].forEach((f,i)=>playTone(f,0.06,"square",0.1,i*0.07)); }
+    else if(type==="fog"){ playSweep(300,90,0.7,"sine",0.18); playNoise(0.5,0.08,0,500); }
+    else if(type==="flash"){ playNoise(0.35,0.3,0,6000); playTone(2200,0.12,"square",0.1); }
+  },
+  itemSelf(type){
+    if(type==="shield"){ [523,659,784,1046,1318].forEach((f,i)=>playTone(f,0.14,"triangle",0.11,i*0.05)); }
+    else if(type==="clear"){ playSweep(200,1400,0.35,"sine",0.14); playTone(1568,0.2,"triangle",0.1,0.32); }
+  },
+  shieldBlock(){ playTone(1760,0.25,"triangle",0.16); playTone(2349,0.35,"triangle",0.12,0.06); },
+  victory(){ [523,659,784,1046,784,1046,1318].forEach((f,i)=>playTone(f,0.16,"square",0.12,i*0.09)); },
   move(){ playTone(220,0.045,"square",0.045); },
   rotate(){ playTone(330,0.055,"square",0.055); },
   drop(){ playTone(110,0.09,"triangle",0.12); },
@@ -1533,9 +1642,10 @@ const HAS_CLAUDE = !!(window.claude && typeof window.claude.use === "function");
 })();
 
 function createClaudeTransport(room){
+  let gone = false;
   return {
     kind:"claude",
-    presence(patch){ return room.presence(patch); },
+    presence(patch){ if(gone) return; return room.presence(patch); },
     onPeers(cb){
       return room.onPeers((change)=>{
         const flat = (change.peers||[]).map(p=>Object.assign({}, p.presence));
@@ -1546,7 +1656,14 @@ function createClaudeTransport(room){
     on(topic, cb){
       return room.on(topic, (msg)=>{ cb(msg.data || {}); });
     },
-    destroy(){}
+    // there is no explicit "leave" on the shared room, so blank our presence: peers only list
+    // players whose roomId matches theirs, so we disappear from everyone's lobby right away
+    destroy(){
+      if(gone) return;
+      gone = true;
+      try{ room.presence({ roomId:null, ready:false, alive:false, inGame:false }); }catch(e){}
+    },
+    beacon(){ this.destroy(); }
   };
 }
 function fetchWithTimeout(url, opts, timeoutMs){
@@ -1558,8 +1675,10 @@ function createLocalTransport(baseUrl){
   let peers = [];
   let peersCb = null;
   let myState = null;
-  let cursor = 0;
+  let cursor = null;       // null until we know the room's current event position
+  let cursorRoom = null;
   let alive = true;
+  const pending = new Set();
   const handlers = {};
   async function post(path, body){
     const res = await fetchWithTimeout(baseUrl+path, { method:"POST", headers:{"Content-Type":"application/json", "ngrok-skip-browser-warning":"true"}, body: JSON.stringify(body) }, 20000);
@@ -1575,29 +1694,66 @@ function createLocalTransport(baseUrl){
     if(!alive) return;
     try{
       if(myState && myState.roomId){
-        const roomData = await get("/api/room?roomId="+encodeURIComponent(myState.roomId));
+        const roomId = myState.roomId;
+        if(cursorRoom !== roomId){ cursor = null; cursorRoom = roomId; }
+        const q = encodeURIComponent(roomId);
+        const [roomData, ev] = await Promise.all([
+          get("/api/room?roomId="+q),
+          get("/api/events?roomId="+q+"&since="+(cursor===null ? -1 : cursor))
+        ]);
+        if(!alive) return;
         peers = roomData.players || [];
         if(peersCb) peersCb(peers);
-        const ev = await get("/api/events?roomId="+encodeURIComponent(myState.roomId)+"&since="+cursor);
-        (ev.events||[]).forEach(e=>{
-          cursor = Math.max(cursor, e.seq);
-          (handlers[e.topic]||[]).forEach(fn=>fn(e.data||{}));
-        });
+        const evs = ev.events || [];
+        if(cursor===null){
+          // just joined: start from "now" so old start/attack/chat events are never replayed
+          cursor = typeof ev.seq==="number" ? ev.seq : evs.reduce((m,e)=>Math.max(m,e.seq), 0);
+        } else {
+          evs.forEach(e=>{
+            cursor = Math.max(cursor, e.seq);
+            (handlers[e.topic]||[]).forEach(fn=>{ try{ fn(e.data||{}); }catch(err){} });
+          });
+        }
       }
     }catch(e){ /* server unreachable; keep retrying silently */ }
     if(alive) setTimeout(poll, 450);
   }
   poll();
+  function leavePayload(){
+    return myState && myState.roomId ? { roomId: myState.roomId, id: myState.id, sess: myState.sess } : null;
+  }
   return {
     kind:"local",
     presence(patch){
+      if(!alive) return Promise.resolve();
       myState = Object.assign({}, myState, patch);
-      return post("/api/presence", myState).catch(()=>{});
+      const pr = post("/api/presence", myState).catch(()=>{});
+      pending.add(pr);
+      pr.then(()=>pending.delete(pr));
+      return pr;
     },
     onPeers(cb){ peersCb = cb; if(peers.length) cb(peers); return ()=>{ peersCb=null; }; },
-    emit(topic, data){ return post("/api/event", { roomId: myState && myState.roomId, topic, data }).catch(()=>{}); },
+    emit(topic, data){ if(!alive) return Promise.resolve(); return post("/api/event", { roomId: myState && myState.roomId, topic, data }).catch(()=>{}); },
     on(topic, cb){ (handlers[topic]=handlers[topic]||[]).push(cb); return ()=>{ handlers[topic]=(handlers[topic]||[]).filter(f=>f!==cb); }; },
-    destroy(){ alive=false; }
+    // tell the server we left so others stop seeing us (and our stale "ready") immediately
+    destroy(){
+      if(!alive) return;
+      alive = false;
+      const lp = leavePayload();
+      if(lp){
+        Promise.all(Array.from(pending)).then(()=> post("/api/leave", lp)).catch(()=>{});
+      }
+    },
+    // page is closing: sendBeacon survives unload (plain-text body, no CORS preflight)
+    beacon(){
+      if(!alive) return;
+      alive = false;
+      const lp = leavePayload();
+      if(!lp) return;
+      let sent = false;
+      try{ if(navigator.sendBeacon) sent = navigator.sendBeacon(baseUrl+"/api/leave", JSON.stringify(lp)); }catch(e){}
+      if(!sent){ try{ fetch(baseUrl+"/api/leave", { method:"POST", body: JSON.stringify(lp), keepalive:true }).catch(()=>{}); }catch(e){} }
+    }
   };
 }
 const BOT_NAMES = ["말랑봇","또리봇","콩순이봇","번개봇"];
@@ -1617,6 +1773,8 @@ function createBotTransport(botCount, difficulty){
   let roomId = null;
   let teamModeOn = false;
   let paused = false;
+  let curRoundSeed;
+  let botTick = 0;
   const handlers = {};
   let loopTimer = null;
 
@@ -1629,7 +1787,7 @@ function createBotTransport(botCount, difficulty){
     if(!peersCb) return;
     peersCb(bots.map(b=>({
       id:b.id, roomId, nickname:b.nickname, character:b.character, team:b.team, ready:true,
-      alive:b.alive, inGame:true, score:b.score, lines:b.lines, boardRows:b.boardRows
+      alive:b.alive, inGame:true, score:b.score, lines:b.lines, boardRows:b.boardRows, rseed:curRoundSeed
     })));
   }
   function fireLocal(topic, data){ (handlers[topic]||[]).forEach(fn=>{ try{ fn(data); }catch(e){} }); }
@@ -1644,6 +1802,8 @@ function createBotTransport(botCount, difficulty){
   }
   function startRound(round, roundSeed){
     if(loopTimer){ clearInterval(loopTimer); loopTimer=null; }
+    curRoundSeed = roundSeed;
+    botTick = 0;
     bots.forEach((b,i)=>{
       const rng = mulberry32((roundSeed + (i+1)*7919) % 2147483647);
       b.engine = new Engine({
@@ -1658,14 +1818,25 @@ function createBotTransport(botCount, difficulty){
         onGameOver:()=>{ b.alive=false; }
       });
       b.alive = true; b.score = 0; b.lines = 0; b.boardRows = [];
+      b.nextItemAt = 12 + i*5;   // seconds into the round (item mode only)
     });
     const interval = { easy:900, normal:650, hard:420 }[difficulty] || 650;
     loopTimer = setInterval(()=>{
       if(paused) return;
+      botTick += interval;
       bots.forEach(b=>{
         if(!b.engine || b.engine.gameOver) return;
         stepBot(b.engine, difficulty);
         b.score = b.engine.score; b.lines = b.engine.lines; b.boardRows = b.engine.boardSnapshotRows();
+        // in item mode the bots also throw an attack item at you now and then
+        if(roomGameMode==="item" && botTick/1000 >= b.nextItemAt){
+          b.nextItemAt += 14;
+          const target = pickTarget(b.id);
+          if(target && target.isMe){
+            const kinds = ["bomb","speed","fog","flash"];
+            fireLocal("item", { roomId, targetId: myState.id, itemType: kinds[Math.floor(Math.random()*kinds.length)], fromNick:b.nickname });
+          }
+        }
       });
       pushPeers();
     }, interval);
@@ -1682,6 +1853,9 @@ function createBotTransport(botCount, difficulty){
       if(topic==="attack"){
         const t = bots.find(b=>b.id===data.targetId);
         if(t && t.engine) t.engine.queueGarbage(data.lines);
+      } else if(topic==="item"){
+        const t = bots.find(b=>b.id===data.targetId);
+        if(t && t.engine && data.itemType==="bomb") t.engine.queueGarbage(3);
       } else if(topic==="chat"){
         fireLocal("chat", data);
       }
@@ -1691,7 +1865,8 @@ function createBotTransport(botCount, difficulty){
     startRound,
     setTeamMode,
     setPaused(p){ paused = !!p; },
-    destroy(){ if(loopTimer){ clearInterval(loopTimer); loopTimer=null; } }
+    destroy(){ if(loopTimer){ clearInterval(loopTimer); loopTimer=null; } },
+    beacon(){ this.destroy(); }
   };
 }
 let testModeBotCount = 0;
@@ -1859,6 +2034,8 @@ $("btn-goto-records").addEventListener("click", ()=>{ showScreen("screen-records
 
 /* ===================== MULTIPLAYER ===================== */
 const MY_ID = uid();
+let mySess = uid();
+let joinedAtLocal = Date.now();
 let myNickname = ($("in-nickname").value||"").trim() || ("Player" + Math.floor(Math.random()*1000));
 let currentRoomId = null;
 let iAmReady = false;
@@ -1878,30 +2055,74 @@ let roomTeamMode = false;
 let saveMatchRecord = true;
 let myTeam = null;
 let myItems = [];
+let matchRoster = [];        // [{id,nickname,character,team}] fixed by the host when the match starts
+let currentRoundSeed = 0;    // identifies match+round; peers stamp it on their presence
+let roundAliveIds = [];
+let peerLastSeen = {};       // id -> last presence seen during the current round
+let knownPeerNames = null;   // id -> nickname (for join/leave notices)
+let enteringRoom = false;
+let lastHitTarget = { id:null, until:0 };
+let lastChipsHtml = "";
+const ROOM_MAX = 4;
 const ITEM_INVENTORY_MAX = 2;
 const ITEM_TIMER_MS = 30000;
 let itemLineCounter = 0;
 const ITEM_DEFS = {
-  bomb:   { icon:"💣", label:"폭탄",     kind:"attack", desc:"상대 쓰레기 줄 +3" },
-  speed:  { icon:"⚡", label:"스피드업", kind:"attack", desc:"상대 낙하속도 8초간 증가" },
-  fog:    { icon:"🌫️", label:"안개",    kind:"attack", desc:"상대 다음블록 8초간 안보이게" },
-  flash:  { icon:"💥", label:"플래시",  kind:"attack", desc:"상대 화면 1초간 번쩍여서 안보이게" },
-  shield: { icon:"🛡️", label:"실드",    kind:"self",   desc:"다음 공격 1회 무효화" },
-  clear:  { icon:"🧹", label:"라인정리", kind:"self",   desc:"내 바닥 줄 1개 제거" }
+  bomb:   { icon:"💣", label:"폭탄",     kind:"attack", short:"쓰레기 줄 +3",
+            desc:"상대 1명에게 쓰레기 줄 3줄을 보냅니다. 상대의 다음 블록이 놓일 때 아래에서 밀고 올라와요.",
+            hitSub:"쓰레기 줄 3줄이 아래에서 올라옵니다!" },
+  speed:  { icon:"⚡", label:"스피드업", kind:"attack", short:"낙하 2배속 8초",
+            desc:"상대 블록의 낙하 속도를 8초간 약 2배로 올립니다.",
+            hitSub:"8초간 블록이 훨씬 빨리 떨어져요!" },
+  fog:    { icon:"🌫️", label:"안개",    kind:"attack", short:"NEXT 가림 8초",
+            desc:"상대의 NEXT 미리보기를 8초간 가립니다.",
+            hitSub:"8초간 다음 블록이 안 보여요!" },
+  flash:  { icon:"💥", label:"플래시",  kind:"attack", short:"화면 가림 1초",
+            desc:"상대의 게임 화면을 1초간 새하얗게 가립니다.",
+            hitSub:"1초간 화면이 안 보여요!" },
+  shield: { icon:"🛡️", label:"실드",    kind:"self",   short:"다음 공격 1회 방어",
+            desc:"다음에 받는 공격 1회(줄 공격·아이템 모두)를 완전히 막아줍니다. 보드에 파란 테두리가 생겨요.",
+            hitSub:"" },
+  clear:  { icon:"🧹", label:"라인정리", kind:"self",   short:"바닥 줄 1개 제거",
+            desc:"내 보드의 맨 아래 줄 1개를 즉시 지웁니다. 위기 탈출용!",
+            hitSub:"" }
 };
 const ITEM_KEYS = Object.keys(ITEM_DEFS);
+
+function itemGuideHTML(){
+  return ITEM_KEYS.map(k=>{
+    const d = ITEM_DEFS[k];
+    return `<div class="row-i"><span class="ic">${d.icon}</span><div><b>${d.label}</b><span class="kind ${d.kind}">${d.kind==="attack"?"공격 · 상대에게":"내 보조 · 나에게"}</span><span class="dsc">${d.desc}</span></div></div>`;
+  }).join("");
+}
+$("lobby-item-guide-list").innerHTML = itemGuideHTML();
+$("ingame-item-guide").innerHTML = itemGuideHTML();
+$("btn-item-guide").addEventListener("click", ()=>{
+  const g = $("ingame-item-guide");
+  g.style.display = g.style.display==="none" ? "" : "none";
+});
+
+/* room codes may contain Korean, so keep letters/digits from any language (not just A-Z) */
+function normalizeRoomCode(raw){
+  let v = String(raw||"");
+  try{ v = v.normalize("NFC"); }catch(e){}
+  return v.toUpperCase().replace(/[^\p{L}\p{N}]/gu, "").slice(0,10);
+}
+function roomT(){ return currentRoomId ? cachedTransport : null; }
 
 $("btn-create-room").addEventListener("click", async ()=>{
   const nick = $("in-nickname").value.trim();
   if(!nick){ $("multi-error").textContent = "닉네임을 입력하세요."; return; }
   myNickname = nick;
-  const customCode = ($("in-roomcode").value||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,6);
+  const raw = $("in-roomcode").value || "";
+  const customCode = normalizeRoomCode(raw);
+  if(raw.trim() && !customCode){ $("multi-error").textContent = "방 코드에는 한글·영문·숫자만 쓸 수 있어요."; return; }
   const code = customCode || roomCode();
   await enterRoom(code, true, !!customCode);
 });
 $("btn-join-room").addEventListener("click", async ()=>{
   const nick = $("in-nickname").value.trim();
-  const code = $("in-roomcode").value.trim().toUpperCase();
+  const code = normalizeRoomCode($("in-roomcode").value);
   if(!nick){ $("multi-error").textContent = "닉네임을 입력하세요."; return; }
   if(!code){ $("multi-error").textContent = "방 코드를 입력하세요."; return; }
   myNickname = nick;
@@ -1919,48 +2140,70 @@ $("btn-test-mode").addEventListener("click", async ()=>{
   if(currentRoomId) startMultiMatch();
 });
 
-async function roomOccupancy(url, code){
+async function roomPlayers(url, code){
   const res = await fetchWithTimeout(url+"/api/room?roomId="+encodeURIComponent(code), { headers:{"ngrok-skip-browser-warning":"true"} }, 15000);
   if(!res.ok) throw new Error("bad status");
   const data = await res.json();
-  return (data.players||[]).length;
+  return data.players || [];
+}
+function setLobbyBusy(b){
+  ["btn-create-room","btn-join-room","btn-test-mode"].forEach(id=>{ const el=$(id); if(el) el.disabled = b; });
 }
 async function enterRoom(code, isCreate, isCustomCode){
+  if(enteringRoom) return;
+  enteringRoom = true;
+  setLobbyBusy(true);
+  try{ await enterRoomInner(code, isCreate, isCustomCode); }
+  finally{ enteringRoom = false; setLobbyBusy(false); }
+}
+async function enterRoomInner(code, isCreate, isCustomCode){
   $("multi-error").textContent = "";
+  if(currentRoomId){
+    // never stack a second set of listeners on top of a room we're still in
+    const keepBots = testModeBotCount;
+    leaveRoom();
+    testModeBotCount = keepBots;
+  }
   if(!HAS_CLAUDE && testModeBotCount===0){
     const url = ($("in-server-url").value||"").trim().replace(/\/$/,"");
     if(!url){ $("multi-error").textContent = "로컬 서버 주소를 입력하세요."; return; }
-    let occupancy = null;
-    for(let attempt=0; attempt<4 && occupancy===null; attempt++){
+    let players = null;
+    for(let attempt=0; attempt<4 && players===null; attempt++){
       if(attempt>0) $("multi-error").textContent = "서버를 깨우는 중입니다... (최대 1분 정도 걸릴 수 있어요)";
-      try{ occupancy = await roomOccupancy(url, code); }catch(e){ /* retry below */ }
-      if(occupancy===null && attempt<3) await new Promise(r=>setTimeout(r, 3000));
+      try{ players = await roomPlayers(url, code); }catch(e){ /* retry below */ }
+      if(players===null && attempt<3) await new Promise(r=>setTimeout(r, 3000));
     }
-    if(occupancy===null){
+    if(players===null){
       $("multi-error").textContent = "서버에 연결할 수 없습니다. start-server.bat을 실행했는지, 주소가 맞는지 확인하세요.";
       return;
     }
     if(isCreate && isCustomCode){
-      if(occupancy>0){
+      if(players.length>0){
         $("multi-error").textContent = "이미 사용 중인 방 코드입니다. 다른 코드를 입력해주세요.";
         return;
       }
     } else if(isCreate){
       let tries = 0;
-      while(occupancy>0 && tries<5){
+      while(players.length>0 && tries<5){
         code = roomCode();
-        try{ occupancy = await roomOccupancy(url, code); }catch(e){ occupancy = 0; }
+        try{ players = await roomPlayers(url, code); }catch(e){ players = []; }
         tries++;
       }
-    } else if(occupancy===0){
-      // the room may have just been created and the creator's own presence
-      // hasn't landed on the server yet — retry briefly before giving up
-      for(let retry=0; retry<3 && occupancy===0; retry++){
-        await new Promise(r=>setTimeout(r, 1500));
-        try{ occupancy = await roomOccupancy(url, code); }catch(e){ /* keep retrying */ }
+    } else {
+      if(players.length===0){
+        // the room may have just been created and the creator's own presence
+        // hasn't landed on the server yet — retry briefly before giving up
+        for(let retry=0; retry<3 && players.length===0; retry++){
+          await new Promise(r=>setTimeout(r, 1500));
+          try{ players = await roomPlayers(url, code); }catch(e){ /* keep retrying */ }
+        }
+        if(players.length===0){
+          $("multi-error").textContent = "방을 찾을 수 없습니다. 방 코드를 다시 확인해주세요.";
+          return;
+        }
       }
-      if(occupancy===0){
-        $("multi-error").textContent = "방을 찾을 수 없습니다. 방 코드를 다시 확인해주세요.";
+      if(players.length >= ROOM_MAX){
+        $("multi-error").textContent = "방이 가득 찼습니다. (최대 " + ROOM_MAX + "명)";
         return;
       }
     }
@@ -1971,6 +2214,8 @@ async function enterRoom(code, isCreate, isCustomCode){
     $("multi-error").textContent = "실시간 연결을 사용할 수 없습니다. 싱글 모드를 이용해주세요.";
     return;
   }
+  mySess = uid();
+  joinedAtLocal = Date.now();
   currentRoomId = code;
   iAmReady = false;
   multiStarted = false;
@@ -1978,13 +2223,23 @@ async function enterRoom(code, isCreate, isCustomCode){
   matchWins = {};
   matchRound = 1;
   roundDecided = false;
+  matchRoster = [];
+  peerLastSeen = {};
+  knownPeerNames = null;
+  lastPeersSnapshot = [];
   chatLogEntries = [];
   $("chat-log").innerHTML = "";
+  $("btn-ready-toggle").textContent = "준비하기";
+  $("overlay-multi-over").classList.remove("active");
+  showDeathStatus(false);
 
-  room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:false, alive:true, score:0, lines:0, inGame:false });
+  room.presence(lobbyPresence({ score:0, lines:0, inGame:false }));
 
   const offPeers = room.onPeers((peers)=>{
+    if(!currentRoomId) return;
     lastPeersSnapshot = peers.filter(p=> p.roomId === currentRoomId);
+    if(multiStarted) lastPeersSnapshot.forEach(p=>{ if(isCurrentRound(p)) peerLastSeen[p.id] = p; });
+    noticePeerChanges();
     if($("screen-multi-room").classList.contains("active")) renderLobby();
     if(multiStarted){
       renderOpponents();
@@ -1995,6 +2250,11 @@ async function enterRoom(code, isCreate, isCustomCode){
 
   const offStart = room.on("start", (data)=>{
     if(data.roomId !== currentRoomId || multiStarted) return;
+    const roster = Array.isArray(data.roster) ? data.roster : null;
+    if(roster && !roster.some(r=>r.id===MY_ID)){
+      toast("이번 판은 준비하지 않아 참여하지 않아요. 준비를 눌러두면 다음 판에 함께해요!", 3200);
+      return;
+    }
     matchBaseSeed = data.seed;
     matchRounds = data.rounds || 1;
     matchRound = 1;
@@ -2002,6 +2262,12 @@ async function enterRoom(code, isCreate, isCustomCode){
     matchWins = {};
     roomGameMode = data.gameMode || "normal";
     roomTeamMode = !!data.teamMode;
+    matchRoster = roster || lobbyPlayers().map(p=>({ id:p.id, nickname:p.nickname||"???", character:p.character, team:p.team||null }));
+    if(roomTeamMode){
+      const me = matchRoster.find(r=>r.id===MY_ID);
+      if(me && me.team) setMyTeam(me.team);
+    }
+    iAmReady = true;
     beginMultiGame();
   });
   unsubEvents.push(offStart);
@@ -2010,11 +2276,14 @@ async function enterRoom(code, isCreate, isCustomCode){
     if(data.roomId !== currentRoomId || data.targetId !== MY_ID) return;
     if(multiEngine && !multiEngine.gameOver){
       if(multiEngine.consumeShield()){
-        toast("실드로 " + (data.fromNick||"상대") + "의 공격을 막음!");
+        showFx("block","🛡️","방어 성공!", (data.fromNick||"상대") + "의 공격 " + data.lines + "줄 무효화", 1800);
+        tintFx("rgba(110,160,255,.5)");
+        SFX.shieldBlock();
         return;
       }
       multiEngine.queueGarbage(data.lines);
       flashAttack();
+      shakeBoard();
       SFX.attackHit();
       toast((data.fromNick||"상대") + "의 공격! +" + data.lines + "줄");
     }
@@ -2036,54 +2305,197 @@ async function enterRoom(code, isCreate, isCustomCode){
   $("room-code-label").textContent = currentRoomId;
   showScreen("screen-multi-room");
   setTimeout(renderLobby, 400);
+  startLobbyHeartbeat();
+}
 
+/* ---- presence helpers ---- */
+function hostSettings(){
+  return {
+    gameMode: $("mode-select") ? $("mode-select").value : "normal",
+    rounds: Number($("round-select").value) || 1,
+    teamMode: $("in-team-mode") ? $("in-team-mode").checked : false
+  };
+}
+function lobbyPresence(extra){
+  return Object.assign({
+    id: MY_ID, roomId: currentRoomId, sess: mySess, joinedAt: joinedAtLocal,
+    nickname: myNickname, character: myCharacter, team: myTeam,
+    ready: iAmReady, alive:true, settings: hostSettings()
+  }, extra || {});
+}
+function gamePresence(){
+  return {
+    id: MY_ID, roomId: currentRoomId, sess: mySess, nickname: myNickname, character: myCharacter, team: myTeam,
+    ready:true, inGame:true, alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
+    boardRows: multiEngine.boardSnapshotRows(), rseed: currentRoundSeed
+  };
+}
+function startLobbyHeartbeat(){
   if(window._lobbyHeartbeat) clearInterval(window._lobbyHeartbeat);
-  window._lobbyHeartbeat = setInterval(async ()=>{
-    if(multiStarted || !currentRoomId) return;
-    const t = await ensureTransport();
-    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
-  }, 5000);
+  window._lobbyHeartbeat = setInterval(()=>{
+    const t = roomT();
+    if(!t || multiStarted) return;
+    t.presence(lobbyPresence());
+  }, 4000);
+}
+
+/* ---- lobby: join order, host, roster ---- */
+function joinKey(p){
+  if(typeof p.joined==="number") return p.joined;
+  if(typeof p.joinedAt==="number") return p.joinedAt;
+  return Number.MAX_SAFE_INTEGER;
+}
+function lobbyPlayers(){
+  const list = lastPeersSnapshot.map(p=> p.id===MY_ID
+    ? Object.assign({}, p, { ready: iAmReady, team: myTeam, nickname: myNickname, character: myCharacter })
+    : p);
+  if(!list.some(p=>p.id===MY_ID)){
+    // our own presence hasn't come back from the server yet — still show ourselves
+    list.push({ id:MY_ID, roomId:currentRoomId, nickname:myNickname, character:myCharacter, team:myTeam, ready:iAmReady, alive:true, inGame:multiStarted, joinedAt:joinedAtLocal });
+  }
+  return list.sort((a,b)=> (joinKey(a)-joinKey(b)) || (a.id<b.id?-1:1));
+}
+function hostPlayer(players){
+  players = players || lobbyPlayers();
+  if(testModeBotCount>0) return players.find(p=>p.id===MY_ID) || players[0];
+  return players[0];
+}
+function amHost(){
+  const h = hostPlayer();
+  return !!h && h.id===MY_ID;
+}
+function modeLabel(m){ return m==="item" ? "아이템전" : "일반전"; }
+
+function noticePeerChanges(){
+  if(testModeBotCount>0) return;
+  const cur = new Map(lastPeersSnapshot.map(p=>[p.id, p.nickname||"???"]));
+  if(knownPeerNames){
+    cur.forEach((n,id)=>{ if(id!==MY_ID && !knownPeerNames.has(id)) appendSystemMessage(n + "님이 입장했습니다"); });
+    knownPeerNames.forEach((n,id)=>{
+      if(id!==MY_ID && !cur.has(id)){
+        appendSystemMessage(n + "님이 나갔습니다");
+        if(multiStarted) toast(n + "님이 방을 나갔습니다");
+      }
+    });
+  }
+  knownPeerNames = cur;
+}
+
+function buildRoster(){
+  const players = lobbyPlayers().slice(0, ROOM_MAX);
+  const bot = testModeBotCount>0;
+  const eligible = players.filter(p=> p.id===MY_ID || bot || (p.ready && !p.inGame));
+  if(eligible.length < 2) return { ok:false, reason:"준비를 완료한 참가자가 1명 이상 필요해요" };
+  const roster = eligible.map(p=>({ id:p.id, nickname:p.nickname||"???", character:p.character, team:p.team||null }));
+  if($("in-team-mode").checked){
+    let a = roster.filter(r=>r.team==="A").length, b = roster.filter(r=>r.team==="B").length;
+    roster.forEach(r=>{
+      if(r.team!=="A" && r.team!=="B"){
+        if(a<=b){ r.team="A"; a++; } else { r.team="B"; b++; }
+      }
+    });
+    if(a===0 || b===0) return { ok:false, reason:"팀전은 A팀·B팀에 각각 1명 이상 필요해요" };
+  }
+  return { ok:true, roster };
 }
 
 function renderLobby(){
+  const players = lobbyPlayers();
+  const host = hostPlayer(players);
+  const iHost = !!host && host.id===MY_ID;
+
+  // guests mirror whatever the host picked
+  if(!iHost && host && host.settings){
+    const st = host.settings;
+    const setSel = (id, v)=>{
+      const el = $(id);
+      if(v!==undefined && v!==null && el.value !== String(v) && Array.from(el.options).some(o=>o.value===String(v))) el.value = String(v);
+    };
+    setSel("mode-select", st.gameMode);
+    setSel("round-select", st.rounds);
+    if($("in-team-mode").checked !== !!st.teamMode) $("in-team-mode").checked = !!st.teamMode;
+  }
+  $("mode-select").disabled = !iHost;
+  $("round-select").disabled = !iHost;
+  $("in-team-mode").disabled = !iHost;
+  $("team-pick-row").style.display = $("in-team-mode").checked ? "flex" : "none";
+  const gm = $("mode-select").value;
+  $("lbl-host-settings").textContent = iHost ? "모드 (방장 설정)" : "모드 (방장이 정함)";
+  $("host-hint").textContent = iHost
+    ? "👑 당신이 방장이에요. 모드·라운드·팀전은 방장만 바꿀 수 있어요."
+    : "👑 방장: " + (host ? (host.nickname||"???") : "?") + " · 지금 설정: " + modeLabel(gm) + " · " + $("round-select").value + "판" + ($("in-team-mode").checked ? " · 2:2 팀전" : "");
+  $("mode-hint").textContent = gm==="item"
+    ? "아이템전: 2줄 지울 때마다, 그리고 30초마다 랜덤 아이템 획득 (최대 2개 보유 · X키로 사용). 줄 공격은 없고 아이템으로만 싸워요. 마지막까지 살아남으면 승리!"
+    : "일반전: 줄을 지우면 상대에게 공격이 가고, 연속(콤보)으로 지우면 추가 공격! 마지막까지 살아남으면 승리!";
+  $("lobby-item-guide").style.display = gm==="item" ? "" : "none";
+
   const wrap = $("lobby-players");
   wrap.innerHTML = "";
-  const slots = lastPeersSnapshot.slice(0,4);
-  for(let i=0;i<4;i++){
+  const slots = players.slice(0, ROOM_MAX);
+  for(let i=0;i<ROOM_MAX;i++){
     const p = slots[i];
     const div = document.createElement("div");
     if(p){
+      const isHost = host && p.id===host.id;
       const teamBadge = p.team ? `<span class="team-badge team-${p.team}">${p.team==="A"?"🔴 A":"🔵 B"}</span>` : "";
+      let statusText, statusReady = false;
+      if(p.inGame && p.id!==MY_ID && testModeBotCount===0){ statusText = "게임 중"; }
+      else if(isHost){ statusText = "방장"; statusReady = true; }
+      else if(p.ready){ statusText = "준비 완료"; statusReady = true; }
+      else { statusText = "대기중"; }
       div.className = "card player-slot";
-      div.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${p.id===MY_ID?" (나)":""}${teamBadge}</div></div>
-        <div class="status ${p.ready?'ready':''}">${p.ready?"준비 완료":"대기중"}</div>`;
+      div.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${isHost?"👑 ":""}${escapeHtml(p.nickname||"???")}${p.id===MY_ID?" (나)":""}${teamBadge}</div></div>
+        <div class="status ${statusReady?'ready':''}">${statusText}</div>`;
     } else {
       div.className = "card player-slot empty";
       div.innerHTML = `<div class="nick">빈 자리</div><div class="status">-</div>`;
     }
     wrap.appendChild(div);
   }
-  const readyCount = lastPeersSnapshot.filter(p=>p.ready).length;
-  const startBtn = $("btn-start-game");
-  startBtn.disabled = !(readyCount>=2 && iAmReady);
-  $("lobby-hint").textContent = lastPeersSnapshot.length + "명 입장 / " + readyCount + "명 준비 완료 (최소 2명 필요)";
+
+  $("btn-ready-toggle").style.display = iHost ? "none" : "";
+  $("btn-start-game").style.display = iHost ? "" : "none";
+  const guests = players.filter(p=>p.id!==MY_ID);
+  const readyGuests = guests.filter(p=>p.ready && !p.inGame);
+  const waiting = guests.filter(p=>!p.ready && !p.inGame);
+  const busy = guests.filter(p=>p.inGame);
+  if(iHost){
+    const built = buildRoster();
+    $("btn-start-game").disabled = !built.ok;
+    let msg = players.length + "명 입장 · 준비 " + readyGuests.length + "명";
+    if(waiting.length>0) msg += " · 미준비 " + waiting.length + "명(이번 판 제외)";
+    if(busy.length>0 && testModeBotCount===0) msg += " · 결과 확인 중 " + busy.length + "명";
+    if(!built.ok) msg += " — " + built.reason;
+    $("lobby-hint").textContent = msg;
+  } else {
+    let msg = players.length + "명 입장 · 방장이 시작하면 게임이 시작돼요";
+    if(host && host.inGame) msg = "게임이 진행 중이에요. 끝나면 준비를 눌러 다음 판에 참여하세요.";
+    else if(!iAmReady) msg += " (준비하기를 눌러주세요)";
+    $("lobby-hint").textContent = msg;
+  }
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-$("btn-ready-toggle").addEventListener("click", async ()=>{
+$("btn-ready-toggle").addEventListener("click", ()=>{
+  if(!currentRoomId) return;
   iAmReady = !iAmReady;
   $("btn-ready-toggle").textContent = iAmReady ? "준비 취소" : "준비하기";
-  const room = await ensureTransport();
-  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
+  const room = roomT();
+  if(room) room.presence(lobbyPresence());
   renderLobby();
 });
 async function startMultiMatch(){
-  const room = await ensureTransport();
-  if(!room) return;
-  const seed = Date.now() % 2147483647;
+  if(multiStarted) return;
+  const room = roomT() || await ensureTransport();
+  if(!room || !currentRoomId) return;
+  if(testModeBotCount===0 && !amHost()) return;
   const rounds = Number($("round-select").value) || 1;
   const gameMode = $("mode-select") ? $("mode-select").value : "normal";
   const teamMode = $("in-team-mode") ? $("in-team-mode").checked : false;
+  if(testModeBotCount>0 && room.setTeamMode) room.setTeamMode(teamMode);
+  const built = buildRoster();
+  if(!built.ok){ $("lobby-hint").textContent = built.reason; return; }
+  const seed = Date.now() % 2147483647;
   matchBaseSeed = seed;
   matchRounds = rounds;
   matchRound = 1;
@@ -2091,8 +2503,12 @@ async function startMultiMatch(){
   matchWins = {};
   roomGameMode = gameMode;
   roomTeamMode = teamMode;
-  if(teamMode && !myTeam) setMyTeam("A");
-  room.emit("start", { roomId: currentRoomId, seed, rounds, gameMode, teamMode });
+  matchRoster = built.roster;
+  if(teamMode){
+    const me = matchRoster.find(r=>r.id===MY_ID);
+    if(me && me.team) setMyTeam(me.team);
+  }
+  room.emit("start", { roomId: currentRoomId, seed, rounds, gameMode, teamMode, roster: matchRoster, hostId: MY_ID });
   beginMultiGame();
 }
 $("btn-start-game").addEventListener("click", startMultiMatch);
@@ -2101,39 +2517,53 @@ function setMyTeam(team){
   $("btn-team-a").classList.toggle("selected", team==="A");
   $("btn-team-b").classList.toggle("selected", team==="B");
 }
-$("in-team-mode").addEventListener("change", ()=>{
-  $("team-pick-row").style.display = $("in-team-mode").checked ? "flex" : "none";
+["mode-select","round-select","in-team-mode"].forEach(id=>{
+  $(id).addEventListener("change", ()=>{
+    const room = roomT();
+    if(room && amHost()) room.presence(lobbyPresence());
+    if(currentRoomId) renderLobby();
+  });
 });
-$("btn-team-a").addEventListener("click", async ()=>{
-  setMyTeam("A");
-  const room = await ensureTransport();
-  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
+function pickTeam(t){
+  setMyTeam(t);
+  const room = roomT();
+  if(room) room.presence(lobbyPresence());
   renderLobby();
-});
-$("btn-team-b").addEventListener("click", async ()=>{
-  setMyTeam("B");
-  const room = await ensureTransport();
-  if(room) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
-  renderLobby();
-});
+}
+$("btn-team-a").addEventListener("click", ()=> pickTeam("A"));
+$("btn-team-b").addEventListener("click", ()=> pickTeam("B"));
 $("btn-leave-room").addEventListener("click", ()=>{
   leaveRoom();
   showScreen("screen-multi-lobby");
 });
 function leaveRoom(){
   stopAll();
+  if(window._finishTimer){ clearTimeout(window._finishTimer); window._finishTimer=null; }
+  if(window._nextRoundTimer){ clearTimeout(window._nextRoundTimer); window._nextRoundTimer=null; }
   unsubEvents.forEach(fn=>{ try{ fn(); }catch(e){} });
   unsubEvents = [];
+  // destroy() tells the server we're gone so others stop seeing us / our "ready" right away
   if(cachedTransport && cachedTransport.destroy) cachedTransport.destroy();
   cachedTransport = null;
   currentRoomId = null;
   multiStarted = false;
+  roundDecided = false;
+  iAmReady = false;
+  lastPeersSnapshot = [];
+  matchRoster = [];
+  peerLastSeen = {};
+  knownPeerNames = null;
   testModeBotCount = 0;
   roomGameMode = "normal";
   roomTeamMode = false;
   saveMatchRecord = true;
   myTeam = null;
   myItems = [];
+  $("overlay-multi-over").classList.remove("active");
+  $("overlay-pause").classList.remove("active");
+  showDeathStatus(false);
+  $("btn-ready-toggle").textContent = "준비하기";
+  $("mode-select").disabled = false; $("round-select").disabled = false; $("in-team-mode").disabled = false;
   if($("in-team-mode")) $("in-team-mode").checked = false;
   if($("team-pick-row")) $("team-pick-row").style.display = "none";
   setMyTeam(null);
@@ -2149,24 +2579,77 @@ function appendChatMessage(nickname, character, text, isMe){
   while(chatLogEntries.length > 60){ const old = chatLogEntries.shift(); if(old.parentNode) old.parentNode.removeChild(old); }
   log.scrollTop = log.scrollHeight;
 }
+function appendSystemMessage(text){
+  const log = $("chat-log");
+  const row = document.createElement("div");
+  row.className = "chat-msg system";
+  row.textContent = "• " + text;
+  log.appendChild(row);
+  chatLogEntries.push(row);
+  while(chatLogEntries.length > 60){ const old = chatLogEntries.shift(); if(old.parentNode) old.parentNode.removeChild(old); }
+  log.scrollTop = log.scrollHeight;
+}
 async function sendChat(){
   const input = $("in-chat");
   const text = input.value.trim();
   if(!text || !currentRoomId) return;
   input.value = "";
-  const room = await ensureTransport();
+  const room = roomT();
   if(!room) return;
   room.emit("chat", { roomId: currentRoomId, id: MY_ID, nickname: myNickname, character: myCharacter, team: myTeam, text: text.slice(0,120) });
 }
 $("btn-chat-send").addEventListener("click", sendChat);
 $("in-chat").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); sendChat(); } });
 
+/* ---- in-game effects (banners, shake, tint, status chips) ---- */
+function showFx(kind, icon, title, sub, dur){
+  const layer = $("fx-layer");
+  if(!layer) return;
+  const ms = dur || 2000;
+  const el = document.createElement("div");
+  el.className = "fx-banner fx-" + kind;
+  el.style.setProperty("--fx-dur", ms+"ms");
+  el.innerHTML = `<span class="ic">${icon}</span><div class="tt">${escapeHtml(title)}</div>${sub ? `<div class="ss">${escapeHtml(sub)}</div>` : ""}`;
+  layer.querySelectorAll(".fx-banner").forEach(b=>b.remove());
+  layer.appendChild(el);
+  setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, ms+100);
+}
+function tintFx(color){
+  const t = $("fx-tint");
+  if(!t) return;
+  t.style.background = color;
+  t.classList.remove("go"); void t.offsetWidth; t.classList.add("go");
+}
+function shakeBoard(){
+  const c = document.querySelector("#screen-multi-game .board-col");
+  if(!c) return;
+  c.classList.remove("shake"); void c.offsetWidth; c.classList.add("shake");
+}
+function updateStatusChips(){
+  if(!multiEngine) return;
+  const now = Date.now();
+  const bc = document.querySelector("#screen-multi-game .board-col");
+  const chips = [];
+  if(multiEngine.shieldCount>0) chips.push("🛡️ 실드 x" + multiEngine.shieldCount);
+  if(multiEngine.speedBoostUntil>now) chips.push("⚡ 스피드업 " + Math.ceil((multiEngine.speedBoostUntil-now)/1000) + "s");
+  if(multiEngine.fogUntil>now) chips.push("🌫️ 안개 " + Math.ceil((multiEngine.fogUntil-now)/1000) + "s");
+  if(multiEngine.pendingGarbage>0) chips.push("⬆ 쓰레기 " + multiEngine.pendingGarbage + "줄 대기");
+  const html = chips.map(c=>`<span class="chip">${c}</span>`).join("");
+  if(html !== lastChipsHtml){ $("status-chips").innerHTML = html; lastChipsHtml = html; }
+  bc.classList.toggle("shielded", multiEngine.shieldCount>0);
+  bc.classList.toggle("speedy", multiEngine.speedBoostUntil>now);
+}
+
 let roundStartTime = 0;
 function beginMultiGame(){
   multiStarted = true;
   roundDecided = false;
+  roundAliveIds = [];
+  peerLastSeen = {};
   roundStartTime = Date.now();
-  showDeathWaitingStatus(false);
+  showDeathStatus(false);
+  if(window._finishTimer){ clearTimeout(window._finishTimer); window._finishTimer=null; }
+  if(window._nextRoundTimer){ clearTimeout(window._nextRoundTimer); window._nextRoundTimer=null; }
   if(window._lobbyHeartbeat){ clearInterval(window._lobbyHeartbeat); window._lobbyHeartbeat=null; }
   if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
@@ -2174,6 +2657,7 @@ function beginMultiGame(){
   showScreen("screen-multi-game");
   startBgm();
   const roundSeed = (matchBaseSeed + matchRound*99991) % 2147483647;
+  currentRoundSeed = roundSeed;
   if(cachedTransport && cachedTransport.setTeamMode) cachedTransport.setTeamMode(roomTeamMode);
   if(cachedTransport && cachedTransport.startRound) cachedTransport.startRound(matchRound, roundSeed);
   const rng = mulberry32(roundSeed);
@@ -2182,11 +2666,17 @@ function beginMultiGame(){
 
   itemLineCounter = 0;
   myItems = [];
+  lastChipsHtml = "";
+  $("status-chips").innerHTML = "";
+  $("fx-layer").querySelectorAll(".fx-banner").forEach(b=>b.remove());
+  $("ingame-item-guide").style.display = "none";
+  document.querySelector("#screen-multi-game .board-col").classList.remove("shielded","speedy","shake");
   renderItemSlots();
   $("item-box").style.display = roomGameMode==="item" ? "" : "none";
   if(roomGameMode==="item"){
+    showFx("info","🎁","ITEM MODE","2줄 지울 때마다 · 30초마다 아이템 획득!\nX키(또는 사용 버튼)로 사용", 3600);
     window._itemTimer = setInterval(()=>{
-      if(multiEngine && !multiEngine.gameOver) grantItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
+      if(multiEngine && !multiEngine.gameOver && !roundDecided) grantItem(ITEM_KEYS[Math.floor(Math.random()*ITEM_KEYS.length)]);
     }, ITEM_TIMER_MS);
   }
 
@@ -2219,9 +2709,9 @@ function beginMultiGame(){
       bctx.fillStyle = "#f4f4f8";
       bctx.fillRect(0,0,boardCanvas.width,boardCanvas.height);
       bctx.fillStyle = "#8890a8";
-      bctx.font = "bold 16px sans-serif";
+      bctx.font = "bold 40px sans-serif";
       bctx.textAlign = "center";
-      bctx.fillText("!", boardCanvas.width/2, boardCanvas.height/2);
+      bctx.fillText("💥", boardCanvas.width/2, boardCanvas.height/2);
     } else {
       drawBoard(bctx, boardCanvas.width, boardCanvas.height, multiEngine);
     }
@@ -2239,31 +2729,27 @@ function beginMultiGame(){
     }
     $("m-score").textContent = multiEngine.score;
     $("m-lines").textContent = multiEngine.lines;
+    updateStatusChips();
   }
   window._multiCtl = makeInputController(multiEngine, refresh);
   refresh();
   renderOpponents();
   window._multiPauseToggle = function(p){
-    if(!window._multiCtl) return;
+    if(!window._multiCtl || roundDecided) return;
     window._multiCtl.setPaused(p);
     if(cachedTransport && cachedTransport.setPaused) cachedTransport.setPaused(p);
     $("overlay-pause").classList.toggle("active", p);
   };
 
-  ensureTransport().then(room=>{
-    if(room && currentRoomId) room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true, alive:true, score:0, lines:0, boardRows: multiEngine.boardSnapshotRows() });
-  });
-  window._multiSyncTimer = setInterval(async ()=>{
-    const room = await ensureTransport();
-    if(!room || !currentRoomId) return;
-    room.presence({
-      id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true,
-      alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
-      boardRows: multiEngine.boardSnapshotRows()
-    });
+  const first = roomT();
+  if(first) first.presence(Object.assign(gamePresence(), { score:0, lines:0 }));
+  window._multiSyncTimer = setInterval(()=>{
+    const room = roomT();
+    if(!room || !multiEngine) return;
+    room.presence(gamePresence());
+    checkRoundDecided();
   }, 400);
 
-  document.querySelectorAll(".touch-controls button").forEach(b=>{});
   $("tm-left").onclick = ()=> multiEngine.move(-1);
   $("tm-right").onclick = ()=> multiEngine.move(1);
   $("tm-rotate").onclick = ()=> multiEngine.rotate(1);
@@ -2275,21 +2761,53 @@ function beginMultiGame(){
   $("tm-hold").onclick = ()=> multiEngine.holdSwap();
 }
 
+/* ---- roster / opponents ---- */
+function inRoster(id){ return matchRoster.length===0 || matchRoster.some(r=>r.id===id); }
+function teamOfId(id){
+  const r = matchRoster.find(x=>x.id===id);
+  if(r && r.team) return r.team;
+  const p = lastPeersSnapshot.find(x=>x.id===id);
+  return (p && p.team) || null;
+}
+function isCurrentRound(p){ return p.rseed===undefined || p.rseed===null || p.rseed===currentRoundSeed; }
+function opponentPeers(){
+  return lastPeersSnapshot.filter(p=> p.id!==MY_ID && inRoster(p.id) && isCurrentRound(p) && p.alive!==false);
+}
+function targetableOpponents(){
+  const others = opponentPeers();
+  if(roomTeamMode && myTeam){
+    const enemies = others.filter(p=> teamOfId(p.id) && teamOfId(p.id)!==myTeam);
+    if(enemies.length>0) return enemies;
+  }
+  return others;
+}
+
 async function sendAttack(lines){
-  const room = await ensureTransport();
-  if(!room || !currentRoomId) return;
+  const room = roomT();
+  if(!room) return;
   const alive = targetableOpponents();
   if(alive.length===0) return;
   const target = alive[Math.floor(Math.random()*alive.length)];
   room.emit("attack", { roomId: currentRoomId, targetId: target.id, fromNick: myNickname, lines });
 }
 
+/* ---- items ---- */
 function renderItemSlots(){
   for(let i=0;i<ITEM_INVENTORY_MAX;i++){
     const el = $("item-icon-"+i);
     const def = myItems[i] ? ITEM_DEFS[myItems[i]] : null;
     el.textContent = def ? def.icon : "-";
     el.title = def ? (def.label + " - " + def.desc) : "";
+    el.classList.toggle("next", i===0 && !!def);
+  }
+  const nx = $("item-next");
+  if(myItems.length===0){
+    nx.innerHTML = `<span>보유 아이템 없음</span><span>2줄 지우거나 30초마다 획득</span>`;
+  } else {
+    const d = ITEM_DEFS[myItems[0]];
+    const second = myItems[1] ? ITEM_DEFS[myItems[1]] : null;
+    nx.innerHTML = `<b>${d.icon} ${d.label} <small>(${d.kind==="attack"?"상대에게":"나에게"})</small></b><span>${d.desc}</span>` +
+      (second ? `<span style="margin-top:3px;">다음 → ${second.icon} ${second.label}</span>` : "");
   }
   $("btn-use-item").disabled = myItems.length===0;
 }
@@ -2297,55 +2815,60 @@ function grantItem(itemKey){
   if(myItems.length >= ITEM_INVENTORY_MAX) return false;
   myItems.push(itemKey);
   renderItemSlots();
-  toast(ITEM_DEFS[itemKey].label + " 획득! X키로 사용 (" + myItems.length + "/" + ITEM_INVENTORY_MAX + ")");
+  const d = ITEM_DEFS[itemKey];
+  toast(d.icon + " " + d.label + " 획득! " + d.short + " · X키로 사용 (" + myItems.length + "/" + ITEM_INVENTORY_MAX + ")", 2600);
   SFX.itemGet();
   return true;
 }
-function targetableOpponents(){
-  const others = lastPeersSnapshot.filter(p=> p.id!==MY_ID && p.alive!==false);
-  if(roomTeamMode && myTeam){
-    const enemies = others.filter(p=> p.team && p.team!==myTeam);
-    if(enemies.length>0) return enemies;
-  }
-  return others;
-}
 function applyItemEffect(itemType, fromNick){
-  if(!multiEngine || multiEngine.gameOver) return;
-  const def = ITEM_DEFS[itemType];
+  if(!multiEngine || multiEngine.gameOver || roundDecided) return;
+  const def = ITEM_DEFS[itemType] || { icon:"❓", label:"아이템", hitSub:"" };
+  const from = fromNick || "상대";
   if(multiEngine.consumeShield()){
-    toast("실드로 " + (fromNick||"상대") + "의 " + (def?def.label:"아이템") + " 막음!");
+    showFx("block","🛡️","방어 성공!", from + "의 " + def.label + " 무효화", 1800);
+    tintFx("rgba(110,160,255,.5)");
+    SFX.shieldBlock();
     return;
   }
   flashAttack();
-  toast((fromNick||"상대") + "의 " + (def?def.label:"아이템") + "!");
-  SFX.attackHit();
-  if(itemType==="bomb") multiEngine.queueGarbage(3);
-  else if(itemType==="speed") multiEngine.speedBoostUntil = Date.now()+8000;
-  else if(itemType==="fog") multiEngine.fogUntil = Date.now()+8000;
-  else if(itemType==="flash") multiEngine.blindUntil = Date.now()+1000;
+  SFX.itemHit(itemType);
+  showFx("hit", def.icon, def.label + " 피격!", from + "의 공격 · " + def.hitSub, 2200);
+  if(itemType==="bomb"){ multiEngine.queueGarbage(3); shakeBoard(); tintFx("rgba(255,77,94,.55)"); }
+  else if(itemType==="speed"){ multiEngine.speedBoostUntil = Date.now()+8000; shakeBoard(); tintFx("rgba(255,159,77,.5)"); }
+  else if(itemType==="fog"){ multiEngine.fogUntil = Date.now()+8000; tintFx("rgba(150,160,190,.55)"); }
+  else if(itemType==="flash"){ multiEngine.blindUntil = Date.now()+1000; tintFx("rgba(255,255,255,.9)"); }
 }
 async function useItem(){
-  if(myItems.length===0 || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver) return;
+  if(myItems.length===0 || roomGameMode!=="item" || !multiEngine || multiEngine.gameOver || roundDecided) return;
   const itemType = myItems[0];
   const def = ITEM_DEFS[itemType];
   if(def && def.kind==="self"){
     myItems.shift();
     renderItemSlots();
-    SFX.itemUse();
-    if(itemType==="shield"){ multiEngine.shieldCount++; toast("실드 장착! 다음 공격을 막아줍니다"); }
-    else if(itemType==="clear"){ multiEngine.clearBottomRow(); toast("바닥 줄 정리!"); }
+    SFX.itemSelf(itemType);
+    if(itemType==="shield"){
+      multiEngine.shieldCount++;
+      showFx("self","🛡️","SHIELD ON","다음 공격 1회를 완전히 막아줘요", 2000);
+      tintFx("rgba(110,160,255,.5)");
+    } else if(itemType==="clear"){
+      multiEngine.clearBottomRow();
+      showFx("self","🧹","LINE CLEAR","맨 아래 줄 1개 제거!", 1800);
+      tintFx("rgba(77,255,146,.45)");
+    }
     return;
   }
-  const room = await ensureTransport();
-  if(!room || !currentRoomId) return;
+  const room = roomT();
+  if(!room) return;
   const alive = targetableOpponents();
-  if(alive.length===0) return;
+  if(alive.length===0){ toast("공격할 상대가 없어요"); return; }
   const target = alive[Math.floor(Math.random()*alive.length)];
   myItems.shift();
   room.emit("item", { roomId: currentRoomId, targetId: target.id, itemType, fromNick: myNickname });
-  toast((def||{}).label + " 사용!");
+  lastHitTarget = { id: target.id, until: Date.now()+1500 };
+  renderOpponents();
+  showFx("out", def.icon, def.label + " 발사!", "→ " + (target.nickname||"상대") + " · " + def.short, 1800);
   renderItemSlots();
-  SFX.itemUse();
+  SFX.itemFire(itemType);
 }
 $("btn-use-item").addEventListener("click", useItem);
 document.addEventListener("keydown", (e)=>{
@@ -2356,80 +2879,148 @@ const OPP_BOARD_W = 56, OPP_BOARD_H = Math.round(OPP_BOARD_W/COLS*ROWS);
 function renderOpponents(){
   const wrap = $("opp-grid");
   wrap.innerHTML = "";
-  let others = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  const now = Date.now();
+  let others = [];
+  if(matchRoster.length>0){
+    matchRoster.filter(r=>r.id!==MY_ID).forEach(r=>{
+      const live = lastPeersSnapshot.find(p=>p.id===r.id);
+      if(live && isCurrentRound(live)) others.push(Object.assign({}, live, { _left:false }));
+      else if(live) others.push(Object.assign({}, live, { boardRows:[], score:0, alive:true, _left:false }));   // hasn't started this round yet
+      else others.push(Object.assign({}, r, peerLastSeen[r.id] || {}, { alive:false, _left:true }));           // gone from the room
+    });
+  } else {
+    others = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
+  }
   if(roomTeamMode && myTeam){
-    others = others.slice().sort((a,b)=> (a.team===myTeam?0:1) - (b.team===myTeam?0:1));
+    others = others.slice().sort((a,b)=> (teamOfId(a.id)===myTeam?0:1) - (teamOfId(b.id)===myTeam?0:1));
   }
   others.forEach(p=>{
     const card = document.createElement("div");
-    const isAlly = roomTeamMode && myTeam && p.team===myTeam;
-    card.className = "card opp-card" + (p.alive===false ? " dead":"") + (isAlly ? " ally":"");
-    const teamBadge = (roomTeamMode && p.team) ? `<span class="team-badge team-${p.team}">${p.team==="A"?"🔴":"🔵"}${isAlly?" 아군":""}</span>` : "";
+    const t = teamOfId(p.id);
+    const isAlly = roomTeamMode && myTeam && t===myTeam;
+    const isHit = lastHitTarget.id===p.id && now < lastHitTarget.until;
+    card.className = "card opp-card" + (p.alive===false ? " dead":"") + (isAlly ? " ally":"") + (isHit ? " hit":"");
+    const teamBadge = (roomTeamMode && t) ? `<span class="team-badge team-${t}">${t==="A"?"🔴":"🔵"}${isAlly?" 아군":""}</span>` : "";
     card.innerHTML = `<div class="name-with-avatar">${avatarHTML(p.character)}<div class="nick">${escapeHtml(p.nickname||"???")}${teamBadge}</div></div>
       <div class="center"><canvas class="opp-board" width="${OPP_BOARD_W}" height="${OPP_BOARD_H}"></canvas></div>
       <div class="stat">점수 ${p.score||0}</div>
-      <div class="stat">${p.alive===false? "탈락" : "생존"}</div>`;
+      <div class="stat">${p._left ? "퇴장" : (p.alive===false ? "탈락" : "생존")}</div>`;
     wrap.appendChild(card);
     const canvas = card.querySelector(".opp-board");
     drawMiniBoardFromSnapshot(canvas.getContext("2d"), OPP_BOARD_W, OPP_BOARD_H, p.boardRows);
   });
 }
 
+/* ---- round resolution ----
+   Every client decides for itself from the shared presence data. A round is over when at most one
+   player (or one team) is still alive — so the survivor's game ends too, not just the loser's. */
 async function onMultiGameOver(){
-  const room = await ensureTransport();
-  if(room && currentRoomId){
-    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:true, inGame:true, alive:false, score: multiEngine.score, lines: multiEngine.lines, boardRows: multiEngine.boardSnapshotRows() });
-    room.emit("gameover", { roomId: currentRoomId, id: MY_ID });
-  }
+  const room = roomT();
+  if(room) room.presence(gamePresence());
+  if(room) room.emit("gameover", { roomId: currentRoomId, id: MY_ID });
   checkRoundDecided();
 }
 
-function showDeathWaitingStatus(waiting){
-  $("death-status").style.display = waiting ? "flex" : "none";
+function showDeathStatus(show, title, sub, spinner){
+  const box = $("death-status");
+  box.style.display = show ? "flex" : "none";
+  if(!show) return;
+  $("death-status-title").textContent = title || "GAME OVER";
+  $("death-status-sub").textContent = sub || "";
+  box.querySelector(".spinner").style.display = spinner===false ? "none" : "";
+}
+
+function evaluateAlive(){
+  const graceOver = Date.now() - roundStartTime > 4000;
+  const alive = [];
+  matchRoster.forEach(r=>{
+    if(r.id===MY_ID){ if(multiEngine && !multiEngine.gameOver) alive.push(r.id); return; }
+    const p = lastPeersSnapshot.find(x=>x.id===r.id);
+    if(!p){ if(!graceOver) alive.push(r.id); return; }   // not seen yet (early) or left the room (later)
+    if(!isCurrentRound(p)){ alive.push(r.id); return; }   // still on the previous round's data
+    if(p.alive!==false) alive.push(r.id);
+  });
+  return alive;
+}
+function roundIsOver(alive){
+  if(roomTeamMode){
+    const teams = new Set(alive.map(id=> teamOfId(id) || ("?"+id)));
+    return teams.size <= 1;
+  }
+  return alive.length <= 1;
 }
 
 function checkRoundDecided(){
-  if(!multiStarted || roundDecided || !multiEngine) return;
-  if(!multiEngine.gameOver) return;
-  if(Date.now() - roundStartTime < 1500) return;
-  const othersKnown = lastPeersSnapshot.filter(p=>p.id!==MY_ID);
-  if(othersKnown.length===0) return;
-  const othersAlive = othersKnown.filter(p=>p.alive!==false).length;
-  if(othersAlive>0){
-    showDeathWaitingStatus(true);
+  if(!multiStarted || roundDecided || !multiEngine || matchRoster.length===0) return;
+  if(Date.now() - roundStartTime < 2000) return;
+  const alive = evaluateAlive();
+  if(!roundIsOver(alive)){
+    if(multiEngine.gameOver) showDeathStatus(true, "GAME OVER", "상대를 기다리는 중...", true);
     return;
   }
-  showDeathWaitingStatus(false);
   roundDecided = true;
-  setTimeout(finishRound, 1000);
+  roundAliveIds = alive;
+  // freeze my board: the round is over for everyone, the survivor doesn't keep playing
+  if(window._multiCtl) window._multiCtl.setPaused(true);
+  multiEngine.softDrop = false;
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
+  if(cachedTransport && cachedTransport.setPaused) cachedTransport.setPaused(false);
+  $("overlay-pause").classList.remove("active");
+  const room = roomT();
+  if(room) room.presence(gamePresence());   // publish my final score before everyone tallies
+  const iWin = roomTeamMode ? alive.some(id=> teamOfId(id)===myTeam) : alive.includes(MY_ID);
+  if(iWin){ showDeathStatus(true, "YOU WIN!", "결과를 집계하는 중...", false); SFX.victory(); }
+  else showDeathStatus(true, "GAME OVER", "결과를 집계하는 중...", false);
+  if(window._finishTimer) clearTimeout(window._finishTimer);
+  window._finishTimer = setTimeout(finishRound, 1500);
 }
 
 function finishRound(){
+  window._finishTimer = null;
+  if(!multiStarted || !currentRoomId || !multiEngine) return;
   if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
-  matchTotals[MY_ID] = (matchTotals[MY_ID]||0) + multiEngine.score;
-  lastPeersSnapshot.filter(p=>p.id!==MY_ID).forEach(p=>{
-    matchTotals[p.id] = (matchTotals[p.id]||0) + (p.score||0);
+  const entries = matchRoster.map(r=>{
+    if(r.id===MY_ID){
+      return { id:MY_ID, nickname:myNickname+" (나)", character:myCharacter, team:myTeam, alive:roundAliveIds.includes(MY_ID), score:multiEngine.score };
+    }
+    const live = lastPeersSnapshot.find(p=>p.id===r.id);
+    const p = (live && isCurrentRound(live)) ? live : (peerLastSeen[r.id] || {});
+    return { id:r.id, nickname:r.nickname||p.nickname||"???", character:r.character||p.character, team:r.team||null,
+             alive:roundAliveIds.includes(r.id), score:(p.score||0) };
   });
+  entries.forEach(e=>{ matchTotals[e.id] = (matchTotals[e.id]||0) + e.score; });
+
+  // winner(s): the survivor / surviving team; if everyone died at once, the top scorer (and team)
+  let winnerIds = entries.filter(e=>e.alive).map(e=>e.id);
+  if(winnerIds.length===0){
+    const top = entries.slice().sort((a,b)=>b.score-a.score)[0];
+    if(top) winnerIds = [top.id];
+  }
+  if(roomTeamMode && winnerIds.length>0){
+    const wt = teamOfId(winnerIds[0]);
+    if(wt) winnerIds = entries.filter(e=>teamOfId(e.id)===wt).map(e=>e.id);
+  }
+  winnerIds.forEach(id=>{ matchWins[id] = (matchWins[id]||0) + 1; });
+  const iWon = winnerIds.includes(MY_ID);
+  const winnerEntry = entries.find(e=>winnerIds.includes(e.id));
+
   const isFinalRound = matchRound >= matchRounds;
-  const roundEntries = [{ id:MY_ID, nickname:myNickname+" (나)", character:myCharacter, team:myTeam, alive:!multiEngine.gameOver, score:multiEngine.score }]
-    .concat(lastPeersSnapshot.filter(p=>p.id!==MY_ID).map(p=>({ id:p.id, nickname:p.nickname, character:p.character, team:p.team||null, alive:p.alive!==false, score:p.score||0 })));
-
-  const winner = roundEntries.find(p=>p.alive);
-  if(winner) matchWins[winner.id] = (matchWins[winner.id]||0) + 1;
-
-  showDeathWaitingStatus(false);
+  showDeathStatus(false);
   if(isFinalRound){
     stopBgm();
-    const all = roundEntries.map(p=>({ ...p, total: matchTotals[p.id]||p.score, wins: matchWins[p.id]||0 }));
+    const all = entries.map(p=>({ ...p, total: matchTotals[p.id]||0, wins: matchWins[p.id]||0 }));
     all.sort((a,b)=> (b.wins - a.wins) || (b.total - a.total));
     renderResultsList(all, "final");
     let victory = all[0] && all[0].id===MY_ID;
     if(roomTeamMode && myTeam){
-      const teamTotal = (t)=> all.filter(p=>p.team===t).reduce((s,p)=>s+(p.total||0),0);
-      victory = teamTotal(myTeam) >= teamTotal(myTeam==="A"?"B":"A");
+      const teamSum = (t, key)=> all.filter(p=>teamOfId(p.id)===t).reduce((s,p)=>s+(p[key]||0),0);
+      const other = myTeam==="A" ? "B" : "A";
+      victory = teamSum(myTeam,"wins") !== teamSum(other,"wins")
+        ? teamSum(myTeam,"wins") > teamSum(other,"wins")
+        : teamSum(myTeam,"total") >= teamSum(other,"total");
     }
     $("mo-title").textContent = victory ? "이겼다! 🎉" : "졌다...";
-    $("mo-subtitle").textContent = matchRounds>1 ? `총 ${matchRounds}판 · 라운드 승수 기준` : "";
+    $("mo-subtitle").textContent = matchRounds>1 ? `총 ${matchRounds}판 · 라운드 승수 기준` : "점수를 확인하고 방으로 돌아가세요";
     $("btn-multi-again").style.display = "";
     $("overlay-multi-over").classList.add("active");
     if(saveMatchRecord && scoreServerBase()){
@@ -2442,15 +3033,16 @@ function finishRound(){
       });
     }
   } else {
-    const all = roundEntries.slice();
+    const all = entries.slice();
     all.sort((a,b)=> (b.alive - a.alive) || (b.score - a.score));
     renderResultsList(all, "round");
-    const iWon = winner && winner.id===MY_ID;
     $("mo-title").textContent = `ROUND ${matchRound}/${matchRounds} · ${iWon ? "이겼다!" : "졌다..."}`;
-    $("mo-subtitle").textContent = (winner && !iWon ? `${winner.nickname}님 승리 · ` : "") + "잠시 후 다음 라운드가 시작됩니다...";
+    $("mo-subtitle").textContent = (!iWon && winnerEntry ? `${winnerEntry.nickname}님 승리 · ` : "") + "잠시 후 다음 라운드가 시작됩니다...";
     $("btn-multi-again").style.display = "none";
     $("overlay-multi-over").classList.add("active");
-    setTimeout(()=>{
+    window._nextRoundTimer = setTimeout(()=>{
+      window._nextRoundTimer = null;
+      if(!multiStarted || !currentRoomId) return;
       matchRound += 1;
       $("overlay-multi-over").classList.remove("active");
       beginMultiGame();
@@ -2461,10 +3053,10 @@ function finishRound(){
 function renderResultsList(all, mode){
   const list = $("mo-list");
   list.innerHTML = "";
-  if(roomTeamMode && all.some(p=>p.team)){
+  if(roomTeamMode && all.some(p=>teamOfId(p.id))){
     const key = mode==="final" ? "total" : "score";
     ["A","B"].forEach(t=>{
-      const members = all.filter(p=>p.team===t);
+      const members = all.filter(p=>teamOfId(p.id)===t);
       if(members.length===0) return;
       const sum = members.reduce((s,p)=>s+(p[key]||0),0);
       const row = document.createElement("div");
@@ -2477,27 +3069,36 @@ function renderResultsList(all, mode){
   all.forEach((p,i)=>{
     const row = document.createElement("div");
     row.className = "result-row";
-    const teamBadge = (roomTeamMode && p.team) ? `<span class="team-badge team-${p.team}">${p.team}</span>` : "";
+    const t = teamOfId(p.id);
+    const teamBadge = (roomTeamMode && t) ? `<span class="team-badge team-${t}">${t}</span>` : "";
     const scoreText = mode==="final" ? `${p.wins}승 · ${p.total}점` : `${p.score}점 ${p.alive? "(생존)":""}`;
     row.innerHTML = `<span class="name-with-avatar" style="justify-content:flex-start;">${avatarHTML(p.character)}${i+1}위 ${escapeHtml(p.nickname)}${teamBadge}</span><span>${scoreText}</span>`;
     list.appendChild(row);
   });
 }
+
+/* after the final results: back to the room (not the main menu) */
 async function rematchInRoom(){
   $("overlay-multi-over").classList.remove("active");
-  showDeathWaitingStatus(false);
+  showDeathStatus(false);
   if(window._multiSyncTimer){ clearInterval(window._multiSyncTimer); window._multiSyncTimer=null; }
   if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
+  if(window._finishTimer){ clearTimeout(window._finishTimer); window._finishTimer=null; }
+  if(window._nextRoundTimer){ clearTimeout(window._nextRoundTimer); window._nextRoundTimer=null; }
+  if(window._multiCtl){ window._multiCtl.destroy(); window._multiCtl=null; }
+  stopBgm();
   multiStarted = false;
   roundDecided = false;
   matchTotals = {};
   matchWins = {};
   matchRound = 1;
+  matchRoster = [];
+  peerLastSeen = {};
   iAmReady = false;
   myItems = [];
-  const room = await ensureTransport();
-  if(room && currentRoomId){
-    room.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready:false, alive:true, score:0, lines:0, inGame:false });
+  const room = roomT();
+  if(room){
+    room.presence(lobbyPresence({ alive:true, score:0, lines:0, inGame:false, boardRows:[], rseed:null }));
   }
   if(testModeBotCount>0){
     startMultiMatch();
@@ -2506,19 +3107,20 @@ async function rematchInRoom(){
   $("btn-ready-toggle").textContent = "준비하기";
   $("room-code-label").textContent = currentRoomId;
   showScreen("screen-multi-room");
-  if(window._lobbyHeartbeat) clearInterval(window._lobbyHeartbeat);
-  window._lobbyHeartbeat = setInterval(async ()=>{
-    if(multiStarted || !currentRoomId) return;
-    const t = await ensureTransport();
-    if(t) t.presence({ id: MY_ID, roomId: currentRoomId, nickname: myNickname, character: myCharacter, team: myTeam, ready: iAmReady, alive:true });
-  }, 5000);
-  setTimeout(renderLobby, 400);
+  startLobbyHeartbeat();
+  setTimeout(renderLobby, 300);
 }
 $("btn-multi-again").addEventListener("click", rematchInRoom);
 
-window.addEventListener("beforeunload", ()=>{ stopAll(); });
+function leaveNow(){
+  stopAll();
+  if(cachedTransport && cachedTransport.beacon) cachedTransport.beacon();
+}
+window.addEventListener("beforeunload", leaveNow);
+window.addEventListener("pagehide", (e)=>{ if(!e.persisted) leaveNow(); });
 
 })();
+
 </script>
 
 </body>

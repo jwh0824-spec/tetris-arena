@@ -13,7 +13,7 @@ const os = require("os");
 const path = require("path");
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8787;
-const STALE_MS = 25000;
+const STALE_MS = 20000;
 const MAX_EVENTS = 500;
 const DATABASE_URL = process.env.DATABASE_URL || "";
 
@@ -167,20 +167,36 @@ async function getMultiResultRows({ nickname, mode, limit }) {
   return db.prepare(`SELECT * FROM multi_results ${whereSql} ORDER BY played_at DESC LIMIT ?`).all(...params, limit);
 }
 
-/** roomId -> { players: Map(id -> presenceObject), events: [{seq,topic,data,ts}], seq } */
+/**
+ * roomId -> { players: Map(id -> presenceObject), events: [{seq,topic,data,ts}], seq,
+ *             joinSeq (join order counter), left: Map("id:sess" -> ts), touched }
+ */
 const rooms = new Map();
 
 function getRoom(id) {
-  if (!rooms.has(id)) rooms.set(id, { players: new Map(), events: [], seq: 0 });
-  return rooms.get(id);
+  if (!rooms.has(id)) rooms.set(id, { players: new Map(), events: [], seq: 0, joinSeq: 0, left: new Map(), touched: Date.now() });
+  const room = rooms.get(id);
+  room.touched = Date.now();
+  return room;
 }
 function cleanRoom(room) {
   const now = Date.now();
   for (const [id, p] of room.players) {
     if (now - p.ts > STALE_MS) room.players.delete(id);
   }
+  for (const [k, ts] of room.left) {
+    if (now - ts > 60000) room.left.delete(k);
+  }
   if (room.events.length > MAX_EVENTS) room.events = room.events.slice(-MAX_EVENTS);
 }
+// drop rooms nobody is in anymore so the map (and the "rooms" counter) doesn't grow forever
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, room] of rooms) {
+    cleanRoom(room);
+    if (room.players.size === 0 && now - room.touched > 60000) rooms.delete(id);
+  }
+}, 30000).unref();
 function send(res, status, body) {
   const data = JSON.stringify(body);
   res.writeHead(status, {
@@ -218,7 +234,8 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "GET" && u.pathname === "/api/room") {
     const roomId = u.searchParams.get("roomId") || "";
-    const room = getRoom(roomId);
+    const room = rooms.get(roomId);
+    if (!room) { send(res, 200, { players: [] }); return; }
     cleanRoom(room);
     send(res, 200, { players: Array.from(room.players.values()) });
     return;
@@ -226,9 +243,14 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "GET" && u.pathname === "/api/events") {
     const roomId = u.searchParams.get("roomId") || "";
-    const since = Number(u.searchParams.get("since") || 0);
-    const room = getRoom(roomId);
-    send(res, 200, { events: room.events.filter((e) => e.seq > since) });
+    const sinceRaw = u.searchParams.get("since");
+    const room = rooms.get(roomId);
+    if (!room) { send(res, 200, { events: [], seq: 0 }); return; }
+    // since < 0 (or missing) = "I just joined": hand back only the current position so a
+    // newcomer never replays old start/attack/chat events from before they arrived.
+    if (sinceRaw === null || Number(sinceRaw) < 0) { send(res, 200, { events: [], seq: room.seq }); return; }
+    const since = Number(sinceRaw) || 0;
+    send(res, 200, { events: room.events.filter((e) => e.seq > since), seq: room.seq });
     return;
   }
 
@@ -237,9 +259,28 @@ const server = http.createServer((req, res) => {
       if (err) { send(res, 400, { error: "bad json" }); return; }
       if (!data.roomId || !data.id) { send(res, 400, { error: "roomId and id required" }); return; }
       const room = getRoom(data.roomId);
+      // a presence update that was already in flight when the player left must not resurrect them
+      if (data.sess && room.left.has(data.id + ":" + data.sess)) { send(res, 200, { ok: true, ignored: true }); return; }
+      const prev = room.players.get(data.id);
+      data.joined = prev && prev.joined ? prev.joined : ++room.joinSeq;
       data.ts = Date.now();
       room.players.set(data.id, data);
       cleanRoom(room);
+      send(res, 200, { ok: true });
+    });
+    return;
+  }
+
+  if (req.method === "POST" && u.pathname === "/api/leave") {
+    readJsonBody(req, (err, data) => {
+      if (err) { send(res, 400, { error: "bad json" }); return; }
+      if (!data.roomId || !data.id) { send(res, 400, { error: "roomId and id required" }); return; }
+      const room = rooms.get(data.roomId);
+      if (room) {
+        room.players.delete(data.id);
+        if (data.sess) room.left.set(data.id + ":" + data.sess, Date.now());
+        room.touched = Date.now();
+      }
       send(res, 200, { ok: true });
     });
     return;
