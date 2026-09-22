@@ -2054,14 +2054,7 @@ let matchRounds = 1;
 let matchRound = 1;
 let matchTotals = {};
 let matchWins = {};
-let roundDecided = false;    // true once *my own* result for this round is locked in
-let roundFinalized = false;  // true once finishRound() has actually run
-let decidedAliveSnapshot = null;  // who was alive the instant the round was decided (preserves win credit)
-let survivorGraceStart = 0;
-let survivorGraceNoticeShown = false;
-let settledAt = 0;
-const SURVIVOR_GRACE_MS = 8000;   // sole survivor keeps playing this long before their score is locked in
-const SETTLE_WAIT_MS = 9000;      // how long a finished player waits for the others to also lock in
+let roundDecided = false;    // true once the round has ended (everyone's board freezes together)
 let chatLogEntries = [];
 let roomGameMode = "normal";
 let roomTeamMode = false;
@@ -2340,7 +2333,7 @@ function gamePresence(){
   return {
     id: MY_ID, roomId: currentRoomId, sess: mySess, nickname: myNickname, character: myCharacter, team: myTeam,
     ready:true, inGame:true, alive: !multiEngine.gameOver, score: multiEngine.score, lines: multiEngine.lines,
-    boardRows: multiEngine.boardSnapshotRows(), rseed: currentRoundSeed, finished: roundDecided
+    boardRows: multiEngine.boardSnapshotRows(), rseed: currentRoundSeed
   };
 }
 function startLobbyHeartbeat(){
@@ -2647,10 +2640,6 @@ function updateStatusChips(){
   if(multiEngine.speedBoostUntil>now) chips.push("⚡ 스피드업 " + Math.ceil((multiEngine.speedBoostUntil-now)/1000) + "s");
   if(multiEngine.fogUntil>now) chips.push("🌫️ 안개 " + Math.ceil((multiEngine.fogUntil-now)/1000) + "s");
   if(multiEngine.pendingGarbage>0) chips.push("⬆ 쓰레기 " + multiEngine.pendingGarbage + "줄 대기");
-  if(survivorGraceStart && !roundDecided){
-    const left = Math.max(0, Math.ceil((SURVIVOR_GRACE_MS - (now-survivorGraceStart))/1000));
-    chips.push("🏆 마지막 생존자 · 추가 점수 " + left + "s");
-  }
   const html = chips.map(c=>`<span class="chip">${c}</span>`).join("");
   if(html !== lastChipsHtml){ $("status-chips").innerHTML = html; lastChipsHtml = html; }
   bc.classList.toggle("shielded", multiEngine.shieldCount>0);
@@ -2661,11 +2650,6 @@ let roundStartTime = 0;
 function beginMultiGame(){
   multiStarted = true;
   roundDecided = false;
-  roundFinalized = false;
-  decidedAliveSnapshot = null;
-  survivorGraceStart = 0;
-  survivorGraceNoticeShown = false;
-  settledAt = 0;
   roundAliveIds = [];
   peerLastSeen = {};
   roundStartTime = Date.now();
@@ -2972,61 +2956,33 @@ function roundIsOver(alive){
   return alive.length <= 1;
 }
 
-/* Two phases:
-   1) Lock in MY OWN result. The moment only me (or my team) is left contesting, that fact is
-      remembered forever (decidedAliveSnapshot) so the win credit doesn't change later — but if I'm
-      still alive I keep playing for SURVIVOR_GRACE_MS so my score reflects real play, instead of
-      freezing the instant the last opponent tops out.
-   2) Once I've locked in, wait briefly for the others to lock in too (so their displayed/ saved
-      score is their real final one, not a stale mid-game snapshot), capped by SETTLE_WAIT_MS. */
+/* Round ends the instant only one player (or team) is left — for everyone at once, so the next
+   round can start together. The winner doesn't get bonus play time; instead finishRound() below
+   tops their score up so it's never lower than a loser's, since surviving should always outscore
+   dying regardless of exactly when each board topped out. */
 function checkRoundDecided(){
-  if(!multiStarted || roundFinalized || !multiEngine || matchRoster.length===0) return;
-  if(!roundDecided){
-    if(Date.now() - roundStartTime < 2000) return;
-    if(!decidedAliveSnapshot){
-      const alive = evaluateAlive();
-      if(!roundIsOver(alive)){
-        if(multiEngine.gameOver) showDeathStatus(true, "GAME OVER", "상대를 기다리는 중...", true);
-        return;
-      }
-      decidedAliveSnapshot = alive;
-    }
-    const amAlive = !multiEngine.gameOver;
-    if(amAlive){
-      if(!survivorGraceStart) survivorGraceStart = Date.now();
-      if(Date.now() - survivorGraceStart < SURVIVOR_GRACE_MS){
-        if(!survivorGraceNoticeShown){
-          survivorGraceNoticeShown = true;
-          toast("마지막 생존자예요! 몇 초 더 플레이해서 점수를 쌓을 수 있어요", 2600);
-        }
-        return;   // still playing — checked again on the next tick
-      }
-    }
-    roundDecided = true;
-    roundAliveIds = decidedAliveSnapshot;
-    settledAt = Date.now();
-    // freeze my board now that my own result is locked in
-    if(amAlive){ if(window._multiCtl) window._multiCtl.setPaused(true); multiEngine.softDrop = false; }
-    if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
-    if(cachedTransport && cachedTransport.setPaused) cachedTransport.setPaused(false);
-    $("overlay-pause").classList.remove("active");
-    const room = roomT();
-    if(room) room.presence(gamePresence());   // publish my final score, marked finished
-    const iWin = roomTeamMode ? roundAliveIds.some(id=> teamOfId(id)===myTeam) : roundAliveIds.includes(MY_ID);
-    if(iWin){ showDeathStatus(true, "YOU WIN!", "결과를 집계하는 중...", false); SFX.victory(); }
-    else showDeathStatus(true, "GAME OVER", "결과를 집계하는 중...", false);
+  if(!multiStarted || roundDecided || !multiEngine || matchRoster.length===0) return;
+  if(Date.now() - roundStartTime < 2000) return;
+  const alive = evaluateAlive();
+  if(!roundIsOver(alive)){
+    if(multiEngine.gameOver) showDeathStatus(true, "GAME OVER", "상대를 기다리는 중...", true);
+    return;
   }
-  const stillWaiting = matchRoster.some(r=>{
-    if(r.id===MY_ID) return false;
-    const p = lastPeersSnapshot.find(x=>x.id===r.id);
-    if(!p) return false;                   // left the room — nothing to wait for
-    if(!isCurrentRound(p)) return false;   // already moved on to the lobby/next round
-    return p.finished !== true;
-  });
-  if(stillWaiting && Date.now() - settledAt < SETTLE_WAIT_MS) return;
-  roundFinalized = true;
+  roundDecided = true;
+  roundAliveIds = alive;
+  // freeze everyone's board together — nobody keeps playing after the round is decided
+  if(window._multiCtl) window._multiCtl.setPaused(true);
+  multiEngine.softDrop = false;
+  if(window._itemTimer){ clearInterval(window._itemTimer); window._itemTimer=null; }
+  if(cachedTransport && cachedTransport.setPaused) cachedTransport.setPaused(false);
+  $("overlay-pause").classList.remove("active");
+  const room = roomT();
+  if(room) room.presence(gamePresence());   // publish my final score before everyone tallies
+  const iWin = roomTeamMode ? alive.some(id=> teamOfId(id)===myTeam) : alive.includes(MY_ID);
+  if(iWin){ showDeathStatus(true, "YOU WIN!", "결과를 집계하는 중...", false); SFX.victory(); }
+  else showDeathStatus(true, "GAME OVER", "결과를 집계하는 중...", false);
   if(window._finishTimer) clearTimeout(window._finishTimer);
-  window._finishTimer = setTimeout(finishRound, 400);
+  window._finishTimer = setTimeout(finishRound, 1500);
 }
 
 function finishRound(){
@@ -3042,8 +2998,6 @@ function finishRound(){
     return { id:r.id, nickname:r.nickname||p.nickname||"???", character:r.character||p.character, team:r.team||null,
              alive:roundAliveIds.includes(r.id), score:(p.score||0) };
   });
-  entries.forEach(e=>{ matchTotals[e.id] = (matchTotals[e.id]||0) + e.score; });
-
   // winner(s): the survivor / surviving team; if everyone died at once, the top scorer (and team)
   let winnerIds = entries.filter(e=>e.alive).map(e=>e.id);
   if(winnerIds.length===0){
@@ -3054,6 +3008,15 @@ function finishRound(){
     const wt = teamOfId(winnerIds[0]);
     if(wt) winnerIds = entries.filter(e=>teamOfId(e.id)===wt).map(e=>e.id);
   }
+  // surviving should always outscore dying: winners' games often end a beat before losers finish
+  // theirs, so top a winner's raw score up to beat the best losing score, rather than showing them
+  // ranked #1 with fewer points
+  const loserScores = entries.filter(e=>!winnerIds.includes(e.id)).map(e=>e.score);
+  if(loserScores.length>0){
+    const beatScore = Math.max(...loserScores) + 50;
+    entries.forEach(e=>{ if(winnerIds.includes(e.id) && e.score < beatScore) e.score = beatScore; });
+  }
+  entries.forEach(e=>{ matchTotals[e.id] = (matchTotals[e.id]||0) + e.score; });
   winnerIds.forEach(id=>{ matchWins[id] = (matchWins[id]||0) + 1; });
   const iWon = winnerIds.includes(MY_ID);
   const winnerEntry = entries.find(e=>winnerIds.includes(e.id));
