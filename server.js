@@ -51,6 +51,18 @@ async function initScoreStore() {
         result TEXT,
         played_at TEXT NOT NULL
       )`);
+      await pool.query(`CREATE TABLE IF NOT EXISTS homerun_hits (
+        id SERIAL PRIMARY KEY,
+        player TEXT NOT NULL,
+        mascot TEXT,
+        result TEXT NOT NULL,
+        distance DOUBLE PRECISION NOT NULL,
+        exit_velo DOUBLE PRECISION,
+        launch DOUBLE PRECISION,
+        spray DOUBLE PRECISION,
+        stadium TEXT,
+        created_at TEXT NOT NULL
+      )`);
       pg = { pool };
       console.log("Score DB: connected to Postgres (DATABASE_URL) — records persist across redeploys.");
       return;
@@ -85,6 +97,18 @@ async function initScoreStore() {
       placement INTEGER,
       result TEXT,
       played_at TEXT NOT NULL
+    )`);
+    db.exec(`CREATE TABLE IF NOT EXISTS homerun_hits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      player TEXT NOT NULL,
+      mascot TEXT,
+      result TEXT NOT NULL,
+      distance REAL NOT NULL,
+      exit_velo REAL,
+      launch REAL,
+      spray REAL,
+      stadium TEXT,
+      created_at TEXT NOT NULL
     )`);
     console.log("Score DB: local SQLite (tetris.db) — set DATABASE_URL for a persistent DB on cloud hosts.");
   } catch (e) {
@@ -166,6 +190,81 @@ async function getMultiResultRows({ nickname, mode, limit }) {
   }
   const whereSql = conds.length ? "WHERE " + conds.map((c) => `${c[0]} = ?`).join(" AND ") : "";
   return db.prepare(`SELECT * FROM multi_results ${whereSql} ORDER BY played_at DESC LIMIT ?`).all(...params, limit);
+}
+
+// ---- Sneaky Homerun (몰래홈런) desktop overlay game shares this server as its record DB.
+// Records are "one swing's distance"; the leaderboard is each player's best distance.
+const HOMERUN_KEY = "sneaky-homerun-2026";
+
+async function saveHomerunHit(h) {
+  const player = String(h.player).trim().slice(0, 20);
+  const row = [
+    player, String(h.mascot || "").slice(0, 16), h.result, Math.round(Number(h.distance) * 10) / 10,
+    Number(h.exit_velo) || 0, Number(h.launch) || 0, Number(h.spray) || 0, String(h.stadium || "").slice(0, 30),
+    typeof h.created_at === "string" && h.created_at.length === 19 ? h.created_at : new Date().toISOString().slice(0, 19).replace("T", " ")
+  ];
+  const sql = "INSERT INTO homerun_hits (player, mascot, result, distance, exit_velo, launch, spray, stadium, created_at) VALUES ";
+  if (pg) {
+    const top = (await pg.pool.query("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits")).rows[0].m;
+    const mine = (await pg.pool.query("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits WHERE player = $1", [player])).rows[0].m;
+    await pg.pool.query(sql + "($1,$2,$3,$4,$5,$6,$7,$8,$9)", row);
+    return { top: Number(top), mine: Number(mine) };
+  }
+  const top = db.prepare("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits").get().m;
+  const mine = db.prepare("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits WHERE player = ?").get(player).m;
+  db.prepare(sql + "(?,?,?,?,?,?,?,?,?)").run(...row);
+  return { top, mine };
+}
+
+async function homerunBest(player) {
+  if (pg) return Number((await pg.pool.query("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits WHERE player = $1", [player])).rows[0].m);
+  return db.prepare("SELECT COALESCE(MAX(distance), 0) AS m FROM homerun_hits WHERE player = ?").get(player).m;
+}
+
+// today = "YYYY-MM-DD" (client local date) or "" for all-time
+async function homerunTop(limit, today) {
+  if (pg) {
+    const r = await pg.pool.query(
+      `SELECT * FROM (SELECT DISTINCT ON (player) player, mascot, distance, result, stadium, created_at
+         FROM homerun_hits WHERE ($1 = '' OR created_at LIKE $1 || '%') ORDER BY player, distance DESC) t
+       ORDER BY distance DESC LIMIT $2`, [today, limit]);
+    return r.rows;
+  }
+  // SQLite: bare columns next to MAX() come from the max row
+  return db.prepare(
+    `SELECT player, mascot, MAX(distance) AS distance, result, stadium, created_at FROM homerun_hits
+     WHERE (? = '' OR created_at LIKE ? || '%') GROUP BY player ORDER BY distance DESC LIMIT ?`).all(today, today, limit);
+}
+
+async function homerunMine(player, limit) {
+  const cols = "result, distance, exit_velo, launch, stadium, created_at";
+  if (pg) return (await pg.pool.query(`SELECT ${cols} FROM homerun_hits WHERE player = $1 ORDER BY distance DESC LIMIT $2`, [player, limit])).rows;
+  return db.prepare(`SELECT ${cols} FROM homerun_hits WHERE player = ? ORDER BY distance DESC LIMIT ?`).all(player, limit);
+}
+
+function handleHomerun(req, res, u) {
+  if (!pg && !db) { send(res, 501, { error: "score db unavailable" }); return; }
+  const fail = () => send(res, 500, { error: "db error" });
+  if (req.method === "POST" && u.pathname === "/api/homerun/hit") {
+    readJsonBody(req, (err, h) => {
+      if (err) { send(res, 400, { error: "bad json" }); return; }
+      if (h.key !== HOMERUN_KEY && req.headers["x-key"] !== HOMERUN_KEY) { send(res, 403, { error: "forbidden" }); return; }
+      const dist = Number(h.distance);
+      if (!String(h.player || "").trim() || (h.result !== "안타" && h.result !== "홈런") || !(dist > 0 && dist < 200)) {
+        send(res, 400, { error: "invalid" }); return;
+      }
+      saveHomerunHit(h).then((r) => send(res, 200, r)).catch(fail);
+    });
+    return;
+  }
+  if (req.method !== "GET") { send(res, 404, { error: "not found" }); return; }
+  if (u.searchParams.get("key") !== HOMERUN_KEY && req.headers["x-key"] !== HOMERUN_KEY) { send(res, 403, { error: "forbidden" }); return; }
+  const player = u.searchParams.get("player") || "";
+  const limit = Math.min(100, Math.max(1, Number(u.searchParams.get("limit")) || 20));
+  if (u.pathname === "/api/homerun/best") { homerunBest(player).then((best) => send(res, 200, { best })).catch(fail); return; }
+  if (u.pathname === "/api/homerun/top") { homerunTop(limit, u.searchParams.get("today") || "").then((rows) => send(res, 200, { rows })).catch(fail); return; }
+  if (u.pathname === "/api/homerun/mine") { homerunMine(player, limit).then((rows) => send(res, 200, { rows })).catch(fail); return; }
+  send(res, 404, { error: "not found" });
 }
 
 /**
@@ -359,6 +458,8 @@ const server = http.createServer((req, res) => {
       .catch(() => send(res, 500, { error: "db error" }));
     return;
   }
+
+  if (u.pathname.startsWith("/api/homerun/")) { handleHomerun(req, res, u); return; }
 
   send(res, 404, { error: "not found" });
 });
