@@ -77,6 +77,7 @@ async function initScoreStore() {
         ending TEXT,
         created_at TEXT NOT NULL
       )`);
+      await pool.query("ALTER TABLE younggam_scores ADD COLUMN IF NOT EXISTS detail TEXT");
       pg = { pool };
       console.log("Score DB: connected to Postgres (DATABASE_URL) — records persist across redeploys.");
       return;
@@ -138,6 +139,7 @@ async function initScoreStore() {
       ending TEXT,
       created_at TEXT NOT NULL
     )`);
+    try { db.exec("ALTER TABLE younggam_scores ADD COLUMN detail TEXT"); } catch (e) { /* already there */ }
     console.log("Score DB: local SQLite (tetris.db) — set DATABASE_URL for a persistent DB on cloud hosts.");
   } catch (e) {
     console.log("Warning: node:sqlite unavailable (" + e.message + "). Score history disabled; needs Node 22.5+.");
@@ -304,19 +306,20 @@ async function saveYounggam(d) {
   const row = [
     String(d.player).trim().slice(0, 20), String(d.company || "").slice(0, 20), String(d.face || "").slice(0, 200),
     String(d.biz || "").slice(0, 20), num(d.score), num(d.capital), num(d.revenue), num(d.profit),
-    Math.floor(Number(d.age) || 0), String(d.ending || "").slice(0, 30), new Date().toISOString().slice(0, 19).replace("T", " ")
+    Math.floor(Number(d.age) || 0), String(d.ending || "").slice(0, 30), new Date().toISOString().slice(0, 19).replace("T", " "),
+    String(d.detail || "").slice(0, 8000)
   ];
-  const cols = "(player, company, face, biz, score, capital, revenue, profit, age, ending, created_at)";
+  const cols = "(player, company, face, biz, score, capital, revenue, profit, age, ending, created_at, detail)";
   if (pg) {
-    await pg.pool.query(`INSERT INTO younggam_scores ${cols} VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, row);
+    await pg.pool.query(`INSERT INTO younggam_scores ${cols} VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, row);
     return Number((await pg.pool.query("SELECT COUNT(*) AS c FROM younggam_scores WHERE score > $1", [row[4]])).rows[0].c) + 1;
   }
-  db.prepare(`INSERT INTO younggam_scores ${cols} VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(...row);
+  db.prepare(`INSERT INTO younggam_scores ${cols} VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).run(...row);
   return db.prepare("SELECT COUNT(*) AS c FROM younggam_scores WHERE score > ?").get(row[4]).c + 1;
 }
 
 async function younggamTop(limit) {
-  const cols = "player, company, face, biz, score, capital, revenue, profit, age, ending, created_at";
+  const cols = "player, company, face, biz, score, capital, revenue, profit, age, ending, created_at, detail";
   if (pg) return (await pg.pool.query(`SELECT ${cols} FROM younggam_scores ORDER BY score DESC LIMIT $1`, [limit])).rows;
   return db.prepare(`SELECT ${cols} FROM younggam_scores ORDER BY score DESC LIMIT ?`).all(limit);
 }

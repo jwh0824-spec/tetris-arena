@@ -16,6 +16,18 @@ html,body{height:100%}
 body{background:radial-gradient(ellipse at top,#1d2b55 0%,var(--bg) 60%) fixed;background-color:var(--bg);color:var(--text);
   font-family:'Noto Sans KR',system-ui,sans-serif;font-size:14px;-webkit-tap-highlight-color:transparent}
 #app{max-width:480px;margin:0 auto;min-height:100%;padding:12px 16px 24px}
+#app.wide{max-width:1180px}
+/* 게임 화면: 모바일은 1단(카드가 위쪽), 넓은 화면은 2단으로 한눈에 */
+.game{display:grid;grid-template-columns:minmax(0,1fr);gap:0 18px;grid-template-areas:"top" "react" "choose" "info" "log"}
+.g-top{grid-area:top}.g-react{grid-area:react}.g-choose{grid-area:choose;margin-bottom:10px}.g-info{grid-area:info}.g-log{grid-area:log}
+@media (min-width:900px){
+  .game{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"top top" "react choose" "info choose" "info log";align-items:start}
+  .modal.wide{max-width:900px}
+  .modal.wide .m-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+  .modal.wide .m-cols .m-body{margin-bottom:0}
+  .modal.wide .report{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-height:760px) and (min-width:900px){ .card{padding:9px 12px} .card .ic{font-size:26px} .g-log .log{max-height:110px} }
 button{font-family:inherit;cursor:pointer;border:none;color:inherit}
 input{font-family:inherit}
 .hidden{display:none!important}
@@ -191,6 +203,8 @@ input{font-family:inherit}
 .rank-row .n1{font-weight:700}
 .rank-row .n2{font-size:11px;color:var(--muted)}
 .rank-row .sc{text-align:right;font-weight:900;color:var(--gold);white-space:nowrap}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:5px;margin-bottom:6px}
+.rank-row{cursor:pointer}.rank-row:hover{background:rgba(255,255,255,.04)}
 .rank-row.me{background:rgba(245,196,81,.08);border-radius:8px}
 </style>
 </head>
@@ -202,7 +216,7 @@ input{font-family:inherit}
    영감님 성공하기 — 파트론 회사 키우기
    단위: 억원 · 1턴 = 1분기 · 김종구 회장 타임라인 — 54세(2003, 파트론 창업)에 시작, 80세 또는 은퇴 시 종료
    ========================================================= */
-const START_YEAR = 2003, START_AGE = 54, MAX_AGE = 80, MEMORY_END = 2026;
+const START_YEAR = 2003, START_AGE = 54, MAX_AGE = 80, MEMORY_END = 2026, HEIR_AGE = 65;
 const SAVE_KEY = 'younggam_save_v2', LOCAL_RANK_KEY = 'younggam_rank_local';
 const SERVER = new URLSearchParams(location.search).get('server') || 'https://tetris-arena-4spd.onrender.com';
 const RANK_API_KEY = 'younggam-2026';
@@ -463,7 +477,7 @@ const CARDS = [
       return `베트남 생산법인 PARTRON VINA의 공장이 준공됐다. 현지 인건비는 국내의 1/5 수준.\n${s.ab.nego >= 60 ? '회장님이 성 정부와 담판을 지어 법인세 4년 면제까지 받아냈다.' : '인허가에 반년이 걸렸지만, 결국 테이프 커팅까지 왔다.'}\n원가 경쟁력이 확 올라가자 주주들은 환호했고 고객사도 "단가 맞출 수 있겠네"라며 반겼다. 반면 국내 협력업체들은 물량이 빠질까 걱정이 태산이다.`; } },
   { id: 'mna', cat: '설비', icon: '🤝', t: '경쟁사 인수합병', d: '생산능력 ×1.6, 기술 +8. 조직 융합으로 직원 반응 하락.', ab: ['nego', 'insight', 'lead'], grow: { nego: 3, insight: 1, lead: 1 },
     avail: s => s.year >= 2011 && s.cap >= 150, board: () => true, cost: s => s.cap * 1.2,
-    run: (s, k) => { s.cap *= 1.5 + 0.1 * k; s.tech += 8; s.morale -= 8; s.market += 8; s.holder += 5; s.health -= 6;
+    run: (s, k) => { s.flags.mna = 1; s.cap *= 1.5 + 0.1 * k; s.tech += 8; s.morale -= 8; s.market += 8; s.holder += 5; s.health -= 6;
       return `수개월의 물밑 협상 끝에 경쟁사 인수 계약서에 도장을 찍었다.\n${s.ab.nego >= 60 ? '회장님의 노련한 협상으로 인수가를 20%나 깎았다. 상대편 대표가 "미래를 보고 오신 분 같다"며 혀를 내둘렀다.' : '가격은 좀 비쌌지만, 시간을 사는 거라 생각하기로 했다.'}\n하루아침에 생산능력과 특허가 불어났고 시장은 "업계 판도가 바뀌었다"며 들썩였다. 다만 두 회사 직원들 사이엔 아직 어색한 기류가 흐른다.`; } },
   // ---------- R&D ----------
   { id: 'rnd', cat: 'R&D', icon: '🧪', t: '신기술 연구개발', d: '기술력 상승 (높을수록 효과 감소). 지식이 높을수록 효과 UP.', ab: ['know'], grow: { know: 2, grit: 1 },
@@ -718,13 +732,16 @@ const ceoFace = (size, age) => faceSVG(S.ceo.face, age ?? S.age, size, { bg: '#5
 /* =========================================================
    공통 UI
    ========================================================= */
-function modal({ icon, tag, title, body, extra = '', options }) {
+function modal({ icon, tag, title, body, extra = '', options, wide }) {
   const ov = document.createElement('div');
   ov.className = 'overlay';
-  ov.innerHTML = `<div class="modal">
+  // wide: 넓은 화면에서 본문(이야기)과 결과(변화·반응·결산)를 좌우로 나눠 스크롤 없이 보이게
+  const content = wide && body && extra ? `<div class="m-cols"><div class="m-body">${body}</div><div>${extra}</div></div>`
+    : `${body ? `<div class="m-body">${body}</div>` : ''}${extra}`;
+  ov.innerHTML = `<div class="modal ${wide ? 'wide' : ''}">
     ${icon ? `<div class="m-ic">${icon}</div>` : ''}${tag ? `<div class="m-tag">${tag}</div>` : ''}
-    <h2>${title}</h2>${body ? `<div class="m-body">${body}</div>` : ''}${extra}
-    <div class="opts"></div></div>`;
+    <h2>${title}</h2>${content}
+    <div class="opts" style="margin-top:12px"></div></div>`;
   const box = ov.querySelector('.opts');
   options.forEach(o => {
     const b = document.createElement('button');
@@ -777,7 +794,7 @@ function quoteHtml(n, text, bad) {
 function renderTitle() {
   const sv = load();
   const demo = { s: 1, h: 4, c: 0, e: 1, b: 1, m: 0, g: 0, d: 0 };
-  app.innerHTML = `<div class="title-screen">
+  app.className = ''; app.innerHTML = `<div class="title-screen">
     <div class="logo-badge">PARTRON</div>
     <div style="display:flex;gap:6px;align-items:flex-end" class="bob">${faceSVG(demo, 77, 64, { bg: '#5a4520' })}<span style="font-size:28px">➜</span>${faceSVG(demo, 54, 96, { bg: '#5a4520' })}</div>
     <div class="title">영감님<br>성공하기</div>
@@ -800,7 +817,7 @@ const INTRO = [
 ];
 function renderIntro() {
   let i = 0;
-  app.innerHTML = `<div class="intro"><div class="intro-text" id="it"></div><button class="btn btn-gold" id="bNext">다음 ▶</button></div>`;
+  app.className = ''; app.innerHTML = `<div class="intro"><div class="intro-text" id="it"></div><button class="btn btn-gold" id="bNext">다음 ▶</button></div>`;
   const show = () => { $('#it').innerHTML = INTRO[i]; if (i === INTRO.length - 1) $('#bNext').textContent = '거울 속 내 얼굴 보기 🪞'; };
   show();
   $('#bNext').onclick = () => { if (i < INTRO.length - 1) { i++; show(); } else renderCreateFace(); };
@@ -811,7 +828,7 @@ function renderCreateFace() {
   NEW.face = NEW.face || randomFace();
   NEW.name = NEW.name ?? '김종구';
   const f = NEW.face;
-  app.innerHTML = `<div style="padding-top:10px">
+  app.className = ''; app.innerHTML = `<div style="padding-top:10px">
     <div class="step-tag">STEP 1 / 4</div><div class="step-title">회장님 외모 & 이름</div>
     <div class="face-preview">
       <div>${faceSVG(f, START_AGE, 120, { bg: '#5a4520' })}<div class="cap">54세 (2003년 창업)</div></div>
@@ -843,7 +860,7 @@ function abilityGrid(ab, rolling) {
 function renderCreateAbility() {
   if (!NEW.ab) { NEW.ab = rollAbilities(); NEW.rolls = 5; }
   const tot = Object.values(NEW.ab).reduce((a, b) => a + b, 0);
-  app.innerHTML = `<div style="padding-top:10px">
+  app.className = ''; app.innerHTML = `<div style="padding-top:10px">
     <div class="step-tag">STEP 2 / 4</div><div class="step-title">타고난 능력치</div>
     <div class="center">${faceSVG(NEW.face, START_AGE, 72, { bg: '#5a4520' })}<div style="font-weight:900;margin-top:4px">${esc(NEW.name)}</div>
     <div class="total-pill">총합 ${tot} ${tot >= 330 ? '🌟 천재형' : tot >= 290 ? '👍 우수' : tot >= 250 ? '🙂 평범' : '😅 대기만성형'}</div></div>
@@ -860,7 +877,7 @@ function renderCreateAbility() {
 }
 function renderCreateBiz() {
   NEW.mainBiz = NEW.mainBiz || 'antenna';
-  app.innerHTML = `<div style="padding-top:10px">
+  app.className = ''; app.innerHTML = `<div style="padding-top:10px">
     <div class="step-tag">STEP 3 / 4</div><div class="step-title">창업 아이템 선택</div>
     <div class="muted center" style="font-size:13px;margin-bottom:12px">2003년, 어떤 사업으로 시작할까?<br>나머지 사업은 나중에 '신사업 진출'로 열 수 있다.</div>
     <div class="biz-pick">${Object.entries(START_BIZ).map(([k, v]) => `<button class="biz-card ${NEW.mainBiz === k ? 'sel' : ''}" data-k="${k}">
@@ -873,7 +890,7 @@ function renderCreateBiz() {
   $('#bOk').onclick = () => renderCreateCompany();
 }
 function renderCreateCompany() {
-  app.innerHTML = `<div class="intro">
+  app.className = ''; app.innerHTML = `<div class="intro">
     <div><div class="step-tag">STEP 4 / 4</div><div class="step-title">회사 이름</div></div>
     <div class="center">${faceSVG(NEW.face, START_AGE, 96, { bg: '#5a4520' })}</div>
     <input class="text-input" id="co" maxlength="10" value="${esc(NEW.company || '파트론')}">
@@ -940,22 +957,32 @@ function renderGame() {
         <div class="loy">${moodFace(n.loyal)} 충성 <b>${Math.round(n.loyal)}</b><div class="track" style="margin-top:3px"><div class="fill" style="width:${n.loyal}%;background:${n.loyal < 35 ? 'var(--bad)' : n.loyal < 60 ? '#fbbf24' : 'var(--good)'}"></div></div></div></button>`).join('');
     }).join('') + `<div class="muted center" style="font-size:11px;margin-top:8px">${s.pAct ? '이번 분기 인사 관리를 이미 했습니다.' : '사람을 눌러 인사 관리 (분기당 1명, 턴 소모 없음)'}</div>`;
 
-  app.innerHTML = `
-    <div class="top">${ceoFace(46)}<div class="who"><div class="nm">${esc(s.ceo.name)} 회장</div><div class="co"><span style="color:var(--gold);font-weight:700">${esc(s.company)}</span> · ${Math.floor(s.age)}세</div></div>
+  app.className = 'wide';
+  const heirBtn = s.heir ? `<button class="btn btn-dark btn-sm" id="bHeir">👨‍👦 후계자 ${esc(s.heir.name)} · 수업 ${s.heir.exp}</button>`
+    : `<button class="btn btn-dark btn-sm" id="bHeir" ${s.age >= HEIR_AGE ? '' : 'disabled'}>👨‍👦 후계자 지정${s.age >= HEIR_AGE ? '' : ` (${HEIR_AGE}세~)`}</button>`;
+  app.innerHTML = `<div class="game">
+    <div class="g-top top">${ceoFace(46)}<div class="who"><div class="nm">${esc(s.ceo.name)} 회장</div><div class="co"><span style="color:var(--gold);font-weight:700">${esc(s.company)}</span> · ${Math.floor(s.age)}세${s.heir ? ` · 👨‍👦 후계자 ${esc(s.heir.name)}` : ''}</div></div>
       <span class="date-pill">${s.year}년 ${s.q}분기</span></div>
-    <div class="react">${rxHtml}</div>
-    <div class="tabs"><button class="tab ${TAB === 'co' ? 'on' : ''}" data-t="co">🏭 회사</button><button class="tab ${TAB === 'ceo' ? 'on' : ''}" data-t="ceo">👴 회장님</button><button class="tab ${TAB === 'ppl' ? 'on' : ''}" data-t="ppl">👥 사람들${s.npcs.some(n => n.loyal < 35) ? ' ⚠️' : ''}</button></div>
-    <div class="panel">${tabBody}</div>
-    <div class="h3">이번 분기 경영 전략은? <small>카드 1장 = 1분기</small></div>
-    <div class="cards">${hand.map(cardHtml).join('')}</div>
-    <div class="actions">
-      <button class="btn btn-dark btn-sm" id="bRest">🛌 휴식 (체력 회복)</button>
-      <button class="btn btn-dark btn-sm" id="bReroll" ${s.memory > 0 ? '' : 'disabled'}>🔄 기억으로 다시 뽑기 ★${s.memory}</button>
-      <button class="btn btn-dark btn-sm" id="bBank">🏦 대출 · 상환</button>
-      <button class="btn btn-dark btn-sm" id="bRetire" ${s.turn >= 8 ? '' : 'disabled'}>👋 은퇴 · 승계</button>
+    <div class="g-react react">${rxHtml}</div>
+    <div class="g-choose">
+      <div class="h3">이번 분기 경영 전략은? <small>${s.heir && heirTurnNow() ? '이번 분기는 후계자 차례' : '카드 1장 = 1분기'}</small></div>
+      <div class="cards">${hand.map(cardHtml).join('')}</div>
+      <div class="actions">
+        <button class="btn btn-dark btn-sm" id="bRest">🛌 휴식 (체력 회복)</button>
+        <button class="btn btn-dark btn-sm" id="bReroll" ${s.memory > 0 ? '' : 'disabled'}>🔄 다시 뽑기 ★${s.memory}</button>
+        <button class="btn btn-dark btn-sm" id="bBank">🏦 대출 · 상환</button>
+        ${heirBtn}
+        <button class="btn btn-dark btn-sm" id="bRetire" ${s.turn >= 8 ? '' : 'disabled'}>👋 은퇴 · 승계</button>
+        <button class="btn btn-dark btn-sm" id="bQuit">🏠 저장하고 타이틀로</button>
+      </div>
     </div>
-    <div class="panel" style="margin-top:10px"><div class="log">${s.log.map(l => `<div><span class="t">${l.t}</span>${esc(l.m)}</div>`).join('')}</div></div>
-    <div class="center" style="margin-top:6px"><button class="btn btn-dark" id="bQuit" style="display:inline-block;width:auto;font-size:12px;padding:6px 14px">🏠 저장하고 타이틀로</button></div>`;
+    <div class="g-info">
+      <div class="tabs"><button class="tab ${TAB === 'co' ? 'on' : ''}" data-t="co">🏭 회사</button><button class="tab ${TAB === 'ceo' ? 'on' : ''}" data-t="ceo">👴 회장님</button><button class="tab ${TAB === 'ppl' ? 'on' : ''}" data-t="ppl">👥 사람들${s.npcs.some(n => n.loyal < 35) ? ' ⚠️' : ''}</button></div>
+      <div class="panel">${tabBody}</div>
+    </div>
+    <div class="g-log panel"><div class="log">${s.log.map(l => `<div><span class="t">${l.t}</span>${esc(l.m)}</div>`).join('')}</div></div>
+  </div>`;
+  $('#bHeir').onclick = () => S.heir ? heirInfo() : pickHeir();
   app.querySelectorAll('.tab').forEach(b => b.onclick = () => { TAB = b.dataset.t; renderGame(); });
   app.querySelectorAll('.card').forEach(el => el.onclick = () => choose(el.dataset.id));
   app.querySelectorAll('.npc').forEach(el => el.onclick = () => personnel(el.dataset.id));
@@ -1017,7 +1044,7 @@ function startTurn() {
   if (checkGameOver()) return;
   if (S.acting && S.acting.left > 0) return actingTurn();
   S.pAct = false;
-  const done = () => { drawHand(); save(); renderGame(); };
+  const done = () => { drawHand(); save(); renderGame(); if (heirTurnNow()) heirTurn(); };
   const ev = pickEvent();
   if (ev) return runEvent(ev, done);
   done();
@@ -1029,7 +1056,7 @@ function runEvent(ev, done) {
       const before = snap();
       const h0 = S.health; const msg = o.r(S); softenHealth(h0); normalize(S); addLog(`[${ev.t}] ${msg}`);
       if (S.flags.lostMA) return modal({ icon: '🦈', title: '경영권 상실', body: msg, options: [{ label: '결과 보기', primary: true, onClick: () => ending('ma') }] });
-      modal({ icon: ev.npc ? npcFace(ev.npc, 60) : ev.icon, tag: '결과', title: ev.t, body: msg, extra: diffHtml(before), options: [{ label: '확인', primary: true, onClick: done }] });
+      modal({ wide: true, icon: ev.npc ? npcFace(ev.npc, 60) : ev.icon, tag: '결과', title: ev.t, body: msg, extra: diffHtml(before), options: [{ label: '확인', primary: true, onClick: done }] });
     } })) });
 }
 
@@ -1070,10 +1097,25 @@ const RESTS = [
   ['서재에서 책을 읽었다', s => { s.ab.know += 2; return '휴대폰을 끄고 서재에 틀어박혀 경영서와 기술 서적을 읽었다.\n"전생엔 왜 이런 책을 안 읽었을까." 머리가 맑아지고 지식이 쌓였다.'; }],
   ['낚시터에서 생각을 정리했다', s => { s.ab.insight += 2; return '새벽 저수지에 낚싯대를 드리웠다. 찌를 바라보며 회사의 다음 10년을 그려봤다.\n고기는 한 마리도 못 잡았지만, 큰 그림은 조금 더 선명해졌다. 통찰력이 올랐다.'; }],
   ['고향 집에 다녀왔다', s => { s.ab.humor += 1; s.ab.social += 1; return '고향 집에 내려가 어머니 밥을 먹었다. "우리 아들 사장님 됐네!"\n동네 어르신들과 막걸리를 나누며 웃다 보니 사람 냄새가 그리웠던 마음이 채워졌다.'; }]];
-function execute(id) {
+function execute(id, opt = {}) {
   const before = snap();
   let title, icon, msg, quotes;
-  if (id === '__rest') {
+  if (opt.heir) {
+    // 후계자 차례: 후계자 실력(경영 수업)으로 효과 결정, 회장님은 휴식
+    const h = S.heir, h0 = S.health;
+    if (id === '__rest') { icon = '🧘'; title = `${h.name}: 현상 유지`; msg = `${h.name}는 무리하지 않고 회사를 안정적으로 굴렸다.`; quotes = []; }
+    else {
+      const c = cardById(id), k = heirK();
+      S.cash -= cardCost(c, S);
+      const ok = c.chance ? chance(c.chance(S)) : undefined;
+      msg = c.run(S, k, ok);
+      icon = c.icon; title = `${h.name}: ${c.t}${c.chance ? (ok ? ' — 성공!' : ' — 실패') : ''}`;
+      msg = `👨‍👦 <b>후계자 ${esc(h.name)}의 결정</b> (효과 ×${k.toFixed(2)})\n\n` + msg + `\n\n${k < 1 ? '아직 손이 서툴러 회장님이었다면 더 잘했을 것이다. 그래도 한 뼘 성장했다.' : '이제 제법 회장님 티가 난다. 임원들이 고개를 끄덕였다.'}`;
+      quotes = npcReact(c.cat);
+    }
+    S.health = h0 + 15;
+    h.exp += h.kind === 'son' ? 2 : 1;
+  } else if (id === '__rest') {
     const v = pick(RESTS);
     S.health += 22 + S.ab.grit * 0.15; S.morale += 2;
     icon = '🛌'; title = '휴식 — ' + v[0]; msg = v[1](S); quotes = npcReact('휴식');
@@ -1101,7 +1143,7 @@ function execute(id) {
       <div class="money"><div class="k">영업이익</div><div class="v ${rep.op >= 0 ? 'pos' : 'neg'}">${fmt(rep.op)}</div></div>
       <div class="money"><div class="k">가동률</div><div class="v">${Math.round(rep.util * 100)}%</div></div>
       <div class="money"><div class="k">이자 비용</div><div class="v">${fmt(rep.interest)}</div></div></div>`;
-  modal({ icon, tag: `${rep.year}년 ${rep.q}분기`, title, body: msg, extra,
+  modal({ wide: true, icon, tag: `${rep.year}년 ${rep.q}분기`, title, body: msg, extra,
     options: [{ label: '다음 분기로 ▶', primary: true, onClick: () => S.cash < 0 ? cashCrisis() : advance() }] });
 }
 
@@ -1126,6 +1168,7 @@ function settle() {
   for (const n of S.npcs) { n.loyal += (55 - n.loyal) * 0.03 + (r.profit > 0 ? 0.5 : -1); if (n.checked > 0) n.checked--; }
   if (S.own < 45 && !S.npcs.find(n => n.id === 'brown') && chance(0.15)) { addHolder(S, 'brown'); addLog('행동주의 펀드 브라운이 지분을 사 모으기 시작했다.'); }
   normalize(S);
+  checkAch();
   return { ...r, year: S.year, q: S.q };
 }
 
@@ -1247,6 +1290,7 @@ const REAL = {
 };
 function realHtml(year, h) {
   const r = REAL[year]; if (!r) return '';
+  if (year === 2018 && h.rev >= 10000) ach('📜', '2018년 매출 1조 — 역사와 나란히');
   let cmp = '';
   if (r.rev) {
     const ratio = h.rev / r.rev;
@@ -1287,8 +1331,95 @@ function checkGameOver() {
   if (S.age >= MAX_AGE) { modal({ icon: '🎂', title: `${MAX_AGE}세 생일`, body: `어느덧 ${MAX_AGE}번째 생일. 전생에 눈을 감았던 77세를 지나, 덤으로 3년을 더 달렸다.\n"이제… 물려줄 때가 됐구나."`, options: [{ label: '후계자 정하기', primary: true, onClick: () => retireFlow(true, 'age') }] }); return true; }
   return false;
 }
+/* ---------- 업적 ---------- */
+function ach(i, t) {
+  S.ach = S.ach || [];
+  if (S.ach.some(a => a.t === t)) return;
+  S.ach.push({ i, t, y: S.year });
+  addLog(`🏅 업적 달성: ${t}`);
+  setTimeout(() => toast(`🏅 업적 달성: ${t}`), 300);
+}
+function checkAch() {
+  const f = S.flags;
+  if (f.china) ach('🇨🇳', '중국 생산법인 설립');
+  if (f.ipo) ach('🔔', '코스닥 상장');
+  if (f.overseas) ach('🇻🇳', '베트남 공장 설립');
+  if (f.lab) ach('🏛️', '기업부설 연구소 설립');
+  if (f.smart) ach('🛰️', '스마트팩토리 구축');
+  if (f.mna) ach('🤝', '경쟁사 인수합병');
+  for (const k in S.biz) if (S.biz[k] && k !== S.mainBiz) ach(BIZ[k].icon, `${BIZ[k].name} 사업 진출`);
+  const rev4 = S.qhist.slice(-4).reduce((a, h) => a + h.rev, 0);
+  for (const [v, t] of [[1000, '1,000억'], [5000, '5,000억'], [10000, '1조'], [30000, '3조'], [50000, '5조']]) if (S.qhist.length >= 4 && rev4 >= v) ach('💰', `연매출 ${t} 돌파`);
+  if (S.tech >= 90) ach('🧪', '기술력 90 달성');
+  if (REACT.every(([k]) => S[k] >= 80)) ach('💞', '모두가 사랑하는 회사 (반응 5종 80↑)');
+  if (S.debt === 0 && S.qhist.length >= 40 && S.cash > S.cap * 3) ach('🏦', '무차입 경영 (10년차 이후)');
+}
+function buildDetail() {
+  return JSON.stringify({ ach: S.ach || [], hist: S.hist.map(h => [h.year, Math.round(h.rev), Math.round(h.op)]),
+    ab: Object.fromEntries(Object.entries(S.ab).map(([k, v]) => [k, Math.round(v)])), biz: Object.keys(S.biz).filter(k => S.biz[k]),
+    start: S.mainBiz, hosp: S.flags.hosp || 0, heir: S.heir ? S.heir.name : null, own: Math.round(S.own), ipo: !!S.flags.ipo }).slice(0, 7900);
+}
+function recordModal(r) {
+  let d = {}; try { d = typeof r.detail === 'string' ? JSON.parse(r.detail) : (r.detail || {}); } catch (e) {}
+  let f = null; try { f = JSON.parse(r.face); } catch (e) {}
+  const hist = (d.hist || []).map(([year, rev, op]) => ({ year, rev, op }));
+  const achs = d.ach || [];
+  modal({ wide: true, icon: f && f.s !== undefined ? faceSVG(f, r.age || 60, 80, { bg: '#5a4520' }) : '👴', tag: `${esc(r.company || '')} · ${r.age || '?'}세 은퇴 · ${esc(r.created_at || '')}`, title: `${esc(r.player)} 회장의 업적`,
+    body: `<b>${esc(r.ending || '')}</b>\n총점 <b>${fmt(r.score)}</b>\n자본금 ${fmt(r.capital || 0)} · 1년 매출 ${fmt(r.revenue || 0)} · 1년 영업이익 ${fmt(r.profit || 0)}` +
+      (d.start ? `\n\n창업 사업: ${BIZ[d.start]?.icon || ''} ${BIZ[d.start]?.name || ''}` : '') +
+      (d.biz ? `\n보유 사업부: ${d.biz.map(k => BIZ[k] ? BIZ[k].icon + BIZ[k].name : k).join(', ')}` : '') +
+      (d.own !== undefined ? `\n회장 지분 ${d.own}% · ${d.ipo ? '상장사' : '비상장'}${d.hosp ? ` · 입원 ${d.hosp}회` : ''}${d.heir ? ` · 후계자 ${esc(d.heir)}` : ''}` : '') +
+      (!d.hist ? '\n\n(이전 버전 기록이라 상세 업적이 없습니다)' : ''),
+    extra: (hist.length ? chartHtml(hist) : '') +
+      (achs.length ? `<div class="sec">🏅 업적 ${achs.length}개</div><div class="ach-grid">${achs.map(a => `<div class="rline">${a.i} <b>${esc(a.t)}</b> <span class="muted">${a.y}년</span></div>`).join('')}</div>` : '') +
+      (d.ab ? `<div class="sec">🧠 최종 능력치</div>${abilityGrid(d.ab)}` : ''),
+    options: [{ label: '닫기', primary: true }] });
+}
+
+/* ---------- 후계자 (65세부터 지정 → 턴의 절반을 후계자가 경영) ---------- */
+const heirTurnNow = () => !!(S.heir && (S.turn - S.heir.since) % 2 === 1);
+function pickHeir() {
+  if (S.age < HEIR_AGE) return toast(`${HEIR_AGE}세부터 후계자를 정할 수 있습니다`);
+  const sonFace = { ...S.ceo.face, e: ri(0, 3), m: ri(0, 3), g: chance(0.5) ? 0 : ri(1, 2), d: 0 };
+  const opts = [{ label: '👨‍👦 장남에게 경영 수업을 시킨다', sub: '처음엔 서툴지만 빨리 배운다 (수업 +2/분기) · 고르게 경영', onClick: () => setHeir({ name: '장남', kind: 'son', face: sonFace, age: Math.floor(S.age) - 28, exp: 0, style: null }) }];
+  for (const n of execs(S)) opts.push({ label: `👔 ${n.name}를 후계자로 키운다`, sub: `경험 많음 (수업 10부터 시작) · ${npcT(n).likes.join('·')} 위주 경영 · 충성 ${Math.round(n.loyal)}${n.loyal < 35 ? ' ⚠️' : ''}`,
+    onClick: () => setHeir({ name: n.name, kind: 'exec', id: n.id, face: n.face, age: n.age, exp: 10, style: npcT(n).likes }) });
+  opts.push({ label: '아직은 내가 다 한다', dark: true });
+  modal({ icon: ceoFace(72), tag: '후계 구도', title: '후계자를 지정할까?',
+    body: `후계자를 정하면 <b>두 분기에 한 번씩 후계자가 직접 경영</b>합니다.\n그동안 회장님은 쉬면서 체력을 회복하고, 후계자는 경영 수업이 쌓여 은퇴 때 승계 점수가 올라갑니다.\n(후계자 차례에도 원하면 회장님이 직접 할 수 있어요)`, options: opts });
+}
+function setHeir(h) {
+  S.heir = { ...h, since: S.turn };
+  ach('👨‍👦', `후계자 지정: ${h.name}`);
+  save(); renderGame();
+  toast(`${h.name}의 경영 수업이 시작됐다. 다음 분기는 후계자 차례!`);
+}
+function heirInfo() {
+  const h = S.heir;
+  modal({ icon: faceSVG(h.face, h.age + (S.age - (h.age0 ?? S.age)) * 0, 80, h.kind === 'son' ? { bg: '#3d5a40' } : NPC_STYLE.exec), tag: '후계자', title: `${esc(h.name)} · 경영 수업 ${h.exp}`,
+    body: `두 분기에 한 번씩 ${esc(h.name)}가 직접 경영합니다.\n효과 배율: ×${heirK().toFixed(2)} (수업이 쌓일수록 상승)\n은퇴 시 승계 보너스: +${Math.round(heirBonus() * 100)}%`,
+    options: [{ label: '🔁 후계자를 바꾼다', sub: '지금까지의 경영 수업은 사라진다', onClick: () => { S.heir = null; pickHeir(); } }, { label: '닫기', dark: true }] });
+}
+const heirK = () => 0.75 + Math.min(0.45, S.heir.exp * 0.015);
+const heirBonus = () => Math.min(0.15, S.heir.exp * 0.006);
+function heirPick() {
+  const hand = S.hand.map(cardById).filter(c => cardCost(c, S) <= S.cash || cardCost(c, S) === 0);
+  if (!hand.length) return '__rest';
+  const st = S.heir.style;
+  const pref = st ? hand.filter(c => st.includes(c.cat)) : [];
+  return (pref.length ? pick(pref) : pick(hand)).id;
+}
+function heirTurn() {
+  const h = S.heir, id = heirPick(), c = cardById(id);
+  modal({ icon: faceSVG(h.face, h.age, 72, h.kind === 'son' ? { bg: '#3d5a40' } : NPC_STYLE.exec), tag: `${S.year}년 ${S.q}분기 · 후계자 차례`, title: `${esc(h.name)}의 경영`,
+    body: `"아버님(회장님), 이번 분기는 제가 맡겠습니다."\n${esc(h.name)}는 <b>${c ? c.icon + ' ' + c.t : '현상 유지'}</b>를 하겠다고 한다.\n\n그동안 회장님은 한숨 돌리며 체력을 회복한다.`,
+    options: [{ label: `▶ ${esc(h.name)}에게 맡긴다`, sub: `효과 ×${heirK().toFixed(2)} · 회장님 체력 +15 · 경영 수업 +${h.kind === 'son' ? 2 : 1}`, onClick: () => execute(id, { heir: true }) },
+      { label: '✋ 이번엔 내가 직접 한다', sub: '후계자 경영 수업 기회를 놓친다', onClick: () => { S.heir.since--; renderGame(); } }] });
+}
+
 /* ---------- 과로 입원 → 대행 체제 (2분기) ---------- */
 function hospital() {
+  ach('🏥', '평생 처음 입원');
   S.flags.hosp = (S.flags.hosp || 0) + 1;
   S.health = 15;
   const nth = S.flags.hosp;
@@ -1330,7 +1461,7 @@ function actingTurn() {
   if (back) { S.acting = null; S.health = Math.max(S.health, 70); }
   addLog(`[대행 체제] ${msg.split('\n')[0]}`);
   save(); renderGame();
-  modal({ icon: n ? npcFace(n, 64) : '🏥', tag: `${rep.year}년 ${rep.q}분기 · ${n ? n.name + ' 대행' : '병상 결재'}`, title: back ? '회장님 복귀!' : '회장님 입원 중',
+  modal({ wide: true, icon: n ? npcFace(n, 64) : '🏥', tag: `${rep.year}년 ${rep.q}분기 · ${n ? n.name + ' 대행' : '병상 결재'}`, title: back ? '회장님 복귀!' : '회장님 입원 중',
     body: msg + (back ? '\n\n두 분기 만에 회장님이 다시 출근했다. 직원들이 박수로 맞았다. "이제 무리하지 마세요, 회장님!"' : ''),
     extra: diffHtml(before) + `<div class="sec">🧾 분기 결산</div><div class="report">
       <div class="money"><div class="k">분기 매출</div><div class="v">${fmt(rep.rev)}</div></div>
@@ -1344,7 +1475,9 @@ function retireFlow(forced, why) {
       onClick: () => ending(why || 'retire', { name: n.name, mult, loyal: n.loyal }) };
   });
   const heir = S.ab.lead >= 60 ? 1.05 : 1;
-  opts.unshift({ label: '👨‍👦 장남에게 승계 (2세 경영)', sub: `회장님이 키운 리더십만큼 잘 이어받는다 · ${heir > 1 ? '리더십 60↑ (점수 +5%)' : '무난한 선택'}`, onClick: () => ending(why || 'retire', { name: '장남', mult: heir, loyal: heir > 1 ? 70 : 50 }) });
+  if (S.heir) opts.unshift({ label: `🎓 키워온 후계자 ${esc(S.heir.name)}에게 승계`, sub: `경영 수업 ${S.heir.exp} · 점수 +${Math.round(heirBonus() * 100)}%`,
+    onClick: () => ending(why || 'retire', { name: S.heir.name, mult: 1 + heirBonus(), loyal: 80, heir: true }) });
+  else opts.unshift({ label: '👨‍👦 장남에게 승계 (2세 경영)', sub: `회장님이 키운 리더십만큼 잘 이어받는다 · ${heir > 1 ? '리더십 60↑ (점수 +5%)' : '무난한 선택'}`, onClick: () => ending(why || 'retire', { name: '장남', mult: heir, loyal: heir > 1 ? 70 : 50 }) });
   opts.push({ label: '🎩 외부 전문경영인 영입', sub: '안정적 · 보너스 없음', onClick: () => ending(why || 'retire', { name: '외부 전문경영인', mult: 1, loyal: 50 }) });
   if (!forced) opts.push({ label: '아직은 더 일하겠다', dark: true });
   modal({ icon: ceoFace(80), tag: '은퇴 · 승계', title: forced ? '후계자를 정해야 한다' : '정말 은퇴하시겠습니까?',
@@ -1372,10 +1505,10 @@ function ending(type, succ) {
   const [gi, gt, gd] = grade(total);
   const [ei, et, ed] = ENDINGS[type] || ENDINGS.retire;
   S.ended = true; save();
-  const succTxt = succ ? (succ.loyal >= 60 ? `후계자 <b>${esc(succ.name)}</b>는 회장님의 뜻을 이어 회사를 더 키웠다. (점수 +5%)` : succ.loyal >= 35 ? `후계자 <b>${esc(succ.name)}</b>가 무난하게 회사를 이끌었다.` : `후계자 <b>${esc(succ.name)}</b>는 회장님이 떠나자마자 알짜 사업부를 팔아치웠다… (점수 -10%)`) : (mult < 1 ? '회사를 잃어 최종 점수가 절반으로 줄었다.' : '');
-  const rec = { player: S.ceo.name, company: S.company, face: JSON.stringify(S.ceo.face), biz: S.mainBiz, score: total, capital: sc.capital, revenue: sc.revenue, profit: sc.profit, age: Math.floor(S.age), ending: `${et} · ${gt}` };
+  const succTxt = succ ? (succ.heir ? `오랜 경영 수업을 받은 후계자 <b>${esc(succ.name)}</b>가 회사를 이어받아 더 크게 키웠다. (점수 +${Math.round((succ.mult - 1) * 100)}%)` : succ.loyal >= 60 ? `후계자 <b>${esc(succ.name)}</b>는 회장님의 뜻을 이어 회사를 더 키웠다. (점수 +5%)` : succ.loyal >= 35 ? `후계자 <b>${esc(succ.name)}</b>가 무난하게 회사를 이끌었다.` : `후계자 <b>${esc(succ.name)}</b>는 회장님이 떠나자마자 알짜 사업부를 팔아치웠다… (점수 -10%)`) : (mult < 1 ? '회사를 잃어 최종 점수가 절반으로 줄었다.' : '');
+  const rec = { player: S.ceo.name, company: S.company, face: JSON.stringify(S.ceo.face), biz: S.mainBiz, score: total, capital: sc.capital, revenue: sc.revenue, profit: sc.profit, age: Math.floor(S.age), ending: `${et} · ${gt}`, detail: buildDetail() };
   document.querySelectorAll('.overlay').forEach(o => o.remove());
-  app.innerHTML = `<div class="title-screen" style="gap:12px">
+  app.className = ''; app.innerHTML = `<div class="title-screen" style="gap:12px">
     <div class="m-tag" style="color:var(--gold);font-weight:700">ENDING · ${et}</div>
     <div style="display:flex;align-items:flex-end;gap:8px">${ceoFace(110)}<span style="font-size:44px">${ei}</span></div>
     <div class="grade">${gi} ${gt}</div>
@@ -1392,7 +1525,8 @@ function ending(type, succ) {
       <div class="sub-row"><span>경영 <b>${S.hist.length}년</b></span><span>은퇴 <b>${Math.floor(S.age)}세</b></span><span>회장 지분 <b>${Math.round(S.own)}%</b></span></div>
       <div id="rankMsg" class="center" style="margin-top:12px;font-weight:700;color:var(--gold)">🏆 랭킹 등록 중…</div>
     </div>
-    <div class="menu"><button class="btn btn-gold" id="bRank">🏆 명예의 전당 보기</button><button class="btn btn-dark" id="bAgain">다시 회귀하기 🔄</button></div></div>`;
+    <div class="menu"><button class="btn btn-gold" id="bAch">🏅 내 업적 보기</button><button class="btn btn-dark" id="bRank">🏆 명예의 전당 보기</button><button class="btn btn-dark" id="bAgain">다시 회귀하기 🔄</button></div></div>`;
+  $('#bAch').onclick = () => recordModal({ ...rec, created_at: '방금' });
   $('#bAgain').onclick = () => { clearSave(); renderTitle(); };
   $('#bRank').onclick = () => { clearSave(); renderRanking(rec); };
   submitScore(rec);
@@ -1412,7 +1546,7 @@ async function submitScore(rec) {
   clearTimeout(slow);
 }
 async function renderRanking(mine) {
-  app.innerHTML = `<div style="padding-top:10px"><div class="step-title">🏆 명예의 전당</div>
+  app.className = ''; app.innerHTML = `<div style="padding-top:10px"><div class="step-title">🏆 명예의 전당</div>
     <div class="muted center" style="font-size:12px;margin:-8px 0 10px">총점 = 자본금 + 최근 1년 매출 + 최근 1년 영업이익</div>
     <div class="tabs"><button class="tab on" id="tAll">전체 랭킹</button><button class="tab" id="tLocal">이 PC 기록</button></div>
     <div class="panel" id="rk"><div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div></div>
@@ -1423,10 +1557,11 @@ async function renderRanking(mine) {
     $('#rk').innerHTML = rows.map((r, i) => {
       let f = null; try { f = JSON.parse(r.face); } catch (e) {}
       const me = mine && r.player === mine.player && Math.abs(r.score - mine.score) < 0.2;
-      return `<div class="rank-row ${me ? 'me' : ''}"><div class="no">${i + 1}</div>${f && f.s !== undefined ? faceSVG(f, r.age || 60, 40, { bg: '#5a4520' }) : '<div style="width:40px;font-size:28px">👴</div>'}
+      return `<div class="rank-row ${me ? 'me' : ''}" data-i="${i}" title="눌러서 업적 보기"><div class="no">${i + 1}</div>${f && f.s !== undefined ? faceSVG(f, r.age || 60, 40, { bg: '#5a4520' }) : '<div style="width:40px;font-size:28px">👴</div>'}
         <div class="info"><div class="n1">${esc(r.player)} <span class="muted" style="font-weight:400;font-size:12px">${esc(r.company || '')} ${BIZ[r.biz] ? BIZ[r.biz].icon : ''}</span></div>
-        <div class="n2">${esc(r.ending || '')} · ${r.age || '?'}세 · 매출 ${fmt(r.revenue || 0)}</div></div><div class="sc">${fmt(r.score)}</div></div>`;
+        <div class="n2">${esc(r.ending || '')} · ${r.age || '?'}세 · 매출 ${fmt(r.revenue || 0)}</div></div><div class="sc">${fmt(r.score)}<div class="muted" style="font-size:10px;font-weight:400">업적 보기 ›</div></div></div>`;
     }).join('');
+    $('#rk').querySelectorAll('.rank-row').forEach(el => el.onclick = () => recordModal(rows[el.dataset.i]));
   };
   const showLocal = () => { $('#tLocal').classList.add('on'); $('#tAll').classList.remove('on'); draw(localRanks()); };
   const showAll = async () => {
