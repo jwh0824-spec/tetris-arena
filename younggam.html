@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>영감님 성공하기</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1730; --bg2:#16213f; --card:#1d2a4d; --card2:#243358; --line:#33456f;
+  --text:#eef2ff; --muted:#93a3c8; --gold:#f5c451; --gold2:#e0a526;
+  --good:#4ade80; --bad:#f87171; --blue:#60a5fa; --purple:#c084fc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at top,#1d2b55 0%,var(--bg) 60%) fixed;background-color:var(--bg);color:var(--text);
+  font-family:'Noto Sans KR',system-ui,sans-serif;font-size:14px;-webkit-tap-highlight-color:transparent}
+#app{max-width:480px;margin:0 auto;min-height:100%;padding:12px 16px 24px}
+button{font-family:inherit;cursor:pointer;border:none;color:inherit}
+input{font-family:inherit}
+.hidden{display:none!important}
+.center{text-align:center}
+.muted{color:var(--muted)}
+
+/* ---------- 공통 ---------- */
+.logo-badge{font-weight:900;letter-spacing:6px;font-size:13px;color:var(--gold);border:1.5px solid var(--gold);padding:4px 12px;border-radius:4px}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:16px;font-weight:700;transition:transform .08s,filter .15s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#2b1d00;box-shadow:0 4px 0 #8a6210}
+.btn-dark{background:var(--card2);border:1px solid var(--line)}
+.btn-sm{font-size:13px;padding:10px}
+.btn:disabled{filter:grayscale(1) brightness(.6);cursor:not-allowed}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.h3{font-weight:900;font-size:15px;margin:4px 2px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.h3 small{font-weight:500;color:var(--muted);font-size:12px}
+.text-input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-size:16px;text-align:center}
+
+/* ---------- 타이틀 ---------- */
+.title-screen{min-height:calc(100vh - 36px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px}
+.title{font-family:'Black Han Sans',sans-serif;font-size:52px;line-height:1.1;
+  background:linear-gradient(180deg,#fff3c4,var(--gold) 55%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 #6b4a0a)}
+.subtitle{color:var(--muted);font-size:15px}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-3deg)}}
+.menu{width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- 인트로 / 생성 ---------- */
+.intro{min-height:calc(100vh - 36px);display:flex;flex-direction:column;justify-content:center;gap:20px}
+.intro-text{font-size:16px;line-height:1.9;white-space:pre-line;min-height:280px}
+.intro-text b{color:var(--gold)}
+.step-tag{font-size:12px;color:var(--gold);font-weight:700;text-align:center;margin-bottom:4px}
+.step-title{font-size:22px;font-weight:900;text-align:center;margin-bottom:14px}
+.face-preview{display:flex;justify-content:center;align-items:flex-end;gap:14px;margin-bottom:12px}
+.face-preview .cap{font-size:11px;color:var(--muted);text-align:center;margin-top:2px}
+.opt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
+.opt-row:last-child{border:none}
+.opt-row .nm{font-size:13px;color:var(--muted);width:60px}
+.opt-row .val{flex:1;text-align:center;font-weight:700;font-size:13px}
+.arrow{width:34px;height:30px;border-radius:8px;background:var(--card2);border:1px solid var(--line);font-size:13px}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.ab{font-size:12px}
+.ab .lab{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:3px}
+.ab .lab b{color:var(--text);font-size:13px}
+.track{height:7px;background:var(--bg2);border-radius:99px;overflow:hidden}
+.fill{height:100%;border-radius:99px;transition:width .4s}
+.ab-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+.total-pill{display:inline-block;background:var(--card2);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:700;margin:8px 0}
+.rolling .lab b{animation:flash .1s linear infinite}
+@keyframes flash{50%{opacity:.3}}
+.biz-pick{display:flex;flex-direction:column;gap:10px}
+.biz-card{text-align:left;background:linear-gradient(180deg,var(--card2),var(--card));border:1.5px solid var(--line);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start}
+.biz-card.sel{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,196,81,.25)}
+.biz-card .ic{font-size:34px}
+.biz-card .tt{font-weight:900;font-size:16px}
+.biz-card .ds{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+.biz-card .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:11px;padding:2px 7px;border-radius:99px;background:var(--bg2)}
+.tag.p{color:var(--good)} .tag.n{color:var(--bad)}
+
+/* ---------- 게임 화면 ---------- */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.top .who{flex:1;min-width:0}
+.top .nm{font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .co{font-size:12px;color:var(--muted)}
+.date-pill{background:var(--gold);color:#2b1d00;font-weight:900;border-radius:999px;padding:5px 12px;font-size:13px;white-space:nowrap}
+.avatar{border-radius:50%;flex-shrink:0;display:block}
+.money-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.money{background:var(--bg2);border-radius:10px;padding:8px 4px;text-align:center}
+.money .k{font-size:11px;color:var(--muted);white-space:nowrap}
+.money .v{font-weight:900;font-size:15px;margin-top:2px;white-space:nowrap}
+.v.pos{color:var(--good)} .v.neg{color:var(--bad)}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.bar .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:3px}
+.bar .lab b{color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12px;padding:3px 9px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);color:var(--muted)}
+.chip.on{border-color:var(--gold);color:var(--gold)}
+.sub-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;font-size:12px;color:var(--muted);margin-top:10px}
+.sub-row b{color:var(--text)}
+
+.react{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+.rx{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:7px 2px 6px;text-align:center;position:relative}
+.rx .face{font-size:20px;line-height:1}
+.rx .k{font-size:11px;color:var(--muted);margin-top:3px}
+.rx .v{font-weight:900;font-size:14px}
+.rx .d{position:absolute;top:3px;right:4px;font-size:10px;font-weight:700}
+.rx .d.p{color:var(--good)} .rx .d.n{color:var(--bad)}
+.rx .track{height:4px;margin:4px 6px 0}
+.rx.pulse{animation:pulse .6s}
+@keyframes pulse{40%{transform:scale(1.08);border-color:var(--gold)}}
+
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tab{flex:1;padding:8px;border-radius:10px;background:var(--bg2);border:1px solid var(--line);font-weight:700;font-size:13px;color:var(--muted)}
+.tab.on{background:var(--card2);border-color:var(--gold);color:var(--gold)}
+
+.npc{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px dashed var(--line);width:100%;text-align:left;background:none}
+.npc:last-child{border:none}
+.npc .info{flex:1;min-width:0}
+.npc .n1{font-weight:700;font-size:14px}
+.npc .n2{font-size:11px;color:var(--muted)}
+.npc .loy{width:84px;text-align:right;font-size:11px;color:var(--muted)}
+.npc .loy b{font-size:13px}
+.npc .chk{font-size:10px;color:var(--purple)}
+.grp{font-size:11px;color:var(--gold);font-weight:700;margin:6px 0 2px}
+
+.cards{display:flex;flex-direction:column;gap:8px}
+.card{display:flex;gap:12px;align-items:center;text-align:left;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
+  border-radius:14px;padding:12px;transition:transform .1s,border-color .15s;width:100%}
+.card:hover:not(:disabled){border-color:var(--gold);transform:translateY(-2px)}
+.card:disabled{opacity:.45;cursor:not-allowed}
+.card .ic{font-size:30px;width:44px;text-align:center;flex-shrink:0}
+.card .body{flex:1;min-width:0}
+.card .cat{font-size:11px;font-weight:700;color:var(--blue)}
+.card .cat .abt{color:var(--purple);font-weight:500;margin-left:4px}
+.card .tt{font-weight:900;font-size:15px;margin:1px 0 3px}
+.card .ds{font-size:12px;color:var(--muted);line-height:1.5}
+.card .cost{font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;text-align:right;white-space:nowrap}
+.card .cost small{display:block;font-weight:500;margin-top:2px}
+.card .cost .ch{color:var(--purple)} .card .cost .bd{color:#7dd3fc} .card .cost .no{color:var(--bad)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+
+.log{font-size:12px;color:var(--muted);line-height:1.7;max-height:150px;overflow:auto}
+.log div{border-bottom:1px dashed var(--line);padding:3px 0}
+.log div:first-child{color:var(--text)}
+.log .t{color:var(--gold);font-weight:700;margin-right:6px}
+
+/* ---------- 모달 ---------- */
+.overlay{position:fixed;inset:0;background:rgba(5,9,22,.78);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow:auto;background:var(--bg2);border:1.5px solid var(--gold);border-radius:18px;padding:20px;animation:pop .25s cubic-bezier(.2,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.modal .m-ic{font-size:48px;text-align:center;line-height:1.1}
+.modal .m-ic svg{display:inline-block}
+.modal .m-tag{text-align:center;font-size:12px;color:var(--gold);font-weight:700;margin-top:4px}
+.modal h2{text-align:center;font-size:20px;font-weight:900;margin:4px 0 10px}
+.m-body{font-size:14px;line-height:1.8;color:#d6defa;margin-bottom:14px;white-space:pre-line}
+.m-body b{color:var(--gold)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:left}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt:disabled{opacity:.45;cursor:not-allowed}
+.opt .ol{font-weight:700}
+.opt .os{font-size:12px;color:var(--muted);margin-top:2px}
+.sec{font-size:12px;font-weight:700;color:var(--gold);margin:10px 0 6px}
+.fx{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.fx span{font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--card)}
+.fx .p{color:var(--good)} .fx .n{color:var(--bad)}
+.fx.ab span{border:1px solid rgba(192,132,252,.4)}
+.rlines{display:flex;flex-direction:column;gap:5px;margin-bottom:6px}
+.rline{font-size:12.5px;background:var(--card);border-radius:10px;padding:7px 10px;line-height:1.5}
+.rline .dv{font-weight:900;margin-right:4px}
+.rline .dv.p{color:var(--good)} .rline .dv.n{color:var(--bad)}
+.quote{background:var(--card);border-left:3px solid var(--gold);padding:9px 12px;border-radius:0 10px 10px 0;font-size:13px;line-height:1.7;margin-bottom:8px;display:flex;gap:10px;align-items:center}
+.quote.bad{border-color:var(--bad)}
+.quote .qn{font-size:11px;color:var(--muted)}
+.report{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}
+.chart{display:flex;align-items:flex-end;gap:2px;height:110px;padding:8px 4px 0;background:var(--card);border-radius:10px;margin-bottom:6px}
+.chart .cb{flex:1;background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:3px 3px 0 0;min-height:2px}
+.chart .cb.last{background:linear-gradient(180deg,#fff,var(--gold))}
+.chart-x{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:12px}
+.grade{font-family:'Black Han Sans',sans-serif;font-size:36px;text-align:center;color:var(--gold);margin:4px 0}
+.score-big{font-family:'Black Han Sans',sans-serif;font-size:30px;color:var(--text)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--gold);color:#2b1d00;font-weight:700;padding:10px 18px;border-radius:99px;z-index:60;animation:fade .2s;max-width:90vw;text-align:center}
+
+/* ---------- 랭킹 ---------- */
+.rank-row{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px dashed var(--line)}
+.rank-row .no{width:28px;text-align:center;font-family:'Black Han Sans',sans-serif;font-size:18px;color:var(--muted)}
+.rank-row:nth-child(1) .no{color:#ffd54a} .rank-row:nth-child(2) .no{color:#d7dde8} .rank-row:nth-child(3) .no{color:#e0a36b}
+.rank-row .info{flex:1;min-width:0}
+.rank-row .n1{font-weight:700}
+.rank-row .n2{font-size:11px;color:var(--muted)}
+.rank-row .sc{text-align:right;font-weight:900;color:var(--gold);white-space:nowrap}
+.rank-row.me{background:rgba(245,196,81,.08);border-radius:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* =========================================================
+   영감님 성공하기 — 파트론 회사 키우기
+   단위: 억원 · 1턴 = 1분기 · 27세(2003)에 시작, 80세 또는 은퇴 시 종료
+   ========================================================= */
+const START_YEAR = 2003, START_AGE = 27, MAX_AGE = 80, MEMORY_END = 2026;
+const SAVE_KEY = 'younggam_save_v2', LOCAL_RANK_KEY = 'younggam_rank_local';
+const SERVER = new URLSearchParams(location.search).get('server') || 'https://tetris-arena-4spd.onrender.com';
+const RANK_API_KEY = 'younggam-2026';
+
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rand = (a, b) => a + Math.random() * (b - a);
+const ri = (a, b) => Math.floor(rand(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const chance = p => Math.random() < p;
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let S = null;
+
+function fmt(n) {
+  const neg = n <= -0.05; n = Math.abs(n);
+  let s;
+  if (n >= 10000) { const jo = Math.floor(n / 10000), eok = Math.round(n % 10000); s = jo + '조' + (eok ? ' ' + eok.toLocaleString() + '억' : ''); }
+  else if (n < 10) s = n.toFixed(1) + '억';
+  else s = Math.round(n).toLocaleString() + '억';
+  return (neg ? '-' : '') + s;
+}
+
+/* =========================================================
+   얼굴 일러스트 (SVG 생성기) — 나이에 따라 흰머리·주름·탈모
+   ========================================================= */
+const SKINS = ['#f8dcc0', '#f0c7a2', '#e2ae86', '#c98f66', '#9f6c4c'];
+const HAIRC = ['#1b1818', '#3b2a20', '#6b4a2e', '#a3733c', '#2c2f45', '#7a2e2e'];
+const FACE_OPTS = [ // [key, 이름, 옵션이름들]
+  ['s', '피부', ['밝은', '보통', '살구', '구릿빛', '진한']],
+  ['h', '헤어', ['짧은 머리', '가르마', '덮은 머리', '스포츠', '올백', '단발']],
+  ['c', '머리색', ['흑발', '짙은 갈색', '갈색', '밝은 갈색', '청흑', '적갈색']],
+  ['e', '눈', ['또렷', '웃는 눈', '큰 눈', '졸린 눈']],
+  ['b', '눈썹', ['일자', '진한', '처진']],
+  ['m', '입', ['미소', '활짝', '무표정', '오!']],
+  ['g', '안경', ['없음', '동그란', '뿔테']],
+  ['d', '수염', ['없음', '콧수염', '턱수염']]];
+const randomFace = () => Object.fromEntries(FACE_OPTS.map(([k, , arr]) => [k, k === 'g' || k === 'd' ? (chance(0.6) ? 0 : ri(1, arr.length - 1)) : ri(0, arr.length - 1)]));
+function mix(a, b, t) {
+  const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const x = p(a), y = p(b);
+  return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join('');
+}
+let faceUid = 0;
+function faceSVG(f, age = START_AGE, size = 64, o = {}) {
+  const skin = SKINS[f.s] || SKINS[1];
+  const gray = clamp((age - 42) / 28, 0, 1);
+  const hair = mix(HAIRC[f.c] || HAIRC[0], '#d9d9d9', gray);
+  const line = '#3a2a22', suit = o.suit || '#1f2a44', tie = o.tie || '#c9a227', bg = o.bg || '#2a3a66';
+  const bald = age >= 62 && [0, 1, 4].includes(f.h);
+  const hairs = [
+    'M22,46 Q21,15 50,14 Q79,15 78,46 Q74,30 50,29 Q26,30 22,46Z',
+    'M21,48 Q19,13 52,12 Q81,15 79,47 Q73,26 57,27 Q41,21 31,34 Q24,40 21,48Z',
+    'M20,56 Q16,12 50,12 Q84,12 80,56 Q78,40 72,36 Q60,40 40,34 Q30,38 26,44 Q22,48 20,56Z',
+    'M24,40 Q26,18 50,17 Q74,18 76,40 Q70,28 50,27 Q30,28 24,40Z',
+    'M22,43 Q17,6 50,6 Q83,6 78,43 Q74,22 50,21 Q26,22 22,43Z',
+    'M17,66 Q12,11 50,11 Q88,11 83,66 L75,66 Q77,32 52,28 Q34,30 27,40 Q24,50 25,66Z'];
+  const hairPath = bald ? 'M22,52 Q20,36 28,31 L30,46Z M78,52 Q80,36 72,31 L70,46Z' : hairs[f.h] || hairs[0];
+  const eyes = [
+    `<circle cx="40" cy="49" r="2.8" fill="${line}"/><circle cx="60" cy="49" r="2.8" fill="${line}"/>`,
+    `<path d="M36,50 Q40,45 44,50 M56,50 Q60,45 64,50" stroke="${line}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+    `<ellipse cx="40" cy="49" rx="4" ry="4.5" fill="#fff"/><ellipse cx="60" cy="49" rx="4" ry="4.5" fill="#fff"/><circle cx="40.5" cy="50" r="2.4" fill="${line}"/><circle cx="60.5" cy="50" r="2.4" fill="${line}"/>`,
+    `<path d="M36,49 L44,49 M56,49 L64,49" stroke="${line}" stroke-width="2.2" stroke-linecap="round"/><path d="M36,47 Q40,45 44,47 M56,47 Q60,45 64,47" stroke="${line}" stroke-width="1" fill="none" opacity=".5"/>`][f.e] || '';
+  const bc = mix(hair, line, 0.3);
+  const brows = [
+    `<path d="M35,41 L45,41 M55,41 L65,41" stroke="${bc}" stroke-width="2.2" stroke-linecap="round"/>`,
+    `<path d="M34,42 Q40,37 46,41 M54,41 Q60,37 66,42" stroke="${bc}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`,
+    `<path d="M35,40 Q40,40 45,43 M55,43 Q60,40 65,40" stroke="${bc}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`][f.b] || '';
+  const mouths = [
+    `<path d="M43,64 Q50,70 57,64" stroke="${line}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
+    `<path d="M41,62 Q50,62 59,62 Q57,72 50,72 Q43,72 41,62Z" fill="#7a2f2f"/><path d="M43,63 L57,63 L56,65 L44,65Z" fill="#fff"/>`,
+    `<path d="M44,66 L56,66" stroke="${line}" stroke-width="2.2" stroke-linecap="round"/>`,
+    `<ellipse cx="50" cy="66" rx="3.5" ry="4" fill="#7a2f2f"/>`][f.m] || '';
+  const glasses = ['',
+    `<g stroke="#222" stroke-width="1.6" fill="rgba(255,255,255,.12)"><circle cx="40" cy="49" r="7"/><circle cx="60" cy="49" r="7"/><path d="M47,49 L53,49" fill="none"/></g>`,
+    `<g stroke="#111" stroke-width="2.6" fill="rgba(255,255,255,.1)"><rect x="31" y="43" width="17" height="12" rx="3"/><rect x="52" y="43" width="17" height="12" rx="3"/><path d="M48,48 L52,48" fill="none"/></g>`][f.g] || '';
+  const beards = ['',
+    `<path d="M41,60 Q46,57 50,59.5 Q54,57 59,60 Q55,62 50,61 Q45,62 41,60Z" fill="${hair}"/>`,
+    `<path d="M25,55 Q26,80 50,82 Q74,80 75,55 Q70,70 60,68 Q50,73 40,68 Q30,70 25,55Z" fill="${hair}" opacity=".95"/><path d="M41,60 Q46,57 50,59.5 Q54,57 59,60 Q55,62 50,61 Q45,62 41,60Z" fill="${hair}"/>`][f.d] || '';
+  let wr = '';
+  if (age >= 52) wr += `<path d="M38,30 Q50,27 62,30" stroke="${line}" stroke-width=".9" fill="none" opacity=".35"/><path d="M31,52 L28,54 M69,52 L72,54" stroke="${line}" stroke-width="1" opacity=".4"/>`;
+  if (age >= 65) wr += `<path d="M40,34 Q50,31.5 60,34" stroke="${line}" stroke-width=".9" fill="none" opacity=".35"/><path d="M40,58 Q38,63 40,67 M60,58 Q62,63 60,67" stroke="${line}" stroke-width="1" fill="none" opacity=".35"/>`;
+  const id = 'fc' + (++faceUid);
+  return `<svg class="avatar" viewBox="0 0 100 100" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+    <defs><clipPath id="${id}"><circle cx="50" cy="50" r="50"/></clipPath></defs>
+    <g clip-path="url(#${id})">
+    <rect width="100" height="100" fill="${bg}"/>
+    ${f.h === 5 && !bald ? `<path d="M17,66 Q14,90 22,92 L78,92 Q86,90 83,66Z" fill="${hair}"/>` : ''}
+    <rect x="42" y="70" width="16" height="14" fill="${mix(skin, '#000000', .08)}"/>
+    <path d="M6,104 Q10,80 50,78 Q90,80 94,104Z" fill="${suit}"/>
+    <path d="M41,79 L50,94 L59,79Z" fill="#f4f4f4"/>
+    <path d="M48,82 L52,82 L53.5,93 L50,98 L46.5,93Z" fill="${tie}"/>
+    <circle cx="23" cy="51" r="5.5" fill="${skin}"/><circle cx="77" cy="51" r="5.5" fill="${skin}"/>
+    <ellipse cx="50" cy="48" rx="27" ry="31" fill="${skin}"/>
+    <path d="${hairPath}" fill="${hair}"/>
+    ${brows}${eyes}
+    <path d="M50,51 Q47,57.5 51,58.5" stroke="${mix(skin, '#000000', .35)}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    ${wr}${beards}${mouths}${glasses}
+    <ellipse cx="35" cy="59" rx="4" ry="2" fill="#ff8a8a" opacity=".22"/><ellipse cx="65" cy="59" rx="4" ry="2" fill="#ff8a8a" opacity=".22"/>
+    </g></svg>`;
+}
+
+/* =========================================================
+   회장님 능력치 8종
+   ========================================================= */
+const ABIL = [
+  ['social', '사회성', '🗣️', '영업·접대 효과, 고객사 반응'],
+  ['humor', '유머', '😂', '직원 사기, 접대 분위기'],
+  ['know', '지식', '📚', '연구개발 효과, 국책과제 확률'],
+  ['drive', '적극성', '🔥', '설비투자 효과, 승부수 성공률'],
+  ['lead', '리더십', '👑', '이사회 승인률, 조직 장악'],
+  ['insight', '통찰력', '🔮', '인재 발굴, 신사업 판단'],
+  ['nego', '협상력', '🤝', '모든 비용 할인, 투자 유치 조건'],
+  ['grit', '끈기', '💪', '체력 소모 감소, 휴식 효율']];
+const abName = k => ABIL.find(a => a[0] === k)[1];
+const abIcon = k => ABIL.find(a => a[0] === k)[2];
+// 능력치 보정 배율: 0 → ×0.7, 50 → ×1.1, 100 → ×1.5
+const abm = (s, keys) => keys && keys.length ? keys.reduce((a, k) => a + 0.7 + s.ab[k] / 100 * 0.8, 0) / keys.length : 1;
+const rollAbilities = () => Object.fromEntries(ABIL.map(([k]) => [k, ri(15, 62)]));
+
+/* =========================================================
+   이해관계자 반응 5종 (실시간 점수)
+   ========================================================= */
+const REACT = [['market', '시장', '📈'], ['client', '고객사', '🏢'], ['partner', '협력업체', '🔧'], ['holder', '주주', '💼'], ['morale', '직원', '👷']];
+const REACT_Q = {
+  market: { up: ['업계 신문: "{co}, 무서운 성장세"', '증권가 리포트: "주목할 만한 행보"', '경쟁사 회의실: "{co} 요즘 왜 이렇게 잘나가?"'], down: ['업계 신문: "{co}, 성장 동력 의문"', '애널리스트: "투자의견 하향 검토"'] },
+  client: { up: ['고객사 구매팀: "역시 {co}, 믿고 맡길 만하네요."', '고객사 담당자: "다음 모델도 같이 가시죠!"'], down: ['고객사 구매팀: "요즘 좀 실망스럽네요…"', '고객사: "벤더 다변화를 검토하겠습니다."'] },
+  partner: { up: ['협력업체 사장님들: "이런 원청 처음 봅니다!"', '협력업체: "{co} 일이라면 밤새서라도 맞춰드리죠."'], down: ['협력업체: "대금 결제가 좀 늦네요…"', '협력업체: "이러면 저희도 힘듭니다."'] },
+  holder: { up: ['주주 게시판: "회장님 믿습니다 🚀"', '주주: "이 정도면 장기 보유각"'], down: ['주주 게시판: "이게 경영이냐?"', '주주: "배당은 언제 주나요?"'] },
+  morale: { up: ['사내 메신저: "우리 회사 좋은 회사네 ㅎㅎ"', '탕비실: "이번 분기 분위기 최고!"'], down: ['블라인드: "탈출각 재는 중…"', '흡연실: "회장님 요즘 왜 그래?"'] },
+};
+const moodFace = v => v < 25 ? '😡' : v < 42 ? '😟' : v < 60 ? '😐' : v < 80 ? '🙂' : '😍';
+
+/* =========================================================
+   사업부 & 시장
+   ========================================================= */
+const BIZ = {
+  antenna: { name: '안테나', icon: '📡', minYear: 0, tech: 0, trend: y => y < 2008 ? 1 : Math.max(0.35, 1 - (y - 2008) * 0.07),
+    story: '휴대폰마다 안테나는 반드시 들어간다. 당장 안정적인 매출원이 되어줄 것이다.' },
+  passive: { name: '수동부품', icon: '🔩', minYear: 0, tech: 0, trend: y => 0.72 + Math.min(0.25, (y - 2003) * 0.012),
+    story: '필터, 인덕터, 진동모터… 화려하진 않지만 모든 전자제품에 들어가는 쌀 같은 부품이다.' },
+  camera: { name: '카메라모듈', icon: '📷', minYear: 0, tech: 25, trend: y => y < 2005 ? 0.35 : y < 2010 ? 0.35 + (y - 2005) * 0.13 : y < 2019 ? 1 + (y - 2010) * 0.02 : Math.max(0.6, 1.18 - (y - 2019) * 0.04),
+    story: '"이게 앞으로 20년 먹거리다." 회장님은 전생의 기억을 확신했다. 첫 시제품이 나오자 연구원들이 환호했다.' },
+  sensor: { name: '센서', icon: '🔬', minYear: 2008, tech: 45, trend: y => clamp(0.3 + (y - 2010) * 0.08, 0.3, 1.0),
+    story: '지문, 조도, 근접… 스마트폰에 센서가 줄줄이 붙는 시대. 새 매출원을 확보했다.' },
+  auto: { name: '전장', icon: '🚗', minYear: 2013, tech: 55, trend: y => y < 2014 ? 0.1 : Math.min(1.3, 0.1 + (y - 2014) * 0.12),
+    story: '자동차 한 대에 카메라가 10개씩 들어가는 시대가 온다. 까다로운 자동차 부품 인증을 따내느라 고생했지만, 이제 완성차 회사들이 고객이다.' },
+  wear: { name: '웨어러블', icon: '⌚', minYear: 2014, tech: 50, trend: y => y < 2015 ? 0.1 : Math.min(1.0, 0.1 + (y - 2015) * 0.14),
+    story: '손목 위 스마트워치, 귀 안의 무선이어폰. 작고 정밀한 부품의 시대가 열렸다.' },
+  robot: { name: '로봇·XR', icon: '🤖', minYear: 2024, tech: 70, trend: y => y < 2025 ? 0.1 : Math.min(1.5, 0.1 + (y - 2025) * 0.1),
+    story: '회장님도 모르는 미래. 로봇과 XR 기기의 "눈"이 될 비전 모듈 시장에 뛰어들었다.' },
+};
+const START_BIZ = {
+  antenna: { tags: [['당장 매출 안정', 'p'], ['2008년 이후 하락', 'n']], d: '지금 시장의 주력. 첫해부터 매출이 나오지만, 스마트폰 시대엔 비중이 줄어든다.',
+    st: { cap: 12, sales: 22, client: 56 } },
+  camera: { tags: [['2010년 대폭발', 'p'], ['초반 수요 적음', 'n'], ['기술 +12', 'p']], d: '지금은 폰카 초창기라 시장이 작다. 하지만 회귀자는 안다. 곧 모든 폰에 카메라가 2~3개씩 붙는다.',
+    st: { cap: 9, tech: 32, sales: 12, market: 56 } },
+  passive: { tags: [['꾸준한 수요', 'p'], ['품질 +10', 'p'], ['폭발력 낮음', 'n']], d: '유행을 타지 않는 기본 부품. 큰 대박은 없지만 망하지도 않는다.',
+    st: { cap: 11, quality: 40, sales: 16, partner: 58 } },
+};
+const yf = s => s.year + (s.q - 1) / 4;
+function marketFactor(s) {
+  const y = yf(s); let sum = 0;
+  for (const k in s.biz) if (s.biz[k]) sum += BIZ[k].trend(y);
+  return clamp(0.4 + 0.6 * sum, 0.3, 1.5);
+}
+function crisis(s) {
+  const y = yf(s);
+  if (y >= 2008.75 && y < 2009.5) return 0.8;
+  if (y >= 2020.25 && y < 2020.75) return 0.85;
+  return 1;
+}
+const loanLimit = s => (20 + s.cap * 2.5) * (0.6 + s.market / 125);
+const rate = s => 0.012 + Math.min(1, s.debt / Math.max(1, loanLimit(s))) * 0.018;
+const disc = s => 1 - s.ab.nego / 500; // 협상력 비용 할인 (최대 20%)
+/* 분기 손익 */
+function calc(s) {
+  const mf = marketFactor(s) * crisis(s);
+  const share = (s.sales + s.market + s.tech) / 300 * (0.8 + s.client / 250);
+  // 시장 규모: 2026년까지 연 15%p씩 커지다가, 회장님도 모르는 미래(2027~)엔 성장 둔화
+  const y = yf(s), size = y <= MEMORY_END ? 1 + (y - START_YEAR) * 0.15 : 1 + (MEMORY_END - START_YEAR) * 0.15 + (y - MEMORY_END) * 0.05;
+  const demand = 1200 * mf * size * share;
+  const util = clamp(Math.min((0.3 + s.sales * 0.004 + s.market * 0.002 + s.quality * 0.002 + (s.client - 50) * 0.002) * mf, demand / s.cap), 0.15, 1);
+  const rev = s.cap * util;
+  const margin = 0.1 + s.tech * 0.002 + s.quality * 0.001 + s.mb + (s.partner - 50) * 0.0008 + (s.morale < 30 ? -0.04 : s.morale > 75 ? 0.01 : 0);
+  const fixed = 0.6 + s.cap * 0.025;
+  const op = rev * margin - fixed;
+  const interest = s.debt * rate(s);
+  return { util, rev, margin, op, interest, profit: op - interest };
+}
+
+/* =========================================================
+   사람들 — 임원 · 직원 · 주주 (충성도 & 견제)
+   ========================================================= */
+const SURNAMES = ['윤', '장', '임', '한', '오', '서', '신', '권', '황', '안', '송', '류', '홍', '배', '조', '남'];
+const NPC_T = {
+  park: { name: '박전무', role: '영업총괄 전무', type: 'exec', area: 'sales', title: '전무', trait: '야심가', likes: ['영업'], dislikes: ['R&D'],
+    q: { like: ['역시 회장님! 영업은 발로 뛰는 겁니다.', '고객사에서 회장님 칭찬이 자자합니다.'], dis: ['연구소에 돈 붓느니 영업 인원 늘리는 게 낫습니다만…', '기술은 기술자들이나 좋아하지, 고객은 가격만 봅니다.'] } },
+  kim: { name: '김상무', role: '기술연구소장 상무', type: 'exec', area: 'tech', title: '상무', trait: '장인', likes: ['R&D', '설비'], dislikes: ['영업'],
+    q: { like: ['좋습니다. 기술이 곧 회사입니다.', '연구원들 사기가 하늘을 찌릅니다!'], dis: ['접대비로 측정 장비 하나 더 사겠네요…', '물건이 좋으면 영업은 저절로 됩니다.'] } },
+  choi: { name: '최이사', role: '재무이사 (CFO)', type: 'exec', area: 'finance', title: '이사', trait: '깐깐', likes: ['재무'], dislikes: ['설비', '신사업'],
+    q: { like: ['재무구조가 탄탄해지고 있습니다.', '현금이 곧 생명입니다. 현명한 판단이십니다.'], dis: ['회수 기간 계산은 해보셨습니까?', '현금흐름표 보시면 이러시면 안 됩니다…'] } },
+  lee: { name: '이대리', role: '사원 대표 (MZ)', type: 'staff', area: 'morale', title: '대리', trait: '솔직', likes: ['인사', '휴식'], dislikes: ['설비'],
+    q: { like: ['회장님 최고! 블라인드에 칭찬 글 올렸어요.', '이런 회사라면 오래 다니고 싶어요.'], dis: ['또 야근이네요… 저녁 있는 삶은요?', '라인 늘면 사람도 늘려주시는 거죠?'] } },
+  jung: { name: '정반장', role: '생산현장 반장', type: 'staff', area: 'field', title: '반장', trait: '뚝심', likes: ['설비', '인사'], dislikes: ['신사업'],
+    q: { like: ['새 설비 좋네요. 현장이 신났습니다!', '현장 챙겨주셔서 감사합니다, 회장님.'], dis: ['또 새 제품 공정을 배워야 합니까…', '현장은 지금도 손이 모자랍니다.'] } },
+  han: { name: '한대표', role: '벤처캐피탈 투자자', type: 'holder', area: 'vc', title: '대표', trait: '성장광', likes: ['설비', '신사업'], dislikes: ['인사', '휴식'],
+    q: { like: ['바로 이겁니다! 성장, 성장, 성장!', '엑시트 각이 보이네요.'], dis: ['직원 복지는 상장 후에 하시죠.', '회장님, 지금 쉬실 때입니까?'] } },
+  oh: { name: '오대표', role: '소액주주연대 대표', type: 'holder', area: 'retail', title: '대표', trait: '개미', likes: ['재무'], dislikes: ['인사'],
+    q: { like: ['주주를 생각하는 경영, 좋습니다!', '이제야 주가가 숨을 쉬네요.'], dis: ['성과급 줄 돈으로 배당이나 주시죠.', '주주는 안중에도 없으십니까?'] } },
+  brown: { name: '브라운', role: '행동주의 펀드 매니저', type: 'holder', area: 'fund', title: '', trait: '하이에나', likes: ['재무'], dislikes: ['설비', '신사업'],
+    q: { like: ['Good. 주주가치 제고, 그게 정답입니다.', 'Excellent. 이대로만 하시죠.'], dis: ['그 돈은 자사주 매입에 써야 합니다.', '이사회 자리를 하나 요구하겠습니다.'] } },
+};
+const NPC_STYLE = { exec: { suit: '#2b2b2b', tie: '#7c3aed', bg: '#3a3550' }, staff: { suit: '#3b5b8a', tie: '#e5e7eb', bg: '#2d4a5a' }, holder: { suit: '#4a3b2a', tie: '#16a34a', bg: '#4a3a2a' } };
+function makeNpc(id, rename) {
+  const t = NPC_T[id];
+  const n = { id, name: t.name, loyal: ri(48, 68), face: randomFace(), age: t.type === 'staff' ? ri(26, 45) : ri(38, 55), checked: 0 };
+  if (id === 'lee') n.age = ri(26, 30);
+  if (id === 'brown') { n.face.s = 0; n.face.c = 3; }
+  if (rename) n.name = pick(SURNAMES) + t.title;
+  return n;
+}
+const npcT = n => NPC_T[n.id];
+const npcFace = (n, size) => faceSVG(n.face, n.age, size, NPC_STYLE[npcT(n).type]);
+const holders = s => s.npcs.filter(n => npcT(n).type === 'holder');
+const execs = s => s.npcs.filter(n => npcT(n).type === 'exec');
+function addHolder(s, id) { if (!s.npcs.find(n => n.id === id)) { s.npcs.push(makeNpc(id)); return true; } return false; }
+const avgLoyal = arr => arr.length ? arr.reduce((a, n) => a + n.loyal, 0) / arr.length : 60;
+function boardChance(s) {
+  const pen = (s.flags.boardPen || 0) > s.turn ? 0.2 : 0;
+  return clamp(0.3 + avgLoyal([...execs(s), ...holders(s)]) * 0.005 + s.ab.lead * 0.003 - pen, 0.15, 0.97);
+}
+
+/* =========================================================
+   전략 카드
+   ab: 효과에 쓰이는 능력치(배율 k) / grow: 행동 후 오르는 능력치
+   run(s, k, ok) → 결과 서술
+   ========================================================= */
+const clientName = s => s.year < 2008 ? pick(['S전자', 'L전자', '팬택']) : s.year < 2016 ? pick(['S전자', 'L전자', '미국 A사']) : pick(['S전자', '미국 A사', 'H자동차', '중국 X사']);
+const CARDS = [
+  // ---------- 설비 ----------
+  { id: 'line', cat: '설비', icon: '🏭', t: '생산라인 증설', d: '생산능력 대폭 증가. 야근이 늘어 직원 반응은 하락.', ab: ['drive', 'insight'], grow: { drive: 2, insight: 1 },
+    board: s => s.cap >= 40, cost: s => 3 + s.cap * 0.8,
+    run: (s, k) => { s.cap *= 1.35 + 0.15 * k; s.morale -= 5; s.partner += 6; s.market += 2; s.health -= 3;
+      return `새 생산라인 착공식에서 회장님이 직접 첫 삽을 떴다. 설비 업체 사장님들은 "역대급 발주"라며 연신 고개를 숙였고, 협력업체 반응이 확 좋아졌다.\n${s.ab.drive >= 60 ? '회장님 특유의 밀어붙이는 추진력 덕에 셋업 기간이 한 달이나 단축됐다.' : '처음 해보는 규모라 시행착오가 있었지만, 결국 라인은 힘차게 돌아가기 시작했다.'}\n다만 셋업 기간 내내 야근이 이어져 현장 직원들의 표정은 조금 어두워졌다.`; } },
+  { id: 'automate', cat: '설비', icon: '🦾', t: '공정 자동화', d: '품질 상승, 이익률 +1%p. 일자리 걱정에 직원 반응 소폭 하락.', ab: ['know', 'insight'], grow: { know: 1, insight: 2 },
+    avail: s => s.tech >= 30, cost: s => 5 + s.cap * 0.5,
+    run: (s, k) => { s.quality += 12 * k; s.mb = Math.min(0.08, s.mb + 0.01); s.morale -= 3; s.partner += 3;
+      return `독일에서 들여온 로봇팔이 라인에 자리를 잡았다. 사람 손으로는 들쭉날쭉하던 조립 정밀도가 일정해지면서 불량률이 눈에 띄게 줄었다.\n${s.ab.know >= 60 ? '회장님이 직접 공정 데이터를 분석해 로봇 세팅값을 잡아준 덕에 효과가 배가됐다.' : '세팅에 애를 먹었지만, 장비 업체 엔지니어가 3주를 상주하며 잡아줬다.'}\n하지만 현장에서는 "이러다 우리 자리 없어지는 거 아니냐"는 수군거림도 들린다.`; } },
+  { id: 'smart', cat: '설비', icon: '🛰️', t: '스마트팩토리 구축', d: '품질 대폭 상승, 이익률 +1.5%p. (1회)', ab: ['know', 'lead'], grow: { know: 2, lead: 1 },
+    avail: s => s.year >= 2016 && !s.flags.smart, cost: s => 10 + s.cap * 0.6, board: () => true,
+    run: (s, k) => { s.flags.smart = 1; s.quality += 15 * k; s.mb += 0.015; s.market += 4; s.client += 4;
+      return `공장 곳곳에 센서를 깔고 모든 설비 데이터를 실시간으로 모으는 스마트팩토리를 구축했다.\n설비 이상을 미리 감지하니 라인이 갑자기 멈추는 일이 사라졌고, 품질 편차가 확 줄었다. 견학 온 고객사 임원이 "여기가 한국 맞냐"며 놀랐다.`; } },
+  { id: 'overseas', cat: '설비', icon: '🌏', t: '베트남 공장 설립', d: '생산능력 ×1.8, 이익률 +3%p. 국내 협력업체는 불안. (1회)', ab: ['drive', 'nego'], grow: { drive: 2, nego: 2 },
+    avail: s => s.year >= 2009 && !s.flags.overseas && s.cap >= 50, board: () => true, cost: s => 20 + s.cap * 1.0,
+    run: (s, k) => { s.cap *= 1.7 + 0.1 * k; s.mb += 0.03; s.flags.overseas = 1; s.morale -= 4; s.partner -= 8; s.holder += 8; s.market += 6; s.client += 4; s.health -= 8;
+      return `베트남 박닌성에 대규모 공장이 준공됐다. 현지 인건비는 국내의 1/5 수준.\n${s.ab.nego >= 60 ? '회장님이 성 정부와 담판을 지어 법인세 4년 면제까지 받아냈다.' : '인허가에 반년이 걸렸지만, 결국 테이프 커팅까지 왔다.'}\n원가 경쟁력이 확 올라가자 주주들은 환호했고 고객사도 "단가 맞출 수 있겠네"라며 반겼다. 반면 국내 협력업체들은 물량이 빠질까 걱정이 태산이다.`; } },
+  { id: 'mna', cat: '설비', icon: '🤝', t: '경쟁사 인수합병', d: '생산능력 ×1.6, 기술 +8. 조직 융합으로 직원 반응 하락.', ab: ['nego', 'insight', 'lead'], grow: { nego: 3, insight: 1, lead: 1 },
+    avail: s => s.year >= 2011 && s.cap >= 150, board: () => true, cost: s => s.cap * 1.2,
+    run: (s, k) => { s.cap *= 1.5 + 0.1 * k; s.tech += 8; s.morale -= 8; s.market += 8; s.holder += 5; s.health -= 6;
+      return `수개월의 물밑 협상 끝에 경쟁사 인수 계약서에 도장을 찍었다.\n${s.ab.nego >= 60 ? '회장님의 노련한 협상으로 인수가를 20%나 깎았다. 상대편 대표가 "젊은 분이 수가 어찌 이리 깊으냐"며 혀를 내둘렀다.' : '가격은 좀 비쌌지만, 시간을 사는 거라 생각하기로 했다.'}\n하루아침에 생산능력과 특허가 불어났고 시장은 "업계 판도가 바뀌었다"며 들썩였다. 다만 두 회사 직원들 사이엔 아직 어색한 기류가 흐른다.`; } },
+  // ---------- R&D ----------
+  { id: 'rnd', cat: 'R&D', icon: '🧪', t: '신기술 연구개발', d: '기술력 상승 (높을수록 효과 감소). 지식이 높을수록 효과 UP.', ab: ['know'], grow: { know: 2, grit: 1 },
+    cost: s => 2 + s.cap * 0.12,
+    run: (s, k) => { const g = 12 * (1 - s.tech / 140) * k; s.tech += g; s.health -= 3; s.market += 1;
+      return `연구소의 불이 밤새 꺼지지 않았다.\n${s.ab.know >= 60 ? '회장님이 전생에 봤던 기술 로드맵을 슬쩍 힌트로 던지자, 연구원들이 "회장님 그걸 어떻게 아셨어요?"라며 눈이 휘둥그레졌다.' : '회장님은 연구원들 야식을 직접 챙기며 묵묵히 응원했다.'}\n몇 달 뒤, 시제품이 목표 스펙을 넘어섰다. 연구원들의 자신감과 함께 기술력이 ${Math.round(g)} 올랐다.`; } },
+  { id: 'lab', cat: 'R&D', icon: '🏛️', t: '기업부설 연구소 설립', d: '매 분기 기술력이 자연 상승으로 바뀐다. (1회)', ab: ['know', 'insight'], grow: { know: 3, insight: 1 },
+    avail: s => !s.flags.lab, cost: s => 12 + s.cap * 0.3,
+    run: s => { s.flags.lab = 1; s.tech += 5; s.market += 3;
+      return `"기업부설 연구소" 현판식이 열렸다. 회장님은 현판을 한참 바라보다 혼잣말을 했다.\n"기술이 곧 회사다… 전생엔 이걸 너무 늦게 깨달았지."\n이제 매 분기 연구 성과가 꾸준히 쌓일 것이다. 연구소장의 눈시울이 붉어졌다.`; } },
+  { id: 'patent', cat: 'R&D', icon: '📜', t: '특허 출원 러시', d: '기술 +4, 시장 반응 상승.', ab: ['know', 'nego'], grow: { know: 1, nego: 1 },
+    cost: s => 1 + s.cap * 0.05,
+    run: (s, k) => { s.tech += 4; s.market += 7 * k;
+      return `그동안 쌓아온 기술을 특허로 꽁꽁 묶어 수십 건을 한꺼번에 출원했다.\n업계 신문에 "${s.company}, 특허 공세"라는 기사가 실렸고, 경쟁사 법무팀이 비상 회의를 열었다는 소문이 돌았다. 시장의 관심이 확 쏠렸다.`; } },
+  { id: 'gov', cat: 'R&D', icon: '🏢', t: '국책과제 도전', d: '성공 시 기술 +10, 지원금. 지식이 높을수록 유리.', ab: ['know'], grow: { know: 2, grit: 1 },
+    chance: s => clamp(0.3 + s.ab.know * 0.005 + s.tech * 0.002, 0.3, 0.9), cost: () => 0.5,
+    run: (s, k, ok) => ok ? (s.tech += 10, s.cash += 3 + s.cap * 0.05, s.market += 3,
+      `국책과제 발표 심사장. ${s.ab.know >= 60 ? '회장님이 심사위원의 날카로운 질문에 논문까지 인용하며 막힘없이 답하자' : '연구소장이 준비한 데모 영상이 끝나자'} 심사위원들이 고개를 끄덕였다.\n선정! 정부 지원금으로 개발 장비를 들이고, 기술력이 쑥 올랐다.`)
+      : (s.health -= 3, s.morale -= 2, `밤새 쓴 200페이지 제안서였지만 아쉽게 탈락했다.\n심사평은 "사업화 계획이 구체적이지 않음". 서류 작업에 진만 빠졌다. 그래도 회장님의 지식은 조금 늘었다.`) },
+  { id: 'univ', cat: 'R&D', icon: '🎓', t: '산학협력', d: '기술 상승 + 젊은 인재 유입으로 직원 반응 상승.', ab: ['know', 'social'], grow: { know: 1, social: 2 },
+    cost: s => 1.5 + s.cap * 0.06,
+    run: (s, k) => { const u = pick(['카이스트', '포항공대', '한양대', '성균관대']); s.tech += 6 * k; s.morale += 4;
+      return `${u} 연구실과 산학협력 협약을 맺었다. 교수님은 최신 논문을, 학생들은 열정을 들고 왔다.\n인턴 학생들이 탕비실 간식을 거덜 내긴 했지만, 덕분에 사무실 분위기가 한층 젊어졌다. 이대리는 "후배 생겼다"며 신이 났다.`; } },
+  // ---------- 영업 ----------
+  { id: 'sales', cat: '영업', icon: '💼', t: '대기업 구매팀 영업', d: '영업력 + 고객사 반응 상승. 사회성이 높을수록 효과 UP.', ab: ['social', 'drive'], grow: { social: 2, drive: 1 },
+    cost: s => 1 + s.cap * 0.06,
+    run: (s, k) => { const c = clientName(s); s.sales += 12 * k; s.client += 6 * k; s.health -= 4;
+      return `${c} 구매팀을 찾아갔다. 처음엔 "협력사 등록은 공문으로 하세요"라며 냉랭했던 팀장이, ${s.ab.social >= 60 ? '회장님의 넉살 좋은 입담에 결국 커피 한 잔을 내왔다' : '세 번째 방문 만에 겨우 미팅 시간을 내줬다'}.\n견적 요청서를 받아 들고 나오는 길, 회장님은 혼잣말을 했다. "전생엔 내가 갑이었는데…"\n발로 뛴 만큼 영업력이 올랐고 고객사와의 거리가 한 뼘 가까워졌다.`; } },
+  { id: 'expo', cat: '영업', icon: '🎪', t: '해외 전시회 참가', d: '영업력, 시장 반응, 고객사 반응 상승.', ab: ['social', 'drive'], grow: { social: 2, drive: 1 },
+    avail: s => s.year >= 2005, cost: s => 2 + s.cap * 0.08,
+    run: (s, k) => { const e = pick(['라스베이거스 CES', '바르셀로나 MWC', '독일 하노버 메세']); s.sales += 8 * k; s.market += 7; s.client += 3; s.health -= 3;
+      return `${e}에 부스를 차렸다.\n${s.ab.social >= 60 ? '회장님이 유창한 영어(전생에 60년 갈고닦은)로 직접 시연을 하자' : '번역 앱을 붙들고 진땀을 흘렸지만, 시제품이 워낙 좋아서'} 바이어들이 부스 앞에 줄을 섰다.\n명함 300장이 순식간에 동났다. 해외 시장에 ${s.company}의 이름을 알렸다.`; } },
+  { id: 'pitch', cat: '영업', icon: '🎯', t: '대형 고객사 PT 승부', d: '성공 시 영업·고객사·시장 대폭 상승. 실패 시 사기 하락.', ab: ['drive', 'know'], grow: { drive: 2, know: 1 },
+    chance: s => clamp(0.3 + s.tech * 0.003 + s.market * 0.002 + s.ab.drive * 0.002, 0.3, 0.88), cost: s => 1 + s.cap * 0.03,
+    run: (s, k, ok) => { const c = clientName(s);
+      return ok ? (s.sales += 20 * k, s.client += 12, s.market += 5,
+        `${c} 신모델 부품 수주 PT. 경쟁사 3곳이 붙은 자리였다.\n${s.ab.drive >= 60 ? '회장님이 마지막 장표에서 "납기 못 맞추면 제 월급 반납하겠습니다"라고 승부수를 던지자' : '꼼꼼하게 준비한 기술 데이터가 빛을 발했고'} 고객사 임원이 그 자리에서 고개를 끄덕였다.\n수주 성공! 회의실에 박수가 터졌다.`)
+        : (s.morale -= 6, s.client -= 3, s.health -= 4,
+        `${c} PT에서 경쟁사에 밀렸다. "기술은 좋은데 레퍼런스가 부족하네요."\n돌아오는 차 안이 조용했다. 팀원들의 어깨가 축 처졌다. 회장님은 "전생에도 이런 날이 있었지"라며 애써 웃었다.`); } },
+  { id: 'golf', cat: '영업', icon: '⛳', t: '골프 접대', d: '고객사 반응·영업력 상승. 체력 소모 큼. 사회성·유머가 높을수록 효과 UP.', ab: ['social', 'humor'], grow: { social: 2, humor: 2 },
+    cost: s => 0.5 + s.cap * 0.02,
+    run: (s, k) => { const c = clientName(s); s.sales += 7 * k; s.client += 9 * k; s.health -= 7;
+      return `${c} 구매팀장과 주말 라운딩을 나갔다.\n${s.ab.humor >= 60 ? '회장님의 구수한 아재개그에 팀장이 배꼽을 잡았고' : '회장님의 어설픈 농담에 분위기가 잠깐 싸해졌지만'}, ${s.ab.social >= 55 ? '18홀 내내 대화가 끊이지 않았다' : '17번 홀 버디 한 방에 분위기가 확 살아났다'}.\n라운딩이 끝나고 팀장이 웃으며 말했다. "다음 분기 물량, ${s.company} 쪽으로 좀 더 돌려볼게요."\n고객사 직원이 기뻐하면서 고객사 반응과 영업력이 올랐다. 다만 "20대인데 스윙이 왜 노인네 같아요?"라는 말에 식은땀이 났다.`; } },
+  { id: 'coop', cat: '영업', icon: '🍱', t: '협력업체 상생 간담회', d: '협력업체 반응 대폭 상승, 품질 +4.', ab: ['social', 'nego'], grow: { social: 1, nego: 2 },
+    cost: s => 1 + s.cap * 0.05,
+    run: (s, k) => { s.partner += 15 * k; s.quality += 4;
+      return `협력업체 사장님 30여 명을 초청해 상생 간담회를 열었다.\n회장님은 "앞으로 어음 결제 없애고 전부 현금으로 드리겠습니다"라고 선언했다. 박수가 쏟아졌다.\n${s.ab.nego >= 60 ? '그러면서도 슬쩍 납기 단축 약속까지 받아내는 노련함을 보였다.' : '한 사장님은 회장님 손을 잡고 "이런 원청 처음 본다"며 눈물을 글썽였다.'}\n협력업체들은 납기와 품질로 보답하겠다고 약속했다.`; } },
+  { id: 'price', cat: '영업', icon: '🧮', t: '고객사 단가 인상 협상', d: '성공 시 이익률 +1.5%p. 실패 시 고객사 반응 하락. 협상력이 핵심.', ab: ['nego'], grow: { nego: 3 },
+    chance: s => clamp(0.25 + s.ab.nego * 0.006 + (s.client - 50) * 0.004, 0.2, 0.9), cost: () => 0.3,
+    run: (s, k, ok) => { const c = clientName(s);
+      return ok ? (s.mb += 0.015, s.client -= 2, s.holder += 4,
+        `원자재 가격 상승 자료를 한 보따리 들고 ${c} 구매팀을 찾아갔다.\n${s.ab.nego >= 60 ? '회장님은 서두르지 않았다. 차를 세 잔째 마실 때쯤, 상대가 먼저 "3% 정도면…"이라고 말을 꺼냈다.' : '팽팽한 줄다리기 끝에'} 결국 단가 인상을 받아냈다. 이익률이 올랐고 주주들이 반겼다.`)
+        : (s.client -= 9,
+        `단가 인상 얘기를 꺼내자마자 ${c} 구매팀장의 표정이 굳었다. "그럼 다른 업체 알아볼게요."\n분위기만 싸늘해진 채 돌아왔다. 고객사 반응이 떨어졌다.`); } },
+  // ---------- 인사 ----------
+  { id: 'hire', cat: '인사', icon: '🧑‍💻', t: '핵심 인재 영입', d: '기술·직원 반응 상승. 통찰력이 높을수록 대어를 낚는다.', ab: ['insight', 'social'], grow: { insight: 2, social: 1 },
+    cost: s => 2 + s.cap * 0.07,
+    run: (s, k) => { s.tech += 5 * k; s.morale += 4;
+      return `전생에 경쟁사에서 대박을 터뜨렸던 엔지니어를 ${s.ab.insight >= 60 ? '회장님의 기억을 더듬어 정확히 찾아내' : '수소문 끝에 겨우 찾아내'} 먼저 스카우트했다.\n"제가 이 회사에 올 줄 어떻게 아셨어요?" 그가 갸웃했지만 회장님은 웃기만 했다.\n새 인재의 합류로 기술력과 직원들의 분위기가 함께 올랐다.`; } },
+  { id: 'bonus', cat: '인사', icon: '💰', t: '성과급 지급', d: '직원 반응 대폭 상승. 주주는 아까워한다.', ab: ['lead'], grow: { lead: 2, humor: 1 },
+    cost: s => 1 + s.cap * 0.1,
+    run: s => { s.morale += 20; s.holder -= 4;
+      return `분기 실적 기념 성과급을 지급했다.\n월급날 통장을 확인한 직원들 사이에서 환호성이 터졌다. 사내 메신저엔 "회장님 만세" 이모티콘이 도배됐고, 현장 반장은 아내에게 처음으로 꽃다발을 사 갔다고 한다.\n다만 일부 주주들은 "그 돈이면 배당을…" 하며 입맛을 다셨다.`; } },
+  { id: 'workshop', cat: '인사', icon: '🏕️', t: '전사 워크숍', d: '직원 반응, 품질 상승. 유머가 높으면 대박.', ab: ['humor', 'lead'], grow: { humor: 2, lead: 1 },
+    cost: s => 0.5 + s.cap * 0.02,
+    run: (s, k) => { s.morale += 10 * k; s.quality += 3;
+      return `전 직원이 강원도로 1박 2일 워크숍을 떠났다. 캠프파이어 앞에서 회장님의 "라떼는 말이야" 토크가 시작되자,\n${s.ab.humor >= 60 ? '의외로 다들 배꼽을 잡고 웃었다. "회장님 스탠드업 코미디 하셔도 되겠어요!" 회장님의 유머 감각이 빛났다.' : 'MZ 직원들의 영혼이 잠시 가출했다. 누군가 조용히 휴대폰을 꺼내 들었다.'}\n그래도 다음 날 아침 해장국을 먹으며 팀워크가 한층 단단해졌다.`; } },
+  { id: 'qc', cat: '인사', icon: '🔍', t: '품질 혁신 TF', d: '품질 대폭 상승. 리더십이 높을수록 효과 UP.', ab: ['lead', 'grit'], grow: { lead: 2, grit: 1 },
+    cost: s => 1 + s.cap * 0.06,
+    run: (s, k) => { s.quality += 12 * k; s.client += 3; s.health -= 2;
+      return `"불량 제로" 품질 혁신 TF를 꾸렸다.\n${s.ab.lead >= 60 ? '회장님이 매일 아침 7시 라인을 직접 돌며 진두지휘하자, 현장에 긴장감과 자부심이 동시에 흘렀다.' : 'TF장이 밤낮없이 매달린 끝에'} 공정마다 숨어 있던 불량 원인이 하나씩 잡혀 나갔다.\n품질이 크게 오르자 고객사 품질팀도 만족스러워했다.`; } },
+  { id: 'edu', cat: '인사', icon: '📖', t: '사내 아카데미', d: '기술·품질·직원 반응 고르게 상승.', ab: ['know', 'lead'], grow: { know: 1, lead: 1, humor: 1 },
+    cost: s => 1 + s.cap * 0.04,
+    run: (s, k) => { s.tech += 3 * k; s.quality += 5 * k; s.morale += 4;
+      return `사내 아카데미를 열었다. 첫 강의는 회장님이 직접 맡았다. 제목은 "전생… 아니, 경험에서 배운 제조업 60년".\n"회장님 20대 아니세요?"라는 질문에 회장님은 헛기침으로 넘어갔다. 강의는 의외로 명강의였다.`; } },
+  // ---------- 재무 ----------
+  { id: 'vc', cat: '재무', icon: '📈', t: '벤처캐피탈 투자 유치', d: '큰 자금 확보. 지분 감소, 투자자가 주주로 합류.', ab: ['nego', 'social'], grow: { nego: 2, social: 1 }, board: () => true,
+    avail: s => !s.flags.ipo && s.turn - (s.flags.vcTurn ?? -99) >= 8, cost: () => 0,
+    run: (s, k) => { const a = (15 + s.cap * 1.2) * k; const d = 0.12 / k; s.cash += a; s.own *= 1 - d; s.market += 4; s.flags.vcTurn = s.turn; const added = addHolder(s, 'han');
+      return `여의도 벤처캐피탈 IR 자리.\n${s.ab.nego >= 60 ? '회장님은 투자자들의 질문 공세를 여유롭게 받아치며 기업가치를 한껏 끌어올렸다.' : '투자자들의 날카로운 질문에 진땀을 뺐지만, 사업계획서의 숫자가 설득력이 있었다.'}\n${fmt(a)}의 투자를 유치했다. 대신 지분 ${Math.round(d * 100)}%를 내줬다.${added ? '\n이사회에 투자사의 한대표가 들어왔다. "회장님, 저희는 성장만 봅니다."' : ''}`; } },
+  { id: 'ipo', cat: '재무', icon: '🔔', t: '코스닥 상장', d: '대규모 공모 자금 + 시장 반응 대폭 상승. 지분 -25%. (전년 매출 200억↑)', ab: ['nego', 'social'], grow: { nego: 2, social: 2 }, board: () => true,
+    avail: s => !s.flags.ipo && (s.hist.at(-1)?.rev ?? 0) >= 200, cost: () => 0,
+    run: (s, k) => { const a = (50 + s.cap * 2.5) * k; s.cash += a; s.market += 15; s.holder += 10; s.morale += 8; s.own *= 0.75; s.flags.ipo = 1; addHolder(s, 'oh');
+      return `한국거래소 로비에서 상장 기념 타종을 했다. 공모 청약 경쟁률 ${Math.round(300 + s.market * 12)} 대 1!\n${fmt(a)}의 공모 자금이 들어왔다. 우리사주를 받은 직원들은 서로 부둥켜안았다.\n이제 ${s.company}는 상장사다. 소액주주연대 오대표를 비롯한 수만 명의 눈이 회장님을 지켜보기 시작했다.`; } },
+  { id: 'buyback', cat: '재무', icon: '🛡️', t: '자사주 매입', d: '회장 지분 +4%, 주주 반응 대폭 상승.', ab: ['insight'], grow: { insight: 1, nego: 1 },
+    avail: s => s.flags.ipo, cost: s => 5 + s.cap * 0.4,
+    run: s => { s.own = Math.min(100, s.own + 4); s.holder += 14; s.market += 3;
+      return `주가가 저평가됐다고 판단해 자사주 매입을 발표했다.\n공시가 뜨자마자 주가가 상한가 근처까지 치솟았다. 주주 게시판에는 "회장님 주주 사랑 인정" 글이 줄을 이었고, 경영권도 한층 단단해졌다.`; } },
+  { id: 'dividend', cat: '재무', icon: '💸', t: '현금 배당', d: '주주 반응 대폭 상승.', ab: ['social'], grow: { social: 1 },
+    avail: s => s.flags.ipo || holders(s).length, cost: s => 2 + s.cap * 0.15,
+    run: s => { s.holder += 18;
+      return `현금 배당을 결정했다.\n주주총회장에서 박수가 나왔다. 늘 날을 세우던 주주들도 이번만큼은 "잘하셨습니다"라며 고개를 끄덕였다.`; } },
+];
+// 신사업 진출 카드 자동 생성
+for (const k of Object.keys(BIZ)) {
+  const b = BIZ[k];
+  CARDS.push({ id: 'biz_' + k, cat: '신사업', icon: b.icon, t: `신사업 진출: ${b.name}`, d: `새 시장을 연다. (필요 기술 ${b.tech})`, ab: ['insight', 'drive'], grow: { insight: 2, drive: 1 }, weight: 3,
+    board: () => true, avail: s => !s.biz[k] && s.year >= b.minYear && s.tech >= b.tech,
+    cost: s => (8 + s.cap * 0.6) * (s.flags['disc_' + k] ? 0.5 : 1),
+    run: s => { s.biz[k] = true; s.tech += 3; s.market += 8; s.holder += 4;
+      return `${b.name} 사업부 출범식이 열렸다.\n${b.story}\n시장은 ${s.company}의 새로운 도전에 주목했다.`; } });
+}
+const cardById = id => CARDS.find(c => c.id === id);
+const cardCost = (c, s) => c.cost(s) * disc(s);
+
+/* =========================================================
+   이벤트 — 회귀자의 기억(고정) / 랜덤 / 사람들의 견제
+   ========================================================= */
+const FIXED = {
+  '2005-3': { icon: '📱', tag: '회귀자의 기억', t: '폰에 카메라가 붙기 시작했다',
+    b: '"이거다. 몇 년 뒤면 모든 폰에 카메라가 2개, 3개씩 달린다."\n전생의 기억이 또렷하게 떠오른다.',
+    o: [{ l: '카메라 기술 미리 준비', s: '카메라모듈 진출 비용 50% 할인, 기술 +8', r: s => { s.flags.disc_camera = 1; s.tech += 8; s.ab.insight += 2; return '회장님은 연구소에 카메라 광학 스터디 팀을 몰래 꾸렸다. "지금 준비해야 5년 뒤에 먹는다."'; } },
+        { l: '아직 이르다, 지금 사업에 집중', s: '영업 +6', r: s => { s.sales += 6; return '지금 사업 영업에 집중했다. 회장님은 "아직 조금 이르다"고 판단했다.'; } }] },
+  '2007-1': { icon: '🍎', tag: '회귀자의 기억', t: '바다 건너에서 터치폰이 발표됐다',
+    b: '검은 화면에 손가락 하나. 업계 사람들은 "장난감"이라 비웃는다.\n하지만 영감님은 안다. <b>세상이 뒤집힌다.</b>',
+    o: [{ l: '스마트폰 시대 대비: 기술 집중', s: '기술 +12, 자금 -', r: s => { s.cash -= 3 + s.cap * 0.15; s.tech += 12; s.ab.insight += 2; return '스마트폰용 초소형 부품 개발에 착수했다. 영업 임원은 "피처폰이 아직 잘 팔리는데…"라며 고개를 갸웃했다.'; } },
+        { l: '피처폰 막차 수익 극대화', s: '자금 +', r: s => { s.cash += s.cap * 0.3; return '피처폰 물량을 최대로 뽑아냈다. 통장은 두둑해졌지만, 회장님 마음 한켠이 찜찜하다.'; } }] },
+  '2008-3': { icon: '📉', tag: '회귀자의 기억', t: '월가의 대형 은행이 무너진다',
+    b: '"다음 분기부터 1년간 수요가 얼어붙는다." 전생에 겪었던 일이다.',
+    o: [{ l: '현금 확보 (비상경영)', s: '자금 +, 직원 반응 -5', r: s => { s.cash += s.cap * 0.25; s.morale -= 5; s.ab.grit += 2; return '비상경영을 선포하고 현금을 쌓았다. 재무이사가 처음으로 회장님에게 엄지를 들었다.'; } },
+        { l: '위기는 기회: 헐값 설비 매입', s: '생산능력 ×1.3, 자금 -', r: s => { s.cash -= s.cap * 0.45; s.cap *= 1.3; s.ab.drive += 2; return '남들이 공포에 팔 때 회장님은 샀다. 경매에 나온 설비를 반값에 쓸어 담았다.'; } }] },
+  '2010-2': { icon: '🚀', tag: '시장 이벤트', t: '스마트폰 대폭발',
+    b: '국내 S사의 첫 스마트폰이 대박을 터뜨렸다. 부품 주문이 쏟아진다!',
+    o: [{ l: '물량 총력 대응', s: '영업 +10, 고객사 +5, 체력 -6', r: s => { s.sales += 10; s.health -= 6; s.client += 5; return s.biz.camera ? '카메라모듈 주문이 폭주한다! 공장이 24시간 돌아가기 시작했다.' : '주문은 늘었지만… 카메라모듈을 했어야 했다는 생각이 머리를 떠나지 않는다.'; } }] },
+  '2013-1': { icon: '🚗', tag: '회귀자의 기억', t: '자동차에 눈이 달린다',
+    b: '"곧 후방카메라가 의무화되고, 자율주행이 온다." 전장 시장이 열린다.',
+    o: [{ l: '전장 사업 준비', s: '전장 진출 비용 50% 할인, 기술 +6', r: s => { s.flags.disc_auto = 1; s.tech += 6; s.ab.insight += 1; return '자동차 부품 인증 준비팀을 꾸렸다. 연구소장이 "회장님 혹시 점쟁이세요?"라고 물었다.'; } },
+        { l: '스마트폰에 집중', s: '영업 +6', r: s => { s.sales += 6; return '스마트폰 고객사에 집중했다.'; } }] },
+  '2016-2': { icon: '🐉', tag: '시장 이벤트', t: '중국 업체의 맹추격',
+    b: '반값 부품을 앞세운 중국 업체들이 고객사를 흔든다.',
+    o: [{ l: '단가 인하로 맞불', s: '영업 +10, 이익률 -2%p, 협력업체 -5', r: s => { s.sales += 10; s.mb -= 0.02; s.partner -= 5; return '물량은 지켰지만 마진이 얇아졌다. 협력업체에도 단가 인하 압박이 내려갔다.'; } },
+        { l: '프리미엄 기술로 차별화', s: '기술 70 이상이면 시장·고객사 상승, 아니면 하락', r: s => s.tech >= 70 ? (s.market += 10, s.client += 6, `고급 라인업에서 중국 업체들을 압도했다! "역시 기술의 ${s.company}"`) : (s.sales -= 10, s.client -= 6, '기술이 아직 부족했다. 일부 고객을 중국 업체에 빼앗겼다…') }] },
+  '2020-1': { icon: '😷', tag: '회귀자의 기억', t: '전염병이 온다',
+    b: '"곧 전 세계 공장들이 멈춘다." 영감님은 마스크부터 사재기했다.',
+    o: [{ l: '방역·재택 선제 투자', s: '자금 -, 직원 +12, 시장 +6', r: s => { s.cash -= 2 + s.cap * 0.1; s.morale += 12; s.market += 6; return '선제 대응 덕분에 단 하루의 셧다운도 없이 버텼다. 뉴스에 "방역 모범 기업"으로 소개됐다.'; } },
+        { l: '공장 풀가동 유지', s: '체력 -10, 위험', r: s => { s.health -= 10; return chance(0.5) ? (s.cap *= 0.9, s.morale -= 8, '확진자 발생으로 라인 일부가 2주간 멈췄다. 직원들의 불만이 쌓였다.') : '아슬아슬하게 버텼다. 운이 좋았다.'; } }] },
+  '2026-4': { icon: '🌫️', tag: '회귀자의 기억', t: '기억의 끝',
+    b: '2026년 겨울. 전생의 영감님이 눈을 감았던 바로 그 계절이다.\n"여기서부터는… 나도 모르는 미래다."\n이제 회귀 기억의 도움 없이, 순수한 실력으로 회사를 이끌어야 한다.',
+    o: [{ l: '두려움보다 설렘이 크다', s: '적극성 +3, 통찰력 +3', r: s => { s.ab.drive += 3; s.ab.insight += 3; return '회장님은 창밖을 보며 웃었다. "모르는 길이 더 재밌는 법이지."'; } }] },
+};
+const RANDOM = [
+  { icon: '⚠️', t: '대량 불량 클레임', b: '고객사에서 불량품이 대량으로 발견됐다는 연락이 왔다. 구매팀장의 목소리가 떨린다.', avail: s => s.quality < 55, w: 3,
+    o: [{ l: '전량 리콜', s: '자금 -, 고객사 +6, 품질 +6', r: s => { s.cash -= 1 + s.cap * 0.3; s.client += 6; s.quality += 6; s.ab.lead += 1; return '회장님이 직접 고객사를 찾아가 고개를 숙이고 전량 리콜을 약속했다. 손해는 컸지만 "책임질 줄 아는 회사"라는 신뢰를 얻었다.'; } },
+        { l: '협상으로 무마', s: '고객사 -12, 협상력 성장', r: s => { s.client -= 12; s.ab.nego += 2; if (chance(0.5)) s.sales -= 8; return '보상 단가 조정으로 겨우 무마했다. 하지만 고객사의 눈빛은 확실히 차가워졌다.'; } }] },
+  { icon: '🕵️', t: '핵심 엔지니어 스카우트 제의', b: '경쟁사가 우리 수석 엔지니어에게 연봉 2배를 제안했다.', w: 2,
+    o: [{ l: '연봉을 맞춰준다', s: '자금 -, 직원 +3', r: s => { s.cash -= 1 + s.cap * 0.04; s.morale += 3; return '"돈보다 회장님 의리 보고 남겠습니다." 엔지니어가 남았다.'; } },
+        { l: '보내준다', s: '기술 -8, 직원 -5', r: s => { s.tech -= 8; s.morale -= 5; return '아쉬운 이별이었다. 송별회 자리, 그는 끝내 회장님과 눈을 마주치지 못했다.'; } }] },
+  { icon: '✊', t: '노조 파업 예고', b: '쌓인 불만이 터졌다. 노조가 파업을 예고했다.', avail: s => s.morale < 35, w: 4,
+    o: [{ l: '요구 수용', s: '자금 -, 직원 +22', r: s => { s.cash -= s.cap * 0.15; s.morale += 22; return '밤샘 협상 끝에 극적 타결! 회장님이 노조위원장과 소주잔을 기울였다.'; } },
+        { l: '강경 대응', s: '직원 -10, 시장 -5, 생산 차질', r: s => { s.morale -= 10; s.market -= 5; s.cap *= 0.95; s.ab.lead += 1; return '라인이 며칠 멈췄다. 뉴스에 공장 앞 천막 사진이 실렸다.'; } }] },
+  { icon: '💱', t: '환율 급등', b: '원화 가치가 떨어지며 수출 단가가 올랐다.', w: 1,
+    o: [{ l: '좋다!', s: '자금 +', r: s => { s.cash += s.cap * 0.1; return '환차익이 생겼다. 재무이사가 오랜만에 웃었다.'; } }] },
+  { icon: '🔥', t: '공장 화재', b: '야간에 공장 한쪽에서 불이 났다. 다행히 인명 피해는 없다.', w: 0.5,
+    o: [{ l: '보험 처리 후 복구', s: '생산능력 -10%, 자금 -', r: s => { s.cap *= 0.9; s.cash -= s.cap * 0.1; s.ab.grit += 2; return '잿더미 앞에서 회장님은 소매를 걷어붙였다. 복구에 한 분기가 걸렸다.'; } }] },
+  { icon: '📦', t: '대형 긴급 오더', b: '고객사가 다음 달까지 물량 2배를 요청했다.', avail: s => s.sales > 40, w: 2,
+    o: [{ l: '야근으로 소화', s: '자금 +, 고객사 +8, 직원 -8', r: s => { s.cash += s.cap * 0.25; s.client += 8; s.morale -= 8; s.health -= 5; return '해냈다! 고객사가 감동했다. 하지만 직원들의 다크서클이 무릎까지 내려왔다.'; } },
+        { l: '정중히 거절', s: '고객사 -4', r: s => { s.client -= 4; return '무리하지 않았다. 고객사는 아쉬운 기색을 감추지 않았다.'; } }] },
+  { icon: '⚖️', t: '경쟁사 특허 소송', b: '경쟁사가 우리 핵심 기술이 자기 특허를 침해했다며 소송을 걸었다.', avail: s => s.tech > 40, w: 1.5,
+    o: [{ l: '맞소송', s: '승소 시 시장 +8 / 패소 시 큰 손실 (지식이 높을수록 유리)', r: s => chance(0.45 + s.ab.know * 0.004) ? (s.market += 8, '승소! 업계에 기술력을 증명했다.') : (s.cash -= s.cap * 0.25, s.market -= 5, '패소… 배상금을 물었다.') },
+        { l: '합의', s: '자금 -', r: s => { s.cash -= s.cap * 0.1 * disc(s); s.ab.nego += 1; return '조용히 합의금으로 마무리했다.'; } }] },
+  { icon: '🩺', t: '건강검진 경고', b: '"20대 몸인데 간 수치가 70대네요?" 의사가 고개를 갸웃했다.', avail: s => s.health < 40, w: 4,
+    o: [{ l: '보약 먹고 쉰다', s: '체력 +25, 영업 -5', r: s => { s.health += 25; s.sales -= 5; return '한 달간 술을 끊고 푹 쉬었다. 몸이 가벼워졌다.'; } },
+        { l: '무시한다', s: '체력 -5, 끈기 +2', r: s => { s.health -= 5; s.ab.grit += 2; return '"전생엔 80까지 살았어. 괜찮아." …정말 괜찮을까?'; } }] },
+  { icon: '💭', t: '전생의 기억', b: '꿈속에서 전생의 실패가 다시 펼쳐졌다. 같은 실수는 반복하지 않는다.', w: 0.8, avail: s => s.year <= MEMORY_END,
+    o: [{ l: '기억을 새긴다', s: '회귀 기억 ★ +1, 통찰력 +2', r: s => { s.memory++; s.ab.insight += 2; return '잠에서 깬 회장님은 수첩에 무언가를 빼곡히 적었다.'; } }] },
+  { icon: '🎖️', t: '정부 표창', b: '수출 유공 기업으로 선정되어 대통령 표창을 받게 됐다.', avail: s => s.market > 60, w: 1,
+    o: [{ l: '감사히 받는다', s: '시장 +8, 직원 +6', r: s => { s.market += 8; s.morale += 6; return '표창장을 로비 정중앙에 걸었다. 직원들이 그 앞에서 인증샷을 찍었다.'; } }] },
+  { icon: '🚚', t: '원자재 대란', b: '핵심 원자재 공급이 끊길 위기다. 협력업체들이 물량 확보에 비상이 걸렸다.', w: 1.2,
+    o: [{ l: '웃돈 주고 물량 확보', s: '자금 -, 협력업체 +8', r: s => { s.cash -= s.cap * 0.12; s.partner += 8; return `협력업체와 손잡고 물량을 확보했다. "역시 의리의 ${s.company}"`; } },
+        { l: '버틴다', s: '협력업체 -10, 고객사 -5', r: s => { s.partner -= 10; s.client -= 5; return '일부 라인이 자재 부족으로 멈췄다.'; } }] },
+];
+// 사람들의 견제 이벤트 (충성도가 낮을 때)
+function npcEvent(n) {
+  const t = npcT(n), nm = n.name;
+  const replace = s => { const i = s.npcs.indexOf(n); s.npcs[i] = makeNpc(n.id, true); return s.npcs[i].name; };
+  const base = { icon: '⚠️', tag: '견제', npc: n };
+  switch (t.area) {
+    case 'sales': return { ...base, t: `${nm}의 수상한 움직임`, b: `${nm}가 핵심 고객사 담당자들과 따로 만난다는 소문이 돈다. 독립해서 고객을 빼가려는 걸까?`,
+      o: [{ l: '붙잡는다 (연봉·지분 제안)', s: '자금 -, 충성도 대폭 상승', r: s => { s.cash -= 2 + s.cap * 0.08; n.loyal += 35; s.ab.nego += 1; return `회장님이 ${nm}를 따로 불러 술잔을 기울였다. "자네 없으면 우리 영업은 끝이야." ${nm}의 눈빛이 흔들렸다.`; } },
+          { l: '내보낸다', s: '영업 -12, 고객사 -8, 새 임원 영입', r: s => { s.sales -= 12; s.client -= 8; const nn = replace(s); return `${nm}는 고객 몇 곳을 들고 독립했다. 새 영업 임원으로 ${nn}가 왔다.`; } }] };
+    case 'tech': return { ...base, t: '기술 유출 의혹', b: `${nm} 쪽 연구원이 경쟁사에 설계 도면을 넘겼다는 제보가 들어왔다. ${nm}는 최근 회장님과 사이가 좋지 않았다.`,
+      o: [{ l: '전면 감사 실시', s: '리더십이 높을수록 유리', r: s => chance(0.35 + s.ab.lead * 0.006) ? (n.loyal += 15, s.ab.lead += 2, `감사 결과 ${nm}는 무관했고 유출범은 따로 있었다. 의심받았던 ${nm}는 오히려 회장님의 공정함에 감동했다.`) : (s.tech -= 10, n.loyal -= 10, `감사는 흐지부지 끝났고, 이미 기술 일부가 빠져나간 뒤였다. ${nm}와의 사이는 더 멀어졌다.`) },
+          { l: '조용히 덮는다', s: '기술 -6, 충성도 +5', r: s => { s.tech -= 6; n.loyal += 5; return '일을 키우지 않기로 했다. 대신 보안 시스템을 손봤다.'; } }] };
+    case 'finance': return { ...base, t: `${nm}의 반기`, b: `${nm}가 이사회에서 "회장님의 무리한 투자에 반대한다"며 공개적으로 반기를 들었다. 다른 이사들도 술렁인다.`,
+      o: [{ l: '숫자로 설득한다', s: '협상력이 높을수록 유리', r: s => chance(0.35 + s.ab.nego * 0.006) ? (n.loyal += 20, `회장님이 5개년 현금흐름표를 직접 그려 보이자 ${nm}가 고개를 숙였다. "제가 짧게 봤습니다."`) : (s.flags.boardPen = s.turn + 4, '설득에 실패했다. 앞으로 1년간 이사회 승인이 어려워진다.') },
+          { l: '무시하고 밀어붙인다', s: '1년간 이사회 승인률 -20%', r: s => { s.flags.boardPen = s.turn + 4; n.loyal -= 5; return `${nm}의 반대 의견은 회의록에 그대로 남았다. 이사회 분위기가 냉랭하다.`; } }] };
+    case 'morale': return { ...base, t: '블라인드 폭로', b: `익명 게시판에 "우리 회장 실체" 글이 올라왔다. 작성자는 ${nm}라는 소문이다. 조회수가 폭발하고 있다.`,
+      o: [{ l: '전 직원 간담회', s: '유머가 높을수록 유리', r: s => chance(0.35 + s.ab.humor * 0.006) ? (s.morale += 12, n.loyal += 20, '회장님이 "제 실체는 사실 80살 할아버지입니다"라고 농담하자 장내가 웃음바다가 됐다. 오해가 풀렸다.') : (s.morale -= 6, s.market -= 4, '간담회 분위기는 끝까지 싸했다. 기사까지 났다.') },
+          { l: '무시한다', s: '직원 -8, 시장 -6', r: s => { s.morale -= 8; s.market -= 6; return '글은 기사화됐고, 회사 이미지가 타격을 입었다.'; } }] };
+    case 'field': return { ...base, t: '현장 태업', b: `${nm}를 중심으로 생산현장이 "준법 투쟁"에 들어갔다. 라인 속도가 눈에 띄게 느려졌다.`,
+      o: [{ l: '현장에 직접 내려간다', s: '리더십이 높을수록 유리, 체력 -5', r: s => { s.health -= 5; return chance(0.35 + s.ab.lead * 0.006) ? (n.loyal += 25, s.morale += 6, s.ab.lead += 1, `회장님이 작업복을 입고 라인에 섰다. 하루 종일 같이 땀을 흘리자 ${nm}가 먼저 손을 내밀었다.`) : (s.quality -= 8, '현장의 냉랭함은 쉽게 풀리지 않았다. 불량률이 올랐다.'); } },
+          { l: '반장을 교체한다', s: '직원 -10, 품질 -5', r: s => { s.morale -= 10; s.quality -= 5; const nn = replace(s); return `${nm}를 교체하고 ${nn}를 새 반장으로 앉혔다. 현장 분위기가 얼어붙었다.`; } }] };
+    default: // 주주
+      if (S.own < 50) return { ...base, icon: '🦈', t: '대표이사 해임안 상정', b: `${nm}가 다른 주주들을 규합해 주주총회에 회장님 해임안을 올렸다! 회장님 지분은 ${Math.round(S.own)}%.`,
+        o: [{ l: '표 대결', s: '지분·주주 반응·협상력에 따라 결정. 지면 회사를 잃는다!', r: s => chance(clamp(s.own / 100 + s.holder / 200 + s.ab.nego / 400, 0.15, 0.95)) ? (n.loyal += 15, s.holder += 8, s.ab.lead += 2, '주총 표 대결에서 승리했다! 회장님은 경영권을 지켜냈다.') : (s.flags.lostMA = 1, '표 대결에서 졌다… 회장님은 자신이 키운 회사에서 쫓겨났다.') },
+            { l: '대규모 배당으로 달랜다', s: '자금 큰 손실, 주주 +15', r: s => { s.cash -= 10 + s.cap * 0.4; s.holder += 15; n.loyal += 20; return `${nm}는 두둑한 배당을 받고 해임안을 철회했다.`; } }] };
+      return { ...base, t: '배당 확대 요구', b: `${nm}가 공개서한을 보내 "쌓아둔 현금을 주주에게 돌려달라"고 요구했다.`,
+        o: [{ l: '수용한다', s: '자금 -, 주주 +12', r: s => { s.cash -= 2 + s.cap * 0.15; s.holder += 12; n.loyal += 18; return '배당을 늘렸다. 주주 게시판이 잠잠해졌다.'; } },
+            { l: '거절한다', s: '주주 -12, 충성도 -15', r: s => { s.holder -= 12; n.loyal -= 15; return `"성장 투자가 먼저입니다." ${nm}는 언론 플레이로 응수했다.`; } }] };
+  }
+}
+// 충성도 높은 사람의 보너스 이벤트
+function npcBonus(n) {
+  const t = npcT(n), nm = n.name;
+  const eff = { sales: s => { s.sales += 10; s.client += 6; return `${nm}가 오랜 인맥을 동원해 대형 고객사 신규 거래를 뚫어왔다! "회장님께 받은 은혜 갚는 겁니다."`; },
+    tech: s => { s.tech += 8; return `${nm}가 주말에도 연구소에 나와 핵심 기술 난제를 풀어냈다. "회장님이 믿어주시니까요."`; },
+    finance: s => { s.cash += 3 + s.cap * 0.08; return `${nm}가 금리 조건이 좋은 정책자금을 찾아내 이자 비용을 크게 아꼈다.`; },
+    morale: s => { s.morale += 10; return `${nm}가 사내 동호회를 조직해 회사 분위기가 확 밝아졌다.`; },
+    field: s => { s.quality += 8; return `${nm}가 현장 개선 아이디어 50건을 모아 왔다. 불량률이 뚝 떨어졌다.`; } }[t.area]
+    || (s => { s.holder += 10; s.market += 4; return `${nm}가 언론 인터뷰에서 회장님 경영을 극찬했다. 주가가 들썩였다.`; });
+  return { icon: '🌟', tag: '든든한 사람들', t: `${nm}의 활약`, b: `${t.role} ${nm}가 회장님을 위해 발 벗고 나섰다.`, npc: n, o: [{ l: '고맙네!', s: '', r: eff }] };
+}
+
+/* =========================================================
+   상태 / 저장
+   ========================================================= */
+function newState(o) {
+  const s = { ceo: { name: o.name, face: o.face }, company: o.company || '파트론', mainBiz: o.mainBiz,
+    year: START_YEAR, q: 1, turn: 0, age: START_AGE, health: 100,
+    cash: 30, debt: 0, cap: 10, tech: 20, quality: 30, sales: 15, mb: 0, own: 100, memory: 3,
+    market: 45, client: 50, partner: 50, holder: 55, morale: 60,
+    ab: { ...o.ab }, biz: { [o.mainBiz]: true }, flags: {}, hist: [], qhist: [], log: [], hand: null,
+    npcs: ['park', 'kim', 'choi', 'lee', 'jung'].map(id => makeNpc(id)), pAct: false, prevR: null };
+  Object.assign(s, START_BIZ[o.mainBiz].st);
+  return s;
+}
+function normalize(s) {
+  for (const k of ['tech', 'quality', 'sales', 'health', 'market', 'client', 'partner', 'holder', 'morale']) s[k] = clamp(s[k], 0, 100);
+  for (const k in s.ab) s.ab[k] = clamp(Math.round(s.ab[k] * 10) / 10, 0, 100);
+  for (const n of s.npcs) n.loyal = clamp(n.loyal, 0, 100);
+  s.own = clamp(s.own, 0, 100); s.mb = clamp(s.mb, -0.05, 0.14); s.cap = Math.max(3, s.cap);
+}
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+function load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } }
+function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
+function addLog(msg) { S.log.unshift({ t: `${String(S.year).slice(2)}.${S.q}Q`, m: msg }); S.log = S.log.slice(0, 40); }
+const ceoFace = (size, age) => faceSVG(S.ceo.face, age ?? S.age, size, { bg: '#5a4520' });
+
+/* =========================================================
+   공통 UI
+   ========================================================= */
+function modal({ icon, tag, title, body, extra = '', options }) {
+  const ov = document.createElement('div');
+  ov.className = 'overlay';
+  ov.innerHTML = `<div class="modal">
+    ${icon ? `<div class="m-ic">${icon}</div>` : ''}${tag ? `<div class="m-tag">${tag}</div>` : ''}
+    <h2>${title}</h2>${body ? `<div class="m-body">${body}</div>` : ''}${extra}
+    <div class="opts"></div></div>`;
+  const box = ov.querySelector('.opts');
+  options.forEach(o => {
+    const b = document.createElement('button');
+    b.className = o.primary ? 'btn btn-gold' : o.dark ? 'btn btn-dark btn-sm' : 'opt';
+    b.innerHTML = o.primary || o.dark ? o.label : `<div class="ol">${o.label}</div>${o.sub ? `<div class="os">${o.sub}</div>` : ''}`;
+    if (o.disabled) b.disabled = true;
+    b.onclick = () => { ov.remove(); o.onClick && o.onClick(); };
+    box.appendChild(b);
+  });
+  document.body.appendChild(ov);
+  return ov;
+}
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 1900);
+}
+// 변화 기록용 스냅샷 → 결과창의 "회사 변화 / 능력치 / 반응"
+const CO_KEYS = [['cash', '자금', 'm'], ['debt', '부채', 'm'], ['cap', '생산능력', '%'], ['tech', '기술', ''], ['quality', '품질', ''], ['sales', '영업', ''], ['health', '체력', ''], ['own', '지분', ''], ['memory', '기억★', '']];
+function snap() {
+  return { co: Object.fromEntries(CO_KEYS.map(([k]) => [k, S[k]])), ab: { ...S.ab }, rx: Object.fromEntries(REACT.map(([k]) => [k, S[k]])), mb: S.mb };
+}
+function diffHtml(b) {
+  let h = '';
+  const co = [];
+  for (const [k, lab, t] of CO_KEYS) {
+    const d = S[k] - b.co[k];
+    if (t === 'm' ? Math.abs(d) < 0.05 : t === '%' ? Math.abs(d / b.co[k]) < 0.005 : Math.round(d) === 0) continue;
+    const v = t === 'm' ? (d > 0 ? '+' : '') + fmt(d) : t === '%' ? `${d > 0 ? '+' : ''}${Math.round(d / b.co[k] * 100)}%` : (d > 0 ? '+' : '') + Math.round(d);
+    co.push(`<span class="${(d > 0) !== (k === 'debt') ? 'p' : 'n'}">${lab} ${v}</span>`);
+  }
+  if (Math.abs(S.mb - b.mb) > 0.001) co.push(`<span class="${S.mb > b.mb ? 'p' : 'n'}">이익률 ${S.mb > b.mb ? '+' : ''}${((S.mb - b.mb) * 100).toFixed(1)}%p</span>`);
+  if (co.length) h += `<div class="sec">📊 회사 변화</div><div class="fx">${co.join('')}</div>`;
+  const ab = ABIL.filter(([k]) => Math.round(S.ab[k] - b.ab[k]) !== 0).map(([k, n, ic]) => { const d = S.ab[k] - b.ab[k]; return `<span class="${d > 0 ? 'p' : 'n'}">${ic} ${n} ${d > 0 ? '+' : ''}${Math.round(d)}</span>`; });
+  if (ab.length) h += `<div class="sec">🧠 회장님 능력치 성장</div><div class="fx ab">${ab.join('')}</div>`;
+  const rl = REACT.filter(([k]) => Math.abs(S[k] - b.rx[k]) >= 2).map(([k, n, ic]) => {
+    const d = S[k] - b.rx[k];
+    const q = pick(REACT_Q[k][d > 0 ? 'up' : 'down']).replace('{co}', esc(S.company));
+    return `<div class="rline">${ic} <b>${n}</b> <span class="dv ${d > 0 ? 'p' : 'n'}">${d > 0 ? '▲' : '▼'}${Math.abs(Math.round(d))}</span> ${q}</div>`;
+  });
+  if (rl.length) h += `<div class="sec">🗣️ 이해관계자 반응</div><div class="rlines">${rl.join('')}</div>`;
+  return h;
+}
+function quoteHtml(n, text, bad) {
+  return `<div class="quote ${bad ? 'bad' : ''}">${npcFace(n, 38)}<div><div class="qn">${npcT(n).role} ${n.name} · 충성 ${Math.round(n.loyal)}</div>${text}</div></div>`;
+}
+
+/* =========================================================
+   타이틀 · 인트로 · 캐릭터 생성
+   ========================================================= */
+function renderTitle() {
+  const sv = load();
+  const demo = { s: 1, h: 4, c: 0, e: 1, b: 1, m: 0, g: 0, d: 0 };
+  app.innerHTML = `<div class="title-screen">
+    <div class="logo-badge">PARTRON</div>
+    <div style="display:flex;gap:6px;align-items:flex-end" class="bob">${faceSVG(demo, 82, 64, { bg: '#5a4520' })}<span style="font-size:28px">➜</span>${faceSVG(demo, 27, 96, { bg: '#5a4520' })}</div>
+    <div class="title">영감님<br>성공하기</div>
+    <div class="subtitle">대기업 회장님, 20대로 돌아가다</div>
+    <div class="menu">
+      <button class="btn btn-gold" id="bNew">새로 시작</button>
+      ${sv && !sv.ended && sv.ceo ? `<button class="btn btn-dark" id="bCont">이어하기 (${esc(sv.ceo.name)} · ${sv.year}년 ${sv.q}분기)</button>` : ''}
+      <button class="btn btn-dark" id="bRank">🏆 명예의 전당</button>
+    </div></div>`;
+  $('#bNew').onclick = () => { if (sv && !sv.ended && sv.ceo && !confirm('진행 중인 게임이 지워집니다. 새로 시작할까요?')) return; renderIntro(); };
+  if ($('#bCont')) $('#bCont').onclick = () => { S = sv; renderGame(); if (!S.hand) startTurn(); };
+  $('#bRank').onclick = () => renderRanking();
+}
+
+const INTRO = [
+  '2026년 겨울.\n여든두 살의 <b>파트론 명예회장, 영감님</b>은\n마지막 이사회를 마치고 조용히 눈을 감았다.',
+  '"한 번만 더 기회가 있다면…\n그때 그 실수들, 다 바로잡을 수 있을 텐데."',
+  '……\n\n알람 소리에 눈을 떴다.\n낡은 원룸. 거울 속엔 <b>스물일곱 살</b>의 얼굴.\n달력은 <b>2003년 1월</b>을 가리키고 있다.',
+  '통장엔 전생의 기억으로 모은 종잣돈 <b>30억</b>.\n그리고 앞으로 20여 년의 미래를 아는 머리.\n\n목표는 단 하나.\n<b>이번 생엔 더 크게, 더 빨리.</b>',
+];
+function renderIntro() {
+  let i = 0;
+  app.innerHTML = `<div class="intro"><div class="intro-text" id="it"></div><button class="btn btn-gold" id="bNext">다음 ▶</button></div>`;
+  const show = () => { $('#it').innerHTML = INTRO[i]; if (i === INTRO.length - 1) $('#bNext').textContent = '거울 속 내 얼굴 보기 🪞'; };
+  show();
+  $('#bNext').onclick = () => { if (i < INTRO.length - 1) { i++; show(); } else renderCreateFace(); };
+}
+
+const NEW = {};
+function renderCreateFace() {
+  NEW.face = NEW.face || randomFace();
+  NEW.name = NEW.name ?? '';
+  const f = NEW.face;
+  app.innerHTML = `<div style="padding-top:10px">
+    <div class="step-tag">STEP 1 / 4</div><div class="step-title">회장님 외모 & 이름</div>
+    <div class="face-preview">
+      <div>${faceSVG(f, 27, 120, { bg: '#5a4520' })}<div class="cap">27세 (지금)</div></div>
+      <div>${faceSVG(f, 75, 72, { bg: '#5a4520' })}<div class="cap">75세 (미래)</div></div>
+    </div>
+    <div class="panel">
+      <input class="text-input" id="nm" maxlength="8" placeholder="회장님 이름 (예: 강영감)" value="${esc(NEW.name)}" style="margin-bottom:8px">
+      ${FACE_OPTS.map(([k, lab, arr]) => `<div class="opt-row"><span class="nm">${lab}</span><button class="arrow" data-k="${k}" data-d="-1">◀</button><span class="val">${arr[f[k]]}</span><button class="arrow" data-k="${k}" data-d="1">▶</button></div>`).join('')}
+    </div>
+    <div class="actions" style="margin-bottom:10px"><button class="btn btn-dark btn-sm" id="bRnd">🎲 랜덤 얼굴</button><button class="btn btn-dark btn-sm" id="bBack">◀ 처음으로</button></div>
+    <button class="btn btn-gold" id="bOk">이 얼굴로 결정 ▶</button></div>`;
+  const keepName = () => NEW.name = $('#nm').value;
+  app.querySelectorAll('.arrow').forEach(b => b.onclick = () => {
+    keepName(); const k = b.dataset.k, n = FACE_OPTS.find(o => o[0] === k)[2].length;
+    f[k] = (f[k] + Number(b.dataset.d) + n) % n; renderCreateFace();
+  });
+  $('#bRnd').onclick = () => { keepName(); NEW.face = randomFace(); renderCreateFace(); };
+  $('#bBack').onclick = () => renderTitle();
+  $('#bOk').onclick = () => {
+    keepName(); NEW.name = NEW.name.trim();
+    if (!NEW.name) { toast('회장님 이름을 입력해 주세요'); $('#nm').focus(); return; }
+    renderCreateAbility();
+  };
+}
+function abilityGrid(ab, rolling) {
+  return `<div class="ab-grid ${rolling ? 'rolling' : ''}">${ABIL.map(([k, n, ic, d]) => `<div class="ab"><div class="lab">${ic} ${n}<b>${Math.round(ab[k])}</b></div>
+    <div class="track"><div class="fill" style="width:${ab[k]}%;background:${ab[k] >= 60 ? '#c084fc' : ab[k] >= 35 ? '#818cf8' : '#64748b'}"></div></div><div class="ab-desc">${d}</div></div>`).join('')}</div>`;
+}
+function renderCreateAbility() {
+  if (!NEW.ab) { NEW.ab = rollAbilities(); NEW.rolls = 5; }
+  const tot = Object.values(NEW.ab).reduce((a, b) => a + b, 0);
+  app.innerHTML = `<div style="padding-top:10px">
+    <div class="step-tag">STEP 2 / 4</div><div class="step-title">타고난 능력치</div>
+    <div class="center">${faceSVG(NEW.face, 27, 72, { bg: '#5a4520' })}<div style="font-weight:900;margin-top:4px">${esc(NEW.name)}</div>
+    <div class="total-pill">총합 ${tot} ${tot >= 330 ? '🌟 천재형' : tot >= 290 ? '👍 우수' : tot >= 250 ? '🙂 평범' : '😅 대기만성형'}</div></div>
+    <div class="panel" id="abBox">${abilityGrid(NEW.ab)}</div>
+    <div class="muted center" style="font-size:12px;margin-bottom:8px">능력치는 경영 행동을 할 때마다 관련 능력이 조금씩 오릅니다.</div>
+    <div class="actions" style="margin-bottom:10px"><button class="btn btn-dark btn-sm" id="bRoll" ${NEW.rolls ? '' : 'disabled'}>🎲 다시 굴리기 (${NEW.rolls}회)</button><button class="btn btn-dark btn-sm" id="bBack">◀ 외모 수정</button></div>
+    <button class="btn btn-gold" id="bOk">이 능력치로 결정 ▶</button></div>`;
+  $('#bRoll').onclick = () => {
+    if (!NEW.rolls) return; NEW.rolls--; $('#bRoll').disabled = true;
+    let n = 0; const iv = setInterval(() => { $('#abBox').innerHTML = abilityGrid(rollAbilities(), true); if (++n > 8) { clearInterval(iv); NEW.ab = rollAbilities(); renderCreateAbility(); } }, 60);
+  };
+  $('#bBack').onclick = () => renderCreateFace();
+  $('#bOk').onclick = () => renderCreateBiz();
+}
+function renderCreateBiz() {
+  NEW.mainBiz = NEW.mainBiz || 'antenna';
+  app.innerHTML = `<div style="padding-top:10px">
+    <div class="step-tag">STEP 3 / 4</div><div class="step-title">창업 아이템 선택</div>
+    <div class="muted center" style="font-size:13px;margin-bottom:12px">2003년, 어떤 사업으로 시작할까?<br>나머지 사업은 나중에 '신사업 진출'로 열 수 있다.</div>
+    <div class="biz-pick">${Object.entries(START_BIZ).map(([k, v]) => `<button class="biz-card ${NEW.mainBiz === k ? 'sel' : ''}" data-k="${k}">
+      <div class="ic">${BIZ[k].icon}</div><div><div class="tt">${BIZ[k].name}</div><div class="ds">${v.d}</div>
+      <div class="tags">${v.tags.map(([t, c]) => `<span class="tag ${c}">${t}</span>`).join('')}</div></div></button>`).join('')}</div>
+    <div class="actions" style="margin:12px 0 10px;grid-template-columns:1fr"><button class="btn btn-dark btn-sm" id="bBack">◀ 능력치 다시 보기</button></div>
+    <button class="btn btn-gold" id="bOk">이 사업으로 간다 ▶</button></div>`;
+  app.querySelectorAll('.biz-card').forEach(b => b.onclick = () => { NEW.mainBiz = b.dataset.k; renderCreateBiz(); });
+  $('#bBack').onclick = () => renderCreateAbility();
+  $('#bOk').onclick = () => renderCreateCompany();
+}
+function renderCreateCompany() {
+  app.innerHTML = `<div class="intro">
+    <div><div class="step-tag">STEP 4 / 4</div><div class="step-title">회사 이름</div></div>
+    <div class="center">${faceSVG(NEW.face, 27, 96, { bg: '#5a4520' })}</div>
+    <input class="text-input" id="co" maxlength="10" value="${esc(NEW.company || '파트론')}">
+    <div class="intro-text" style="min-height:0;font-size:14px;text-align:center">${esc(NEW.name)} 회장님의 ${BIZ[NEW.mainBiz].icon} <b>${BIZ[NEW.mainBiz].name}</b> 공장.\n직원 열댓 명, 임원 셋.\n두 번째 인생의 첫 출근이다.</div>
+    <button class="btn btn-gold" id="bOk">창업하기 🏭</button>
+    <button class="btn btn-dark btn-sm" id="bBack">◀ 사업 다시 고르기</button></div>`;
+  $('#bBack').onclick = () => { NEW.company = $('#co').value; renderCreateBiz(); };
+  $('#bOk').onclick = () => {
+    S = newState({ name: NEW.name, face: NEW.face, ab: NEW.ab, mainBiz: NEW.mainBiz, company: $('#co').value.trim() || '파트론' });
+    for (const k in NEW) delete NEW[k];
+    TAB = 'co';
+    addLog(`${S.company} 창업! ${S.ceo.name} 회장님의 두 번째 인생이 시작됐다.`);
+    renderGame(); meetTeam();
+  };
+}
+function meetTeam() {
+  modal({ icon: '🤝', tag: '첫 출근', title: '함께할 사람들',
+    extra: S.npcs.map(n => quoteHtml(n, pick(['회장님, 잘 부탁드립니다.', '젊은 사장님이시네요. 한번 해보죠!', '월급만 밀리지 않으면 됩니다 ㅎㅎ', '이 회사, 크게 키워봅시다.']))).join('') +
+      '<div class="m-body" style="font-size:12.5px;margin-top:8px">사람마다 좋아하는 경영 방식이 다릅니다. 충성도가 낮아지면 <b>견제</b>가 들어오고, 높으면 <b>든든한 지원군</b>이 됩니다.\n「👥 사람들」 탭에서 분기마다 한 명씩 면담·보상·견제·교체를 할 수 있어요.</div>',
+    options: [{ label: '잘 해봅시다! ▶', primary: true, onClick: startTurn }] });
+}
+
+/* =========================================================
+   메인 게임 화면
+   ========================================================= */
+let TAB = 'co';
+function bar(label, v, color) {
+  return `<div class="bar"><div class="lab">${label}<b>${Math.round(v)}</b></div><div class="track"><div class="fill" style="width:${v}%;background:${color}"></div></div></div>`;
+}
+function renderGame() {
+  const s = S;
+  const last = s.qhist.at(-1);
+  const hand = (s.hand || []).map(cardById).filter(Boolean);
+  const rxHtml = REACT.map(([k, n]) => {
+    const d = s.prevR ? Math.round(s[k] - s.prevR[k]) : 0;
+    return `<div class="rx ${d ? 'pulse' : ''}"><div class="face">${moodFace(s[k])}</div><div class="v">${Math.round(s[k])}</div><div class="k">${n}</div>
+      ${d ? `<div class="d ${d > 0 ? 'p' : 'n'}">${d > 0 ? '▲' : '▼'}${Math.abs(d)}</div>` : ''}
+      <div class="track"><div class="fill" style="width:${s[k]}%;background:${s[k] < 35 ? 'var(--bad)' : s[k] < 60 ? '#fbbf24' : 'var(--good)'}"></div></div></div>`;
+  }).join('');
+  let tabBody = '';
+  if (TAB === 'co') tabBody = `
+      <div class="money-row">
+        <div class="money"><div class="k">💰 자금</div><div class="v ${s.cash < 0 ? 'neg' : ''}">${fmt(s.cash)}</div></div>
+        <div class="money"><div class="k">📊 분기 매출</div><div class="v">${last ? fmt(last.rev) : '-'}</div></div>
+        <div class="money"><div class="k">💵 영업이익</div><div class="v ${last ? (last.op >= 0 ? 'pos' : 'neg') : ''}">${last ? fmt(last.op) : '-'}</div></div>
+      </div>
+      <div class="bars">
+        ${bar('🧪 기술력', s.tech, '#60a5fa')}${bar('🔍 품질', s.quality, '#34d399')}
+        ${bar('💼 영업력', s.sales, '#fbbf24')}${bar('❤️ 회장 체력', s.health, s.health < 30 ? '#f87171' : '#fb7185')}
+      </div>
+      <div class="chips">${Object.entries(BIZ).map(([k, b]) => `<span class="chip ${s.biz[k] ? 'on' : ''}">${b.icon} ${b.name}</span>`).join('')}</div>
+      <div class="sub-row"><span>🏭 생산 <b>${fmt(s.cap)}/분기</b></span><span>🏦 부채 <b>${fmt(s.debt)}</b></span><span>📑 지분 <b>${Math.round(s.own)}%</b></span></div>
+      <div class="sub-row"><span>🏆 현재 총점 <b>${fmt(scoreOf(s).total)}</b></span><span>(자본금+연매출+연영업이익)</span></div>`;
+  else if (TAB === 'ceo') tabBody = `
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px">${ceoFace(76)}
+        <div><div style="font-weight:900;font-size:17px">${esc(s.ceo.name)} 회장</div><div class="muted" style="font-size:12px">${Math.floor(s.age)}세 · ${s.age < 45 ? '몸은 젊고 영혼은 82세' : s.age < 65 ? '이제 나이가 몸에도 보인다' : '전생과 같은 나이에 가까워진다'}<br>회귀 기억 ${'★'.repeat(s.memory) || '없음'}${s.year > MEMORY_END ? ' · 기억의 끝을 지났다' : ''}</div></div></div>
+      ${abilityGrid(s.ab)}`;
+  else tabBody = ['exec', 'staff', 'holder'].map(tp => {
+      const list = s.npcs.filter(n => npcT(n).type === tp);
+      if (!list.length) return '';
+      return `<div class="grp">${{ exec: '👔 임원 (이사회)', staff: '👷 직원', holder: '💼 주주 (이사회)' }[tp]}</div>` + list.map(n => `<button class="npc" data-id="${n.id}">${npcFace(n, 40)}
+        <div class="info"><div class="n1">${n.name} <span class="muted" style="font-size:11px;font-weight:400">${npcT(n).trait}</span></div><div class="n2">${npcT(n).role}<br>👍 ${npcT(n).likes.join(', ')} · 👎 ${npcT(n).dislikes.join(', ')}</div>
+        ${n.checked > 0 ? `<div class="chk">⚠️ 견제 중 (${n.checked}분기)</div>` : ''}</div>
+        <div class="loy">${moodFace(n.loyal)} 충성 <b>${Math.round(n.loyal)}</b><div class="track" style="margin-top:3px"><div class="fill" style="width:${n.loyal}%;background:${n.loyal < 35 ? 'var(--bad)' : n.loyal < 60 ? '#fbbf24' : 'var(--good)'}"></div></div></div></button>`).join('');
+    }).join('') + `<div class="muted center" style="font-size:11px;margin-top:8px">${s.pAct ? '이번 분기 인사 관리를 이미 했습니다.' : '사람을 눌러 인사 관리 (분기당 1명, 턴 소모 없음)'}</div>`;
+
+  app.innerHTML = `
+    <div class="top">${ceoFace(46)}<div class="who"><div class="nm">${esc(s.ceo.name)} 회장</div><div class="co"><span style="color:var(--gold);font-weight:700">${esc(s.company)}</span> · ${Math.floor(s.age)}세</div></div>
+      <span class="date-pill">${s.year}년 ${s.q}분기</span></div>
+    <div class="react">${rxHtml}</div>
+    <div class="tabs"><button class="tab ${TAB === 'co' ? 'on' : ''}" data-t="co">🏭 회사</button><button class="tab ${TAB === 'ceo' ? 'on' : ''}" data-t="ceo">👴 회장님</button><button class="tab ${TAB === 'ppl' ? 'on' : ''}" data-t="ppl">👥 사람들${s.npcs.some(n => n.loyal < 35) ? ' ⚠️' : ''}</button></div>
+    <div class="panel">${tabBody}</div>
+    <div class="h3">이번 분기 경영 전략은? <small>카드 1장 = 1분기</small></div>
+    <div class="cards">${hand.map(cardHtml).join('')}</div>
+    <div class="actions">
+      <button class="btn btn-dark btn-sm" id="bRest">🛌 휴식 (체력 회복)</button>
+      <button class="btn btn-dark btn-sm" id="bReroll" ${s.memory > 0 ? '' : 'disabled'}>🔄 기억으로 다시 뽑기 ★${s.memory}</button>
+      <button class="btn btn-dark btn-sm" id="bBank">🏦 대출 · 상환</button>
+      <button class="btn btn-dark btn-sm" id="bRetire" ${s.turn >= 8 ? '' : 'disabled'}>👋 은퇴 · 승계</button>
+    </div>
+    <div class="panel" style="margin-top:10px"><div class="log">${s.log.map(l => `<div><span class="t">${l.t}</span>${esc(l.m)}</div>`).join('')}</div></div>
+    <div class="center" style="margin-top:6px"><button class="btn btn-dark" id="bQuit" style="display:inline-block;width:auto;font-size:12px;padding:6px 14px">🏠 저장하고 타이틀로</button></div>`;
+  app.querySelectorAll('.tab').forEach(b => b.onclick = () => { TAB = b.dataset.t; renderGame(); });
+  app.querySelectorAll('.card').forEach(el => el.onclick = () => choose(el.dataset.id));
+  app.querySelectorAll('.npc').forEach(el => el.onclick = () => personnel(el.dataset.id));
+  $('#bRest').onclick = () => choose('__rest');
+  $('#bReroll').onclick = () => { if (S.memory <= 0) return; S.memory--; drawHand(); save(); renderGame(); toast('전생의 기억을 더듬어 새 전략을 떠올렸다'); };
+  $('#bBank').onclick = () => bank();
+  $('#bRetire').onclick = () => retireFlow(false);
+  $('#bQuit').onclick = () => { save(); renderTitle(); };
+}
+function cardHtml(c) {
+  const cost = cardCost(c, S), afford = S.cash >= cost || cost === 0;
+  const extra = [];
+  if (c.chance) extra.push(`<small class="ch">성공 ${Math.round(c.chance(S) * 100)}%</small>`);
+  if (c.board && c.board(S)) extra.push(`<small class="bd">이사회 ${Math.round(boardChance(S) * 100)}%</small>`);
+  if (!afford) extra.push('<small class="no">자금 부족</small>');
+  return `<button class="card" data-id="${c.id}" ${afford ? '' : 'disabled'}>
+    <div class="ic">${c.icon}</div>
+    <div class="body"><div class="cat">${c.cat}<span class="abt">${(c.ab || []).map(abIcon).join('')}</span></div><div class="tt">${c.t}</div><div class="ds">${c.d}</div></div>
+    <div class="cost">${cost > 0 ? fmt(cost) : '무료'}${extra.join('')}</div></button>`;
+}
+
+/* =========================================================
+   턴 진행
+   ========================================================= */
+function drawHand() {
+  const avail = CARDS.filter(c => !c.avail || c.avail(S));
+  const hand = [], usedCat = new Set();
+  let pool = avail.slice();
+  while (hand.length < 3 && pool.length) {
+    const tot = pool.reduce((a, c) => a + (c.weight || 1), 0);
+    let r = Math.random() * tot, sel = pool[0];
+    for (const c of pool) { r -= c.weight || 1; if (r <= 0) { sel = c; break; } }
+    hand.push(sel.id); usedCat.add(sel.cat);
+    pool = pool.filter(c => !usedCat.has(c.cat));
+    if (!pool.length) pool = avail.filter(c => !hand.includes(c.id));
+  }
+  S.hand = hand;
+}
+function pickEvent() {
+  const fixed = FIXED[`${S.year}-${S.q}`];
+  if (fixed && !S.flags['ev_' + S.year + S.q]) { S.flags['ev_' + S.year + S.q] = 1; return fixed; }
+  if (S.turn < 2) return null;
+  const angry = S.npcs.filter(n => n.loyal < 35 && n.checked <= 0).sort((a, b) => a.loyal - b.loyal)[0];
+  if (angry && chance(0.3 + (35 - angry.loyal) * 0.01)) return npcEvent(angry);
+  const fan = S.npcs.find(n => n.loyal >= 85);
+  if (fan && chance(0.12)) return npcBonus(fan);
+  if (chance(0.3)) {
+    const pool = RANDOM.filter(e => !e.avail || e.avail(S));
+    const tot = pool.reduce((a, e) => a + (e.w || 1), 0);
+    let r = Math.random() * tot;
+    for (const e of pool) { r -= e.w || 1; if (r <= 0) return e; }
+  }
+  return null;
+}
+function startTurn() {
+  if (checkGameOver()) return;
+  S.pAct = false;
+  const done = () => { drawHand(); save(); renderGame(); };
+  const ev = pickEvent();
+  if (ev) return runEvent(ev, done);
+  done();
+}
+function runEvent(ev, done) {
+  renderGame();
+  modal({ icon: ev.npc ? npcFace(ev.npc, 72) : ev.icon, tag: ev.tag || '돌발 이벤트', title: ev.t, body: ev.b,
+    options: ev.o.map(o => ({ label: o.l, sub: o.s, onClick: () => {
+      const before = snap();
+      const msg = o.r(S); normalize(S); addLog(`[${ev.t}] ${msg}`);
+      if (S.flags.lostMA) return modal({ icon: '🦈', title: '경영권 상실', body: msg, options: [{ label: '결과 보기', primary: true, onClick: () => ending('ma') }] });
+      modal({ icon: ev.npc ? npcFace(ev.npc, 60) : ev.icon, tag: '결과', title: ev.t, body: msg, extra: diffHtml(before), options: [{ label: '확인', primary: true, onClick: done }] });
+    } })) });
+}
+
+// 사람들 반응 (좋아함/싫어함 → 충성도 변화 + 한마디)
+function npcReact(cat) {
+  const out = [];
+  for (const n of S.npcs) {
+    const t = npcT(n);
+    if (t.likes.includes(cat)) { n.loyal += 5; out.push([n, pick(t.q.like), false]); }
+    else if (t.dislikes.includes(cat)) { n.loyal -= n.checked > 0 ? 2 : 5; out.push([n, pick(t.q.dis), true]); }
+  }
+  return out.sort(() => Math.random() - 0.5).slice(0, 2);
+}
+
+function choose(id) {
+  if (id !== '__rest') {
+    const c = cardById(id), cost = cardCost(c, S);
+    if (S.cash < cost && cost > 0) return toast('자금이 부족합니다');
+    if (c.board && c.board(S) && !chance(boardChance(S))) return boardReject(id);
+  }
+  execute(id);
+}
+function boardReject(id) {
+  const c = cardById(id);
+  const opp = [...execs(S), ...holders(S)].sort((a, b) => a.loyal - b.loyal)[0];
+  modal({ icon: '🏛️', tag: '이사회', title: `「${c.t}」 안건 부결`, body: '이사회가 회장님의 안건에 제동을 걸었다.',
+    extra: opp ? quoteHtml(opp, pick(['회장님, 이건 너무 위험합니다. 저는 반대입니다.', '시기상조입니다. 다음 분기에 다시 논의하시죠.', '이런 결정을 독단으로 하시면 곤란합니다.']), true) : '',
+    options: [
+      { label: '💥 강행한다', sub: '그대로 실행. 임원·주주 충성도 -10, 주주 반응 -8, 리더십 +2', onClick: () => {
+        for (const n of [...execs(S), ...holders(S)]) n.loyal -= 10; S.holder -= 8; S.ab.lead += 2; normalize(S);
+        addLog(`이사회 반대를 무릅쓰고 「${c.t}」 강행`); execute(id); } },
+      { label: '🙇 철회한다', sub: '이 카드는 버리고 다른 전략을 고른다 (턴 소모 없음)', onClick: () => {
+        S.hand = S.hand.filter(h => h !== id); addLog(`이사회 반대로 「${c.t}」 철회`); save(); renderGame(); } }] });
+}
+
+const RESTS = [
+  ['온천에서 푹 쉬었다', s => { s.ab.grit += 1.5; return '오랜만에 온천에 몸을 담갔다. "역시 몸이 재산이야." 전생에 건강을 잃고 나서야 깨달았던 말이다.\n뜨끈한 물에 몸을 녹이며 버티는 힘, 끈기가 조금 붙었다.'; }],
+  ['서재에서 책을 읽었다', s => { s.ab.know += 2; return '휴대폰을 끄고 서재에 틀어박혀 경영서와 기술 서적을 읽었다.\n"전생엔 왜 이런 책을 안 읽었을까." 머리가 맑아지고 지식이 쌓였다.'; }],
+  ['낚시터에서 생각을 정리했다', s => { s.ab.insight += 2; return '새벽 저수지에 낚싯대를 드리웠다. 찌를 바라보며 회사의 다음 10년을 그려봤다.\n고기는 한 마리도 못 잡았지만, 큰 그림은 조금 더 선명해졌다. 통찰력이 올랐다.'; }],
+  ['고향 집에 다녀왔다', s => { s.ab.humor += 1; s.ab.social += 1; return '고향 집에 내려가 어머니 밥을 먹었다. "우리 아들 사장님 됐네!"\n동네 어르신들과 막걸리를 나누며 웃다 보니 사람 냄새가 그리웠던 마음이 채워졌다.'; }]];
+function execute(id) {
+  const before = snap();
+  let title, icon, msg, quotes;
+  if (id === '__rest') {
+    const v = pick(RESTS);
+    S.health += 22 + S.ab.grit * 0.15; S.morale += 2;
+    icon = '🛌'; title = '휴식 — ' + v[0]; msg = v[1](S); quotes = npcReact('휴식');
+  } else {
+    const c = cardById(id), cost = cardCost(c, S);
+    S.cash -= cost;
+    const k = abm(S, c.ab);
+    const ok = c.chance ? chance(c.chance(S)) : undefined;
+    msg = c.run(S, k, ok);
+    icon = c.icon; title = c.t + (c.chance ? (ok ? ' — 성공!' : ' — 실패') : '');
+    for (const [a, v] of Object.entries(c.grow || {})) S.ab[a] += v * (c.chance && !ok ? 0.5 : 1) * (S.ab[a] > 80 ? 0.5 : 1);
+    if (k >= 1.2) msg += `\n\n<b>✨ 회장님의 ${c.ab.map(abName).join('·')} 덕분에 효과가 ${Math.round((k - 1) * 100)}% 더 컸다.</b>`;
+    else if (k < 0.95) msg += `\n\n💦 회장님의 ${c.ab.map(abName).join('·')}이(가) 아직 부족해 효과가 ${Math.round((1 - k) * 100)}% 줄었다.`;
+    quotes = npcReact(c.cat);
+  }
+  normalize(S);
+  addLog(`${title}: ${msg.split('\n')[0].replace(/<[^>]+>/g, '')}`);
+  const rep = settle();
+  const extra = diffHtml(before) +
+    (quotes.length ? '<div class="sec">💬 사람들 한마디</div>' + quotes.map(([n, t, bad]) => quoteHtml(n, t, bad)).join('') : '') +
+    `<div class="sec">🧾 ${rep.year}년 ${rep.q}분기 결산</div><div class="report">
+      <div class="money"><div class="k">분기 매출</div><div class="v">${fmt(rep.rev)}</div></div>
+      <div class="money"><div class="k">영업이익</div><div class="v ${rep.op >= 0 ? 'pos' : 'neg'}">${fmt(rep.op)}</div></div>
+      <div class="money"><div class="k">가동률</div><div class="v">${Math.round(rep.util * 100)}%</div></div>
+      <div class="money"><div class="k">이자 비용</div><div class="v">${fmt(rep.interest)}</div></div></div>`;
+  modal({ icon, tag: `${rep.year}년 ${rep.q}분기`, title, body: msg, extra,
+    options: [{ label: '다음 분기로 ▶', primary: true, onClick: () => S.cash < 0 ? cashCrisis() : advance() }] });
+}
+
+// 분기 정산 + 자연 변화
+function settle() {
+  S.prevR = Object.fromEntries(REACT.map(([k]) => [k, S[k]]));
+  const r = calc(S);
+  S.cash += r.profit;
+  const prev = S.qhist.at(-1);
+  S.qhist.push({ year: S.year, q: S.q, rev: r.rev, op: r.op, profit: r.profit });
+  if (r.util > 0.92) S.cap *= 1.015;
+  S.tech += S.flags.lab ? 0.5 : -1;
+  S.sales -= 1; S.quality -= 0.5;
+  S.morale += (55 - S.morale) * 0.08;
+  S.health -= 2 * (1.3 - S.ab.grit / 100 * 0.6);
+  // 이해관계자 자연 변화
+  const grow = prev ? r.rev / Math.max(1, prev.rev) - 1 : 0;
+  S.market += (45 - S.market) * 0.05 + clamp(grow * 20, -3, 3);
+  S.client += ((S.quality + S.sales) / 2 - S.client) * 0.08;
+  S.partner += S.cash < 0 ? -8 : (55 - S.partner) * 0.05;
+  S.holder += (50 - S.holder) * 0.05 + (r.profit > 0 ? (grow > 0 ? 2 : 0.5) : -4);
+  for (const n of S.npcs) { n.loyal += (55 - n.loyal) * 0.03 + (r.profit > 0 ? 0.5 : -1); if (n.checked > 0) n.checked--; }
+  if (S.own < 45 && !S.npcs.find(n => n.id === 'brown') && chance(0.15)) { addHolder(S, 'brown'); addLog('행동주의 펀드 브라운이 지분을 사 모으기 시작했다.'); }
+  normalize(S);
+  return { ...r, year: S.year, q: S.q };
+}
+
+function advance() {
+  const wasQ4 = S.q === 4, year = S.year;
+  S.turn++; S.age += 0.25; S.hand = null;
+  if (wasQ4) {
+    const qs = S.qhist.filter(h => h.year === year);
+    S.hist.push({ year, rev: qs.reduce((a, h) => a + h.rev, 0), op: qs.reduce((a, h) => a + h.op, 0) });
+  }
+  S.q++; if (S.q > 4) { S.q = 1; S.year++; }
+  save();
+  if (wasQ4) annualReport(year); else startTurn();
+}
+
+/* ---------- 금융: 대출 · 상환 (턴 소모 없음) ---------- */
+function bank(fromCrisis) {
+  const room = Math.max(0, loanLimit(S) - S.debt);
+  const opts = [];
+  const maxA = Math.floor(room * 10) / 10;
+  const amts = [...new Set([Math.floor(Math.min(room, 10 + S.cap * 0.5) * 10) / 10, maxA])].filter(v => v >= 1);
+  for (const a of amts) opts.push({ label: `🏦 ${fmt(a)} 대출받기`, sub: a === maxA ? '한도 최대' : '', onClick: () => {
+    S.cash += a; S.debt += a; addLog(`${fmt(a)} 대출`); normalize(S); save();
+    if (fromCrisis) afterCrisis(); else { renderGame(); toast(`${fmt(a)} 대출 완료`); } } });
+  if (!fromCrisis && S.debt > 0 && S.cash > 1) {
+    const all = Math.min(S.debt, S.cash), half = Math.min(S.debt, S.cash * 0.5);
+    const pay = a => () => { S.cash -= a; S.debt = Math.max(0, S.debt - a); if (S.debt < 0.05) S.debt = 0; addLog(`${fmt(a)} 상환`); save(); renderGame(); };
+    if (half < all - 0.5) opts.push({ label: `🧾 ${fmt(half)} 상환`, sub: '여유 자금의 절반', onClick: pay(half) });
+    opts.push({ label: `🧾 ${fmt(all)} 상환${all >= S.debt ? ' (전액)' : ''}`, sub: '', onClick: pay(all) });
+  }
+  opts.push({ label: fromCrisis ? '◀ 뒤로' : '닫기', dark: true, onClick: () => fromCrisis && cashCrisis() });
+  modal({ icon: '🏦', tag: '금융 (턴 소모 없음)', title: '대출 · 상환',
+    body: `현재 부채 <b>${fmt(S.debt)}</b> · 분기 이자율 <b>${(rate(S) * 100).toFixed(1)}%</b>\n대출 한도 잔여 <b>${fmt(room)}</b>\n(한도는 생산능력·시장 반응에 따라 늘고, 빚이 많을수록 이자율이 오릅니다)`, options: opts });
+}
+// 자본금 바닥 → 긴급 자금
+function cashCrisis() {
+  const need = -S.cash;
+  const room = Math.max(0, loanLimit(S) - S.debt);
+  const canPersonal = (S.flags.personalTurn ?? -99) + 12 <= S.turn;
+  if (room < need && !canPersonal) {
+    return modal({ icon: '💸', tag: '자금 위기', title: '더 이상 버틸 수 없다', body: `자금이 ${fmt(S.cash)}. 은행은 대출 한도가 찼다며 고개를 저었고, 회장님의 개인 재산도 이미 바닥났다.`,
+      options: [{ label: '결과 보기', primary: true, onClick: () => ending('bankrupt') }] });
+  }
+  modal({ icon: '🚨', tag: '자금 위기', title: '통장이 바닥났다!', body: `자금이 <b>${fmt(S.cash)}</b>. 협력업체 대금과 월급날이 다가온다.\n이대로면 부도다. 어떻게든 메워야 한다.`,
+    options: [
+      { label: '🏦 은행 대출로 메우기', sub: room >= need ? `한도 잔여 ${fmt(room)} · 이자 부담 증가` : '한도 부족', disabled: room < need, onClick: () => bank(true) },
+      { label: '🏠 회장님 사재 출연', sub: canPersonal ? `개인 재산 ${fmt(need + 5)} 투입 · 체력 -15 · 지분 +3 (3년에 1번)` : '최근에 이미 사용함', disabled: !canPersonal, onClick: () => {
+        S.cash += need + 5; S.health -= 15; S.own += 3; S.holder += 5; S.morale += 5; S.flags.personalTurn = S.turn; normalize(S);
+        addLog('회장님이 집을 담보로 사재를 털었다');
+        modal({ icon: '🏠', title: '사재 출연', body: '회장님이 살던 집을 담보로 잡혀 회사 통장을 채웠다.\n소식을 들은 직원들과 주주들이 "회장님이 진심이구나"라며 술렁였다.', options: [{ label: '다음 분기로 ▶', primary: true, onClick: advance }] }); } },
+      { label: '🏳️ 파산 신청', sub: '게임 종료', onClick: () => ending('bankrupt') }] });
+}
+function afterCrisis() { if (S.cash < 0) cashCrisis(); else { toast('급한 불은 껐다'); advance(); } }
+
+/* ---------- 인사 관리 (분기당 1명, 턴 소모 없음) ---------- */
+function personnel(id) {
+  const n = S.npcs.find(x => x.id === id); if (!n) return;
+  const t = npcT(n), used = S.pAct;
+  const act = fn => () => {
+    const b = snap(), l0 = n.loyal;
+    const txt = fn(); S.pAct = true; normalize(S); save(); addLog(`[인사] ${txt.split('\n')[0]}`);
+    const cur = S.npcs.find(x => x.id === id);
+    modal({ icon: npcFace(cur, 64), tag: '인사 관리', title: cur.name, body: txt,
+      extra: diffHtml(b) + (cur === n ? `<div class="sec">🤝 ${n.name} 충성도 ${Math.round(l0)} → ${Math.round(n.loyal)}</div>` : ''), options: [{ label: '확인', primary: true, onClick: renderGame }] });
+  };
+  const c1 = (0.3 + S.cap * 0.01) * disc(S), c2 = (1 + S.cap * 0.04) * disc(S), c3 = (2 + S.cap * 0.05) * disc(S);
+  const opts = t.type === 'holder' ? [
+    { label: '📊 단독 IR 미팅', sub: `비용 ${fmt(c1)} · 충성도 상승 (협상력·사회성)`, disabled: used || S.cash < c1, onClick: act(() => { S.cash -= c1; n.loyal += 12 * abm(S, ['nego', 'social']); S.holder += 3; S.ab.nego += 1;
+      return `${n.name}에게 회사의 5개년 비전을 직접 설명했다.\n${S.ab.nego >= 60 ? '회장님의 노련한 화법에 ' + n.name + '의 표정이 점점 풀렸다.' : '질문 공세에 진땀을 뺐지만 진정성은 전달됐다.'}`; }) },
+    { label: '🛡️ 우호 지분 확보 (견제)', sub: `비용 ${fmt(c3 * 2)} · 회장 지분 +3, 4분기간 이 주주의 견제 차단`, disabled: used || S.cash < c3 * 2, onClick: act(() => { S.cash -= c3 * 2; S.own += 3; n.checked = 4; n.loyal -= 5; S.ab.insight += 1;
+      return `백기사를 섭외해 우호 지분을 늘렸다.\n${n.name}가 "견제구를 던지시는군요"라며 쓴웃음을 지었다. 당분간은 조용할 것이다.`; }) }]
+    : [
+    { label: '🍶 술 한잔 하며 면담', sub: `비용 ${fmt(c1)} · 충성도 상승 (사회성·유머) · 체력 -3`, disabled: used || S.cash < c1, onClick: act(() => { S.cash -= c1; n.loyal += 12 * abm(S, ['social', 'humor']); S.health -= 3; S.ab.social += 1; S.ab.humor += 0.5;
+      return `퇴근 후 ${n.name}와 포장마차에 마주 앉았다.\n${S.ab.humor >= 55 ? '회장님의 농담에 ' + n.name + '가 소주를 뿜었다. 분위기가 순식간에 풀렸다.' : '처음엔 어색했지만, 세 병째쯤 ' + n.name + '가 속마음을 털어놓기 시작했다.'}\n"회장님, 사실 저 요즘…" 그날 밤, 둘 사이의 벽이 조금 낮아졌다.`; }) },
+    { label: '🎁 승진·보상', sub: `비용 ${fmt(c2)} · 충성도 대폭 상승`, disabled: used || S.cash < c2, onClick: act(() => { S.cash -= c2; n.loyal += 25; S.morale += 2; S.ab.lead += 1;
+      return `${n.name}에게 특별 보상과 함께 더 큰 권한을 줬다.\n"회장님, 이 은혜 잊지 않겠습니다." ${n.name}의 눈빛이 달라졌다.`; }) },
+    { label: '⚠️ 견제 (경고·권한 축소)', sub: '충성도 -8 · 6분기간 이 사람의 견제 차단, 불만 반응 절반 · 리더십 +2', disabled: used, onClick: act(() => { n.loyal -= 8; n.checked = 6; S.ab.lead += 2; S.morale -= 2;
+      return `${n.name}를 회장실로 불러 선을 그었다. "이 회사의 방향은 내가 정하네."\n${n.name}의 결재 권한 일부를 회수했다. 당분간 딴마음은 못 먹을 것이다. 다만 회사 분위기는 조금 무거워졌다.`; }) },
+    { label: '🔁 교체', sub: `비용 ${fmt(c3)} · 새 인물로 교체 · 다른 사람들 충성도 -4, 직원 -5`, disabled: used || S.cash < c3, onClick: act(() => { S.cash -= c3; const i = S.npcs.indexOf(n); const nn = makeNpc(n.id, true); S.npcs[i] = nn; for (const o of S.npcs) if (o !== nn) o.loyal -= 4; S.morale -= 5; S.ab.lead += 1;
+      return `${n.name}에게 자리를 비워달라고 했다. 짐을 싸는 뒷모습이 쓸쓸했다.\n새 ${t.role}로 ${nn.name}가 부임했다. 다른 사람들은 "다음은 나일 수도…"라며 몸을 사렸다.`; }) }];
+  opts.push({ label: '닫기', dark: true });
+  modal({ icon: npcFace(n, 80), tag: t.role, title: `${n.name} · 충성 ${Math.round(n.loyal)} ${moodFace(n.loyal)}`,
+    body: `성향: <b>${t.trait}</b>\n👍 좋아하는 경영: ${t.likes.join(', ')}\n👎 싫어하는 경영: ${t.dislikes.join(', ')}${n.loyal < 35 ? '\n\n⚠️ 불만이 많다. 곧 견제가 들어올 수 있다.' : n.loyal >= 85 ? '\n\n🌟 회장님의 든든한 지원군이다.' : ''}${used ? '\n\n이번 분기 인사 관리를 이미 했습니다.' : ''}`,
+    options: opts });
+}
+
+/* =========================================================
+   연말 결산
+   ========================================================= */
+function tier(rev) {
+  if (rev >= 30000) return ['글로벌 초일류', '🌍'];
+  if (rev >= 10000) return ['대기업', '🏙️'];
+  if (rev >= 3000) return ['중견기업', '🏢'];
+  if (rev >= 800) return ['강소기업', '🏬'];
+  if (rev >= 200) return ['중소기업', '🏠'];
+  return ['동네 공장', '🛖'];
+}
+function chartHtml(hist) {
+  if (!hist.length) return '';
+  const max = Math.max(...hist.map(h => h.rev), 1);
+  return `<div class="chart">${hist.map((h, i) => `<div class="cb ${i === hist.length - 1 ? 'last' : ''}" title="${h.year}: ${fmt(h.rev)}" style="height:${Math.max(2, h.rev / max * 100)}%"></div>`).join('')}</div>
+    <div class="chart-x"><span>${hist[0].year}</span><span>연 매출 추이</span><span>${hist.at(-1).year}</span></div>`;
+}
+function chairmanSays(h, prev) {
+  const g = prev && prev.rev > 0 ? (h.rev / prev.rev - 1) * 100 : 0;
+  if (h.op < 0) return '"적자라니… 전생에도 이런 해가 있었지. 버티면 기회가 온다."';
+  if (g > 60) return '"허허, 이 맛에 회귀하는 거지! 전생보다 훨씬 빠르구먼."';
+  if (g > 20) return '"좋아, 순조롭다. 하지만 방심은 금물이야."';
+  if (g > 0) return '"성장은 했지만 이 정도로는 부족해. 더 과감해져야 한다."';
+  return '"매출이 뒷걸음질 쳤군. 시장의 흐름을 다시 읽어야겠어."';
+}
+function annualReport(year) {
+  const h = S.hist.at(-1), prev = S.hist.at(-2);
+  const [tn, ti] = tier(h.rev);
+  const growth = prev && prev.rev > 0 ? `${h.rev >= prev.rev ? '▲' : '▼'} ${Math.abs(Math.round((h.rev / prev.rev - 1) * 100))}%` : '첫 해';
+  renderGame();
+  modal({ icon: ceoFace(72), tag: `${year}년 연말 결산`, title: `${ti} ${tn}`,
+    extra: `<div class="report">
+        <div class="money"><div class="k">연 매출</div><div class="v">${fmt(h.rev)}</div></div>
+        <div class="money"><div class="k">연 영업이익</div><div class="v ${h.op >= 0 ? 'pos' : 'neg'}">${fmt(h.op)}</div></div>
+        <div class="money"><div class="k">전년 대비</div><div class="v">${growth}</div></div>
+        <div class="money"><div class="k">현재 총점</div><div class="v">${fmt(scoreOf(S).total)}</div></div>
+      </div>${chartHtml(S.hist)}<div class="quote">👴 ${chairmanSays(h, prev)}</div>
+      ${S.age >= MAX_AGE - 5 ? `<div class="quote bad">⏳ 회장님 나이 ${Math.floor(S.age)}세. ${MAX_AGE}세가 되면 자동으로 은퇴합니다.</div>` : ''}`,
+    options: [{ label: `${year + 1}년 시작 ▶`, primary: true, onClick: startTurn }] });
+}
+
+/* =========================================================
+   점수 · 은퇴 · 엔딩 · 랭킹
+   총점 = 자본금(자금-부채) + 최근 1년 매출 + 최근 1년 영업이익
+   ========================================================= */
+function scoreOf(s) {
+  const q4 = s.qhist.slice(-4);
+  const capital = s.cash - s.debt;
+  const revenue = q4.reduce((a, h) => a + h.rev, 0);
+  const profit = q4.reduce((a, h) => a + h.op, 0);
+  return { capital, revenue, profit, total: capital + revenue + profit };
+}
+function checkGameOver() {
+  if (S.flags.lostMA) { ending('ma'); return true; }
+  if (S.health <= 0) { modal({ icon: '🚑', title: '회장님이 쓰러졌다', body: '과로로 쓰러진 회장님. 의사는 "더 일하시면 정말 큰일 난다"고 했다.\n이제 회사를 물려줄 때가 됐다.', options: [{ label: '후계자 정하기', primary: true, onClick: () => retireFlow(true, 'health') }] }); return true; }
+  if (S.age >= MAX_AGE) { modal({ icon: '🎂', title: `${MAX_AGE}세 생일`, body: `어느덧 ${MAX_AGE}번째 생일. 전생에 눈을 감았던 나이에 거의 다다랐다.\n"이제… 물려줄 때가 됐구나."`, options: [{ label: '후계자 정하기', primary: true, onClick: () => retireFlow(true, 'age') }] }); return true; }
+  return false;
+}
+function retireFlow(forced, why) {
+  const opts = execs(S).map(n => {
+    const mult = n.loyal >= 60 ? 1.05 : n.loyal >= 35 ? 1 : 0.9;
+    return { label: `👔 ${n.name} (${npcT(n).role})`, sub: `충성 ${Math.round(n.loyal)} · ${n.loyal >= 60 ? '회장님 뜻을 이어갈 사람 (점수 +5%)' : n.loyal >= 35 ? '무난한 선택' : '⚠️ 회사를 팔아버릴지도… (점수 -10%)'}`,
+      onClick: () => ending(why || 'retire', { name: n.name, mult, loyal: n.loyal }) };
+  });
+  opts.push({ label: '🎩 외부 전문경영인 영입', sub: '안정적 · 보너스 없음', onClick: () => ending(why || 'retire', { name: '외부 전문경영인', mult: 1, loyal: 50 }) });
+  if (!forced) opts.push({ label: '아직은 더 일하겠다', dark: true });
+  modal({ icon: ceoFace(80), tag: '은퇴 · 승계', title: forced ? '후계자를 정해야 한다' : '정말 은퇴하시겠습니까?',
+    body: `${esc(S.company)}를 누구에게 맡길까?\n후계자의 충성도에 따라 최종 점수가 달라진다.\n\n현재 총점: <b>${fmt(scoreOf(S).total)}</b>`, options: opts });
+}
+const ENDINGS = {
+  bankrupt: ['💸', '부도', '자금이 바닥났다. 은행도, 사재도 더는 없었다.\n"미래를 알아도… 돈이 없으면 소용없구나."'],
+  ma: ['🦈', '경영권 상실', '주총에서 패배해 회사를 빼앗겼다.\n"지분 관리… 그게 전생의 교훈이었는데."'],
+  health: ['🚑', '과로 은퇴', '20대의 몸도 무한하지는 않았다.\n"전생에도 건강 챙기라는 말을 그렇게 들었는데…"'],
+  age: ['🎂', '천수를 누린 회장님', '80세까지 현역으로 회사를 지켰다.\n전생보다 조금 더 길고, 조금 더 뜨거운 인생이었다.'],
+  retire: ['👋', '아름다운 은퇴', '박수칠 때 떠났다.\n"이번 생, 이 정도면 됐다."'],
+};
+function grade(total) {
+  if (total >= 150000) return ['👑', '전설의 귀환', '전생을 아득히 뛰어넘었다. 회사는 세계 시장을 호령한다.'];
+  if (total >= 50000) return ['🏙️', '회장님 컴백', '전생의 영광을 그대로, 아니 더 크게 되찾았다.'];
+  if (total >= 15000) return ['🏢', '탄탄한 중견기업', '흔들림 없는 회사를 일궈냈다. "나쁘지 않아."'];
+  if (total >= 3000) return ['🏬', '강소기업 사장님', '작지만 단단한 회사. "다음 생엔 더 잘할 수 있을 거야."'];
+  return ['🛖', '두 번째 인생도 쉽지 않네', '"…한 번만 더 기회를 주게."'];
+}
+function ending(type, succ) {
+  if (S.ended) return;
+  const sc = scoreOf(S);
+  const mult = succ?.mult ?? (type === 'bankrupt' || type === 'ma' ? 0.5 : 1);
+  const total = Math.round(sc.total * mult * 10) / 10;
+  const [gi, gt, gd] = grade(total);
+  const [ei, et, ed] = ENDINGS[type] || ENDINGS.retire;
+  S.ended = true; save();
+  const succTxt = succ ? (succ.loyal >= 60 ? `후계자 <b>${esc(succ.name)}</b>는 회장님의 뜻을 이어 회사를 더 키웠다. (점수 +5%)` : succ.loyal >= 35 ? `후계자 <b>${esc(succ.name)}</b>가 무난하게 회사를 이끌었다.` : `후계자 <b>${esc(succ.name)}</b>는 회장님이 떠나자마자 알짜 사업부를 팔아치웠다… (점수 -10%)`) : (mult < 1 ? '회사를 잃어 최종 점수가 절반으로 줄었다.' : '');
+  const rec = { player: S.ceo.name, company: S.company, face: JSON.stringify(S.ceo.face), biz: S.mainBiz, score: total, capital: sc.capital, revenue: sc.revenue, profit: sc.profit, age: Math.floor(S.age), ending: `${et} · ${gt}` };
+  document.querySelectorAll('.overlay').forEach(o => o.remove());
+  app.innerHTML = `<div class="title-screen" style="gap:12px">
+    <div class="m-tag" style="color:var(--gold);font-weight:700">ENDING · ${et}</div>
+    <div style="display:flex;align-items:flex-end;gap:8px">${ceoFace(110)}<span style="font-size:44px">${ei}</span></div>
+    <div class="grade">${gi} ${gt}</div>
+    <div class="m-body" style="margin:0">${ed}\n${gd}</div>
+    ${succTxt ? `<div class="m-body" style="font-size:13px;margin:0">${succTxt}</div>` : ''}
+    <div class="panel" style="width:100%;text-align:left">
+      <div class="center muted" style="font-size:12px">최종 총점 (자본금 + 최근 1년 매출 + 최근 1년 영업이익${mult !== 1 ? ` × ${mult}` : ''})</div>
+      <div class="center score-big">${fmt(total)}</div>
+      <div class="money-row" style="margin-top:8px">
+        <div class="money"><div class="k">자본금</div><div class="v ${sc.capital < 0 ? 'neg' : ''}">${fmt(sc.capital)}</div></div>
+        <div class="money"><div class="k">1년 매출</div><div class="v">${fmt(sc.revenue)}</div></div>
+        <div class="money"><div class="k">1년 영업이익</div><div class="v ${sc.profit < 0 ? 'neg' : ''}">${fmt(sc.profit)}</div></div>
+      </div>${chartHtml(S.hist)}
+      <div class="sub-row"><span>경영 <b>${S.hist.length}년</b></span><span>은퇴 <b>${Math.floor(S.age)}세</b></span><span>회장 지분 <b>${Math.round(S.own)}%</b></span></div>
+      <div id="rankMsg" class="center" style="margin-top:12px;font-weight:700;color:var(--gold)">🏆 랭킹 등록 중…</div>
+    </div>
+    <div class="menu"><button class="btn btn-gold" id="bRank">🏆 명예의 전당 보기</button><button class="btn btn-dark" id="bAgain">다시 회귀하기 🔄</button></div></div>`;
+  $('#bAgain').onclick = () => { clearSave(); renderTitle(); };
+  $('#bRank').onclick = () => { clearSave(); renderRanking(rec); };
+  submitScore(rec);
+}
+function localRanks() { try { return JSON.parse(localStorage.getItem(LOCAL_RANK_KEY)) || []; } catch (e) { return []; } }
+async function submitScore(rec) {
+  try { const l = localRanks(); l.push({ ...rec, created_at: new Date().toISOString().slice(0, 19).replace('T', ' ') }); l.sort((a, b) => b.score - a.score); localStorage.setItem(LOCAL_RANK_KEY, JSON.stringify(l.slice(0, 50))); } catch (e) {}
+  const msg = t => { const el = $('#rankMsg'); if (el) el.innerHTML = t; };
+  const slow = setTimeout(() => msg('🏆 랭킹 서버 깨우는 중… (최대 1분)'), 4000);
+  try {
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 70000);
+    const r = await fetch(SERVER + '/api/younggam/submit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ ...rec, key: RANK_API_KEY }), signal: ctl.signal });
+    clearTimeout(to); const j = await r.json();
+    if (!r.ok) throw new Error(j.error);
+    msg(`🏆 전체 랭킹 <b>${j.rank}위</b> 등록 완료!`);
+  } catch (e) { msg('⚠️ 랭킹 서버 연결 실패 — 이 PC 기록에만 저장했어요.'); }
+  clearTimeout(slow);
+}
+async function renderRanking(mine) {
+  app.innerHTML = `<div style="padding-top:10px"><div class="step-title">🏆 명예의 전당</div>
+    <div class="muted center" style="font-size:12px;margin:-8px 0 10px">총점 = 자본금 + 최근 1년 매출 + 최근 1년 영업이익</div>
+    <div class="tabs"><button class="tab on" id="tAll">전체 랭킹</button><button class="tab" id="tLocal">이 PC 기록</button></div>
+    <div class="panel" id="rk"><div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div></div>
+    <button class="btn btn-dark" id="bBack">🏠 타이틀로</button></div>`;
+  $('#bBack').onclick = renderTitle;
+  const draw = rows => {
+    if (!rows.length) { $('#rk').innerHTML = '<div class="center muted" style="padding:30px 0">아직 기록이 없습니다. 첫 번째 전설이 되어보세요!</div>'; return; }
+    $('#rk').innerHTML = rows.map((r, i) => {
+      let f = null; try { f = JSON.parse(r.face); } catch (e) {}
+      const me = mine && r.player === mine.player && Math.abs(r.score - mine.score) < 0.2;
+      return `<div class="rank-row ${me ? 'me' : ''}"><div class="no">${i + 1}</div>${f && f.s !== undefined ? faceSVG(f, r.age || 60, 40, { bg: '#5a4520' }) : '<div style="width:40px;font-size:28px">👴</div>'}
+        <div class="info"><div class="n1">${esc(r.player)} <span class="muted" style="font-weight:400;font-size:12px">${esc(r.company || '')} ${BIZ[r.biz] ? BIZ[r.biz].icon : ''}</span></div>
+        <div class="n2">${esc(r.ending || '')} · ${r.age || '?'}세 · 매출 ${fmt(r.revenue || 0)}</div></div><div class="sc">${fmt(r.score)}</div></div>`;
+    }).join('');
+  };
+  const showLocal = () => { $('#tLocal').classList.add('on'); $('#tAll').classList.remove('on'); draw(localRanks()); };
+  const showAll = async () => {
+    $('#tAll').classList.add('on'); $('#tLocal').classList.remove('on');
+    $('#rk').innerHTML = '<div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div>';
+    try {
+      const ctl = new AbortController(); setTimeout(() => ctl.abort(), 70000);
+      const r = await fetch(`${SERVER}/api/younggam/top?key=${RANK_API_KEY}&limit=50`, { signal: ctl.signal });
+      const j = await r.json(); if (!r.ok) throw 0;
+      if ($('#tAll')?.classList.contains('on')) draw(j.rows);
+    } catch (e) { if ($('#tAll')?.classList.contains('on')) $('#rk').innerHTML = '<div class="center muted" style="padding:20px 0">⚠️ 랭킹 서버에 연결할 수 없어요.<br>「이 PC 기록」 탭에서 내 기록을 볼 수 있습니다.</div>'; }
+  };
+  $('#tAll').onclick = showAll; $('#tLocal').onclick = showLocal;
+  showAll();
+}
+
+renderTitle();
+</script>
+</body>
+</html>

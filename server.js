@@ -63,6 +63,20 @@ async function initScoreStore() {
         stadium TEXT,
         created_at TEXT NOT NULL
       )`);
+      await pool.query(`CREATE TABLE IF NOT EXISTS younggam_scores (
+        id SERIAL PRIMARY KEY,
+        player TEXT NOT NULL,
+        company TEXT,
+        face TEXT,
+        biz TEXT,
+        score DOUBLE PRECISION NOT NULL,
+        capital DOUBLE PRECISION,
+        revenue DOUBLE PRECISION,
+        profit DOUBLE PRECISION,
+        age INTEGER,
+        ending TEXT,
+        created_at TEXT NOT NULL
+      )`);
       pg = { pool };
       console.log("Score DB: connected to Postgres (DATABASE_URL) — records persist across redeploys.");
       return;
@@ -108,6 +122,20 @@ async function initScoreStore() {
       launch REAL,
       spray REAL,
       stadium TEXT,
+      created_at TEXT NOT NULL
+    )`);
+    db.exec(`CREATE TABLE IF NOT EXISTS younggam_scores (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      player TEXT NOT NULL,
+      company TEXT,
+      face TEXT,
+      biz TEXT,
+      score REAL NOT NULL,
+      capital REAL,
+      revenue REAL,
+      profit REAL,
+      age INTEGER,
+      ending TEXT,
       created_at TEXT NOT NULL
     )`);
     console.log("Score DB: local SQLite (tetris.db) — set DATABASE_URL for a persistent DB on cloud hosts.");
@@ -267,6 +295,53 @@ function handleHomerun(req, res, u) {
   send(res, 404, { error: "not found" });
 }
 
+// ---- 영감님 성공하기 (Partron company-growth game) final-result ranking.
+// score = final capital (cash - debt) + last-year revenue + last-year operating profit, in 억원.
+const YOUNGGAM_KEY = "younggam-2026";
+
+async function saveYounggam(d) {
+  const num = (v) => (Number.isFinite(Number(v)) ? Math.round(Number(v) * 10) / 10 : 0);
+  const row = [
+    String(d.player).trim().slice(0, 20), String(d.company || "").slice(0, 20), String(d.face || "").slice(0, 200),
+    String(d.biz || "").slice(0, 20), num(d.score), num(d.capital), num(d.revenue), num(d.profit),
+    Math.floor(Number(d.age) || 0), String(d.ending || "").slice(0, 30), new Date().toISOString().slice(0, 19).replace("T", " ")
+  ];
+  const cols = "(player, company, face, biz, score, capital, revenue, profit, age, ending, created_at)";
+  if (pg) {
+    await pg.pool.query(`INSERT INTO younggam_scores ${cols} VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`, row);
+    return Number((await pg.pool.query("SELECT COUNT(*) AS c FROM younggam_scores WHERE score > $1", [row[4]])).rows[0].c) + 1;
+  }
+  db.prepare(`INSERT INTO younggam_scores ${cols} VALUES (?,?,?,?,?,?,?,?,?,?,?)`).run(...row);
+  return db.prepare("SELECT COUNT(*) AS c FROM younggam_scores WHERE score > ?").get(row[4]).c + 1;
+}
+
+async function younggamTop(limit) {
+  const cols = "player, company, face, biz, score, capital, revenue, profit, age, ending, created_at";
+  if (pg) return (await pg.pool.query(`SELECT ${cols} FROM younggam_scores ORDER BY score DESC LIMIT $1`, [limit])).rows;
+  return db.prepare(`SELECT ${cols} FROM younggam_scores ORDER BY score DESC LIMIT ?`).all(limit);
+}
+
+function handleYounggam(req, res, u) {
+  if (!pg && !db) { send(res, 501, { error: "score db unavailable" }); return; }
+  const fail = () => send(res, 500, { error: "db error" });
+  if (req.method === "POST" && u.pathname === "/api/younggam/submit") {
+    readJsonBody(req, (err, d) => {
+      if (err) { send(res, 400, { error: "bad json" }); return; }
+      if (d.key !== YOUNGGAM_KEY) { send(res, 403, { error: "forbidden" }); return; }
+      if (!String(d.player || "").trim() || !Number.isFinite(Number(d.score))) { send(res, 400, { error: "invalid" }); return; }
+      saveYounggam(d).then((rank) => send(res, 200, { ok: true, rank })).catch(fail);
+    });
+    return;
+  }
+  if (req.method === "GET" && u.pathname === "/api/younggam/top") {
+    if (u.searchParams.get("key") !== YOUNGGAM_KEY) { send(res, 403, { error: "forbidden" }); return; }
+    const limit = Math.min(100, Math.max(1, Number(u.searchParams.get("limit")) || 30));
+    younggamTop(limit).then((rows) => send(res, 200, { rows })).catch(fail);
+    return;
+  }
+  send(res, 404, { error: "not found" });
+}
+
 /**
  * roomId -> { players: Map(id -> presenceObject), events: [{seq,topic,data,ts}], seq,
  *             joinSeq (join order counter), left: Map("id:sess" -> ts), touched }
@@ -336,6 +411,15 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && (u.pathname === "/" || u.pathname === "/index.html" || u.pathname === "/tetris-arena.html")) {
     fs.readFile(path.join(__dirname, "tetris-arena.html"), (err, html) => {
       if (err) { send(res, 200, { ok: true, name: "tetris-arena-relay", rooms: rooms.size, note: "tetris-arena.html not found next to server.js" }); return; }
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
+      res.end(html);
+    });
+    return;
+  }
+  // 영감님 성공하기 (company-growth game) is hosted here too, next to its ranking API
+  if (req.method === "GET" && (u.pathname === "/younggam" || u.pathname === "/younggam/" || u.pathname === "/younggam.html")) {
+    fs.readFile(path.join(__dirname, "younggam.html"), (err, html) => {
+      if (err) { send(res, 404, { error: "younggam.html not found" }); return; }
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
       res.end(html);
     });
@@ -460,6 +544,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (u.pathname.startsWith("/api/homerun/")) { handleHomerun(req, res, u); return; }
+  if (u.pathname.startsWith("/api/younggam/")) { handleYounggam(req, res, u); return; }
 
   send(res, 404, { error: "not found" });
 });
