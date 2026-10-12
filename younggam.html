@@ -1010,8 +1010,12 @@ function pickEvent() {
   }
   return null;
 }
+// 체력 소모 완화 — 영감님은 평생 큰 병 없이 지낸 건강 체질. 끈기가 높을수록 덜 지치고, 70세 이후엔 조금 더 지친다.
+const fatigue = s => 0.65 * (1.15 - s.ab.grit / 100 * 0.5) * (s.age >= 70 ? 1.3 : 1);
+function softenHealth(h0) { if (S.health < h0) S.health = h0 - (h0 - S.health) * fatigue(S); }
 function startTurn() {
   if (checkGameOver()) return;
+  if (S.acting && S.acting.left > 0) return actingTurn();
   S.pAct = false;
   const done = () => { drawHand(); save(); renderGame(); };
   const ev = pickEvent();
@@ -1023,7 +1027,7 @@ function runEvent(ev, done) {
   modal({ icon: ev.npc ? npcFace(ev.npc, 72) : ev.icon, tag: ev.tag || '돌발 이벤트', title: ev.t, body: ev.b,
     options: ev.o.map(o => ({ label: o.l, sub: o.s, onClick: () => {
       const before = snap();
-      const msg = o.r(S); normalize(S); addLog(`[${ev.t}] ${msg}`);
+      const h0 = S.health; const msg = o.r(S); softenHealth(h0); normalize(S); addLog(`[${ev.t}] ${msg}`);
       if (S.flags.lostMA) return modal({ icon: '🦈', title: '경영권 상실', body: msg, options: [{ label: '결과 보기', primary: true, onClick: () => ending('ma') }] });
       modal({ icon: ev.npc ? npcFace(ev.npc, 60) : ev.icon, tag: '결과', title: ev.t, body: msg, extra: diffHtml(before), options: [{ label: '확인', primary: true, onClick: done }] });
     } })) });
@@ -1078,7 +1082,9 @@ function execute(id) {
     S.cash -= cost;
     const k = abm(S, c.ab);
     const ok = c.chance ? chance(c.chance(S)) : undefined;
+    const h0 = S.health;
     msg = c.run(S, k, ok);
+    softenHealth(h0);
     icon = c.icon; title = c.t + (c.chance ? (ok ? ' — 성공!' : ' — 실패') : '');
     for (const [a, v] of Object.entries(c.grow || {})) S.ab[a] += v * (c.chance && !ok ? 0.5 : 1) * (S.ab[a] > 80 ? 0.5 : 1);
     if (k >= 1.2) msg += `\n\n<b>✨ 회장님의 ${c.ab.map(abName).join('·')} 덕분에 효과가 ${Math.round((k - 1) * 100)}% 더 컸다.</b>`;
@@ -1110,7 +1116,7 @@ function settle() {
   S.tech += S.flags.lab ? 0.5 : -1;
   S.sales -= 1; S.quality -= 0.5;
   S.morale += (55 - S.morale) * 0.08;
-  S.health -= 2 * (1.3 - S.ab.grit / 100 * 0.6);
+  S.health += S.age < 70 ? 0.3 : -1; // 건강 체질: 무리만 안 하면 분기마다 조금씩 회복
   // 이해관계자 자연 변화
   const grow = prev ? r.rev / Math.max(1, prev.rev) - 1 : 0;
   S.market += (45 - S.market) * 0.05 + clamp(grow * 20, -3, 3);
@@ -1277,9 +1283,59 @@ function scoreOf(s) {
 }
 function checkGameOver() {
   if (S.flags.lostMA) { ending('ma'); return true; }
-  if (S.health <= 0) { modal({ icon: '🚑', title: '회장님이 쓰러졌다', body: '과로로 쓰러진 회장님. 의사는 "더 일하시면 정말 큰일 난다"고 했다.\n이제 회사를 물려줄 때가 됐다.', options: [{ label: '후계자 정하기', primary: true, onClick: () => retireFlow(true, 'health') }] }); return true; }
+  if (S.health <= 0) { hospital(); return true; }
   if (S.age >= MAX_AGE) { modal({ icon: '🎂', title: `${MAX_AGE}세 생일`, body: `어느덧 ${MAX_AGE}번째 생일. 전생에 눈을 감았던 77세를 지나, 덤으로 3년을 더 달렸다.\n"이제… 물려줄 때가 됐구나."`, options: [{ label: '후계자 정하기', primary: true, onClick: () => retireFlow(true, 'age') }] }); return true; }
   return false;
+}
+/* ---------- 과로 입원 → 대행 체제 (2분기) ---------- */
+function hospital() {
+  S.flags.hosp = (S.flags.hosp || 0) + 1;
+  S.health = 15;
+  const nth = S.flags.hosp;
+  const opts = execs(S).map(n => ({ label: `👔 ${n.name}에게 대행을 맡긴다`, sub: `${npcT(n).role} · 충성 ${Math.round(n.loyal)} ${moodFace(n.loyal)} · ${n.loyal >= 60 ? '믿을 만하다' : n.loyal >= 35 ? '무난하다' : '⚠️ 회장님 없는 틈에 딴짓할 수도…'}`,
+    onClick: () => startActing(n.id) }));
+  opts.push({ label: '🛏️ 병상에서 직접 결재한다', sub: '대행 없이 버틴다 · 회복이 절반으로 느림 · 회사는 현상 유지', onClick: () => startActing(null) });
+  if (nth >= 3) opts.push({ label: '👋 이참에 은퇴한다', sub: '후계자를 정하고 게임 종료', onClick: () => retireFlow(true, 'health') });
+  renderGame();
+  modal({ icon: ceoFace(72), tag: `입원 ${nth}회째`, title: '회장님이 쓰러졌다!',
+    body: `${nth === 1 ? '평생 병원 신세 한 번 진 적 없던 회장님이' : '또다시 회장님이'} 과로로 쓰러졌다.\n의사: "최소 두 분기는 쉬셔야 합니다. 이번엔 진짜입니다."\n\n그동안 회사는 누가 이끌까?`, options: opts });
+}
+function startActing(id) {
+  S.acting = { id, left: 2 };
+  const n = id && S.npcs.find(x => x.id === id);
+  addLog(n ? `회장님 입원. ${n.name} 대행 체제 시작` : '회장님 입원. 병상 결재 체제');
+  save(); actingTurn();
+}
+function actingTurn() {
+  const n = S.acting.id && S.npcs.find(x => x.id === S.acting.id);
+  const before = snap();
+  let msg;
+  S.health += n ? 40 : 20;
+  if (!n) msg = '회장님은 병실 침대에서 링거를 꽂은 채 결재 서류를 넘겼다.\n간호사가 몇 번이나 서류를 빼앗았지만, 회사는 그럭저럭 굴러갔다.';
+  else if (n.loyal < 35 && chance(0.5)) {
+    S.morale -= 8; S.holder -= 6; S.cash -= 1 + S.cap * 0.05; n.loyal -= 5;
+    msg = `${n.name}가 대행 체제를 틈타 자기 사람들을 요직에 앉히고, 법인카드로 골프장을 드나들었다.\n병실로 들려오는 소식에 회장님은 혈압이 올랐다.`;
+  } else {
+    const area = npcT(n).area;
+    if (area === 'sales') { S.sales += 5; S.client += 4; }
+    else if (area === 'tech') { S.tech += 4; }
+    else if (area === 'finance') { S.cash += 1 + S.cap * 0.05; S.holder += 3; }
+    n.loyal += 6;
+    msg = `${n.name}가 회장님 빈자리를 묵묵히 지켰다. ${{ sales: '고객사 관리를 꼼꼼히 챙겼다.', tech: '연구소 프로젝트를 차질 없이 이끌었다.', finance: '허리띠를 졸라매 현금을 아꼈다.' }[area] || ''}\n"회장님은 몸만 챙기십시오. 회사는 제가 지키겠습니다."`;
+  }
+  S.acting.left--;
+  normalize(S);
+  const rep = settle();
+  const back = S.acting.left <= 0;
+  if (back) { S.acting = null; S.health = Math.max(S.health, 70); }
+  addLog(`[대행 체제] ${msg.split('\n')[0]}`);
+  save(); renderGame();
+  modal({ icon: n ? npcFace(n, 64) : '🏥', tag: `${rep.year}년 ${rep.q}분기 · ${n ? n.name + ' 대행' : '병상 결재'}`, title: back ? '회장님 복귀!' : '회장님 입원 중',
+    body: msg + (back ? '\n\n두 분기 만에 회장님이 다시 출근했다. 직원들이 박수로 맞았다. "이제 무리하지 마세요, 회장님!"' : ''),
+    extra: diffHtml(before) + `<div class="sec">🧾 분기 결산</div><div class="report">
+      <div class="money"><div class="k">분기 매출</div><div class="v">${fmt(rep.rev)}</div></div>
+      <div class="money"><div class="k">영업이익</div><div class="v ${rep.op >= 0 ? 'pos' : 'neg'}">${fmt(rep.op)}</div></div></div>`,
+    options: [{ label: '다음 분기로 ▶', primary: true, onClick: () => S.cash < 0 ? cashCrisis() : advance() }] });
 }
 function retireFlow(forced, why) {
   const opts = execs(S).map(n => {
@@ -1297,7 +1353,7 @@ function retireFlow(forced, why) {
 const ENDINGS = {
   bankrupt: ['💸', '부도', '자금이 바닥났다. 은행도, 사재도 더는 없었다.\n"미래를 알아도… 돈이 없으면 소용없구나."'],
   ma: ['🦈', '경영권 상실', '주총에서 패배해 회사를 빼앗겼다.\n"지분 관리… 그게 전생의 교훈이었는데."'],
-  health: ['🚑', '과로 은퇴', '미래를 알아도 몸은 하나였다.\n"전생에도 건강 챙기라는 말을 그렇게 들었는데…"'],
+  health: ['🚑', '건강 은퇴', '세 번이나 쓰러지고 나서야 결심했다.\n"전생에도 건강 챙기라는 말을 그렇게 들었는데…"'],
   age: ['🎂', '천수를 누린 회장님', '80세까지 현역으로 회사를 지켰다.\n전생보다 조금 더 길고, 조금 더 뜨거운 인생이었다.'],
   retire: ['👋', '아름다운 은퇴', '박수칠 때 떠났다.\n"이번 생, 이 정도면 됐다."'],
 };
