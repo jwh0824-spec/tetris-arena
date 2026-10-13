@@ -1531,15 +1531,27 @@ function ending(type, succ) {
   $('#bRank').onclick = () => { clearSave(); renderRanking(rec); };
   submitScore(rec);
 }
+// 무료 서버가 잠에서 깨는 동안엔 요청이 바로 실패할 수 있어서, 최대 70초 동안 10초 간격으로 다시 시도
+async function fetchRetry(url, opts = {}) {
+  const until = Date.now() + 70000;
+  for (;;) {
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), Math.max(1000, until - Date.now()));
+      const r = await fetch(url, { ...opts, signal: ctl.signal }); clearTimeout(to);
+      if (r.status < 500) return r;
+    } catch (e) { /* 깨어나는 중 */ }
+    if (Date.now() + 10000 > until) throw new Error('timeout');
+    await new Promise(r => setTimeout(r, 10000));
+  }
+}
 function localRanks() { try { return JSON.parse(localStorage.getItem(LOCAL_RANK_KEY)) || []; } catch (e) { return []; } }
 async function submitScore(rec) {
   try { const l = localRanks(); l.push({ ...rec, created_at: new Date().toISOString().slice(0, 19).replace('T', ' ') }); l.sort((a, b) => b.score - a.score); localStorage.setItem(LOCAL_RANK_KEY, JSON.stringify(l.slice(0, 50))); } catch (e) {}
   const msg = t => { const el = $('#rankMsg'); if (el) el.innerHTML = t; };
   const slow = setTimeout(() => msg('🏆 랭킹 서버 깨우는 중… (최대 1분)'), 4000);
   try {
-    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 70000);
-    const r = await fetch(SERVER + '/api/younggam/submit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ ...rec, key: RANK_API_KEY }), signal: ctl.signal });
-    clearTimeout(to); const j = await r.json();
+    const r = await fetchRetry(SERVER + '/api/younggam/submit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ ...rec, key: RANK_API_KEY }) });
+    const j = await r.json();
     if (!r.ok) throw new Error(j.error);
     msg(`🏆 전체 랭킹 <b>${j.rank}위</b> 등록 완료!`);
   } catch (e) { msg('⚠️ 랭킹 서버 연결 실패 — 이 PC 기록에만 저장했어요.'); }
@@ -1568,8 +1580,7 @@ async function renderRanking(mine) {
     $('#tAll').classList.add('on'); $('#tLocal').classList.remove('on');
     $('#rk').innerHTML = '<div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div>';
     try {
-      const ctl = new AbortController(); setTimeout(() => ctl.abort(), 70000);
-      const r = await fetch(`${SERVER}/api/younggam/top?key=${RANK_API_KEY}&limit=50`, { signal: ctl.signal });
+      const r = await fetchRetry(`${SERVER}/api/younggam/top?key=${RANK_API_KEY}&limit=50`);
       const j = await r.json(); if (!r.ok) throw 0;
       if ($('#tAll')?.classList.contains('on')) draw(j.rows);
     } catch (e) { if ($('#tAll')?.classList.contains('on')) $('#rk').innerHTML = '<div class="center muted" style="padding:20px 0">⚠️ 랭킹 서버에 연결할 수 없어요.<br>「이 PC 기록」 탭에서 내 기록을 볼 수 있습니다.</div>'; }
