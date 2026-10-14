@@ -1,0 +1,1312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프린세스 메이커</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf3f7; --bg2:#f6e8f4; --card:#ffffffd9; --ink:#4a3348; --muted:#9a7f97; --line:#ecd3e4;
+  --pink:#e8739a; --pink2:#f7b6cb; --lav:#a58ad6; --gold:#c99a3a; --mint:#59b394; --red:#d9536b; --blue:#5b8fd6;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(circle at 15% 10%,#fff 0,transparent 40%),linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);font-family:'Gowun Dodum',sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(#e7b9d0 1px,transparent 1.2px);background-size:14px 14px;opacity:.25}
+#app{max-width:1180px;margin:0 auto;padding:12px 16px 40px;position:relative}
+h1,h2,h3,.serif{font-family:'Gowun Batang',serif}
+button{font-family:inherit;cursor:pointer}
+.btn{border:0;border-radius:999px;padding:10px 18px;font-size:15px;background:linear-gradient(180deg,#f59bb9,#e46f97);color:#fff;box-shadow:0 3px 0 #c2507a,0 6px 14px #e46f9740;transition:.12s}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c2507a}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.sub{background:linear-gradient(180deg,#fff,#f7eaf2);color:var(--ink);box-shadow:0 3px 0 #dcbfd2}
+.btn.lav{background:linear-gradient(180deg,#b9a0ea,#9277cf);box-shadow:0 3px 0 #6f56aa}
+.btn.gold{background:linear-gradient(180deg,#f0cf78,#cf9c34);box-shadow:0 3px 0 #9c7220}
+.btn.sm{padding:6px 12px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px #c98fb022;backdrop-filter:blur(4px)}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#f8e6ef;margin:2px}
+.chip.up{background:#e3f4ec;color:#2f7d5c}.chip.dn{background:#fbe3e7;color:#b03a52}.chip.g{background:#fbf0d6;color:#8c6514}
+/* title */
+.title-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;min-height:90vh}
+.logo{font-family:'Gowun Batang',serif;font-size:56px;line-height:1.05;margin:0;color:#d3577f;text-shadow:0 2px 0 #fff,0 0 22px #fff,0 4px 18px #e46f9760;letter-spacing:-1px}
+.logo small{display:block;font-size:20px;color:var(--lav);letter-spacing:6px;margin-bottom:6px}
+.title-menu{display:flex;flex-direction:column;gap:12px;max-width:300px;margin-top:26px}
+.sparkle{animation:tw 2.4s infinite ease-in-out}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.float{animation:floaty 4s infinite ease-in-out}
+/* create */
+.create{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+.create .pv{position:sticky;top:12px;padding:14px}
+.opt{margin:10px 0}
+.opt .lb{font-size:13px;color:var(--muted);margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.ch{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:6px 10px;font-size:13px;color:var(--ink)}
+.ch.on{border-color:var(--pink);background:#fde9f1;color:#c2416d;font-weight:bold}
+.sw{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--line);padding:0}
+.sw.on{box-shadow:0 0 0 3px var(--pink)}
+input[type=text],select{font-family:inherit;font-size:15px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 12px;font-size:13px}
+/* main */
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.top .date{font-family:'Gowun Batang',serif;font-size:20px}
+.top .gold{font-weight:bold;color:#a77a1c;font-size:18px}
+.main{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
+.pcard{padding:14px;text-align:center}
+.pcard .nm{font-family:'Gowun Batang',serif;font-size:22px;margin:6px 0 0}
+.bubble{position:relative;background:#fff;border:1.5px solid var(--pink2);border-radius:14px;padding:8px 12px;margin:10px 4px 8px;font-size:14px;min-height:38px}
+.bubble:before{content:"";position:absolute;top:-8px;left:50%;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom-color:var(--pink2)}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.act{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 4px;font-size:13px;color:var(--ink)}
+.act b{display:block;font-size:20px;font-weight:normal}
+.act:disabled{opacity:.4;cursor:not-allowed}
+.sched{padding:14px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.slot{border:2px dashed var(--pink2);border-radius:14px;background:#fff;padding:10px 6px;min-height:92px;color:var(--ink);text-align:center}
+.slot.set{border-style:solid;background:linear-gradient(180deg,#fff,#fdf0f6)}
+.slot .when{font-size:12px;color:var(--muted)}
+.slot .ic{font-size:26px}
+.slot .nm2{font-size:14px;font-weight:bold}
+.slot.lock{border-color:var(--gold);background:#fff9ea}
+.tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.tab{border:0;background:#f5e4ee;color:var(--ink);padding:6px 14px;border-radius:999px;font-size:13px}
+.tab.on{background:var(--pink);color:#fff}
+.stats{padding:14px}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.bar{font-size:13px}
+.bar .l{display:flex;justify-content:space-between}
+.bar .t{height:8px;background:#f4e5ee;border-radius:9px;overflow:hidden;margin-top:2px}
+.bar .t i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#f7b6cb,#e8739a)}
+.bar.c .t i{background:linear-gradient(90deg,#b7c9f0,#5b8fd6)}
+.bar.k .t i{background:linear-gradient(90deg,#c9e8d8,#59b394)}
+.bar.e .t i{background:linear-gradient(90deg,#f5dd9e,#c99a3a)}
+.bar.x .t i{background:linear-gradient(90deg,#c8b6d9,#6a4a8a)}
+.bar.s .t i{background:linear-gradient(90deg,#ffd0a0,#e05555)}
+.log{font-size:13px;max-height:190px;overflow:auto;padding:10px 14px}
+.log div{padding:3px 0;border-bottom:1px dotted var(--line)}
+/* modal */
+.mask{position:fixed;inset:0;background:#3a2238aa;display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;backdrop-filter:blur(2px)}
+.modal{background:#fffafc;border-radius:20px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px #0005;border:2px solid #fff}
+.modal h3{margin:0 0 10px;font-size:20px;color:#c2416d}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.op{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:9px 10px;text-align:left;color:var(--ink);font-size:13px}
+.op:hover:not(:disabled){border-color:var(--pink);background:#fff4f8}
+.op .h{font-weight:bold;font-size:14px}
+.op:disabled{opacity:.45;cursor:not-allowed}
+.days{display:flex;gap:5px;justify-content:center;margin:12px 0;flex-wrap:wrap}
+.day{width:28px;height:28px;border-radius:50%;background:#f4e5ee;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}
+.day.ok{background:#ffd5e3;transform:scale(1.08)}
+.day.ng{background:#e5e1ea;color:#999}
+.phase-wrap{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+.choice{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.ending{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:center}
+.ending .etitle{font-family:'Gowun Batang',serif;font-size:36px;color:#c2416d;margin:4px 0}
+.rank-row{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px dotted var(--line);cursor:pointer}
+.rank-row:hover{background:#fff4f8}
+.rank-row .no{width:28px;font-weight:bold;color:var(--pink);text-align:center;font-family:'Gowun Batang',serif;font-size:18px}
+.rank-row .info{flex:1;min-width:0}
+.rank-row .sc{font-weight:bold;color:#a77a1c;text-align:right}
+.rank-row.me{background:#fff2d8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#4a3348;color:#fff;padding:10px 18px;border-radius:999px;z-index:99;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:860px){
+  .title-wrap,.create,.main,.ending{grid-template-columns:1fr}
+  .create .pv{position:static}
+  .logo{font-size:40px}
+  .title-menu{margin:20px auto 0}
+  .title-wrap{text-align:center;min-height:auto;padding-top:20px}
+  .bars{grid-template-columns:1fr}
+  .phase-wrap{grid-template-columns:100px 1fr}
+  .statgrid{grid-template-columns:repeat(2,1fr)}
+  .pcard>svg{max-width:250px!important}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+// ================= 기본 유틸 =================
+const SERVER = new URLSearchParams(location.search).get('server') || 'https://tetris-arena-4spd.onrender.com';
+const RANK_API_KEY = 'princess-2026';
+const SAVE_KEY = 'princess_save_v1', LOCAL_RANK_KEY = 'princess_local_ranks_v1';
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const R = (a, b) => a + Math.random() * (b - a);
+const RI = (a, b) => Math.floor(R(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove('on'), 2200); }
+function shade(hex, p) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const t = p < 0 ? 0 : 255, q = Math.abs(p);
+  r = Math.round((t - r) * q + r); g = Math.round((t - g) * q + g); b = Math.round((t - b) * q + b);
+  return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+}
+
+// ================= 외모 데이터 =================
+const HAIR_COLORS = [['밤색', '#8a5a3b'], ['금발', '#efc85e'], ['은발', '#d6d8e6'], ['흑발', '#3a2e42'], ['벚꽃', '#f29bb8'], ['하늘', '#8cc4ee'], ['진홍', '#c8463a'], ['라벤더', '#a68ad8']];
+const EYE_COLORS = [['호박', '#b8742a'], ['사파이어', '#3a6fd0'], ['에메랄드', '#2f9a6a'], ['자수정', '#8a52d8'], ['루비', '#cc3355'], ['아쿠아', '#2aa8c8'], ['초콜릿', '#6a3e28'], ['은회색', '#707a90']];
+const SKINS = ['#fff0e6', '#ffe4d4', '#f7d3b8', '#e6b896'];
+const DRESS_COLORS = ['#f6a5c0', '#a8c8f0', '#c8b0f0', '#fff0a8', '#b8e8c8', '#ffffff', '#f08a8a', '#9fb0d8'];
+const HAIR_STYLES = [['long', '긴 생머리'], ['wavy', '웨이브'], ['twin', '트윈테일'], ['pony', '포니테일'], ['bob', '단발'], ['braid', '땋은 머리'], ['odango', '공주 머리']];
+const BANGS = [['hime', '일자 앞머리'], ['side', '옆으로 넘긴'], ['part', '가르마']];
+const EYE_SHAPES = [['round', '동글동글'], ['cat', '고양이 눈'], ['droopy', '처진 눈']];
+const ACCS = [['ribbon', '리본'], ['flower', '꽃핀'], ['band', '머리띠'], ['none', '없음']];
+
+// ================= 순정만화풍 초상화 (SVG) =================
+let UID = 0;
+function star(x, y, r, fill = '#fff', op = 1) {
+  const q = r * 0.22;
+  return `<path d="M${x} ${y - r}L${x + q} ${y - q}L${x + r} ${y}L${x + q} ${y + q}L${x} ${y + r}L${x - q} ${y + q}L${x - r} ${y}L${x - q} ${y - q}Z" fill="${fill}" opacity="${op}"/>`;
+}
+function rose(x, y, r, c) {
+  const d = shade(c, -0.25);
+  return `<g><ellipse cx="${x - r * 0.9}" cy="${y + r * 0.7}" rx="${r * 0.7}" ry="${r * 0.32}" fill="#9fcf9a" transform="rotate(-30 ${x - r * 0.9} ${y + r * 0.7})"/>
+  <ellipse cx="${x + r * 0.95}" cy="${y + r * 0.6}" rx="${r * 0.65}" ry="${r * 0.3}" fill="#8cc48a" transform="rotate(25 ${x + r * 0.95} ${y + r * 0.6})"/>
+  <circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>
+  <path d="M${x - r * 0.6} ${y + r * 0.1}Q${x - r * 0.5} ${y - r * 0.7} ${x + r * 0.2} ${y - r * 0.55}M${x - r * 0.2} ${y + r * 0.45}Q${x + r * 0.7} ${y + r * 0.5} ${x + r * 0.55} ${y - r * 0.25}M${x - r * 0.25} ${y - r * 0.15}Q${x} ${y - r * 0.4} ${x + r * 0.2} ${y - r * 0.05}Q${x + r * 0.1} ${y + r * 0.25} ${x - r * 0.15} ${y + r * 0.1}" stroke="${d}" stroke-width="${r * 0.13}" fill="none" stroke-linecap="round"/></g>`;
+}
+function bow(x, y, s, c) {
+  const d = shade(c, -0.3);
+  return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0C-10 -14 -26 -12 -24 0C-26 12 -10 14 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.4"/>
+  <path d="M0 0C10 -14 26 -12 24 0C26 12 10 14 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.4"/>
+  <path d="M-2 2L-10 22L-4 19L-1 24ZM2 2L10 22L4 19L1 24Z" fill="${c}" stroke="${d}" stroke-width="1.2"/>
+  <ellipse cx="0" cy="0" rx="5" ry="6" fill="${shade(c, -0.1)}" stroke="${d}" stroke-width="1.2"/>
+  <path d="M-18 -4Q-12 -8 -6 -3M18 -4Q12 -8 6 -3" stroke="#fff" stroke-width="1.5" fill="none" opacity=".7"/></g>`;
+}
+function backHairPath(cx, hw, top, len, wave, flare) {
+  const L = cx - hw - 8, Rr = cx + hw + 8, n = 6;
+  let d = `M${L} 100C${L - 6} ${top} ${Rr + 6} ${top} ${Rr} 100`;
+  const sx = (side, i) => (side > 0 ? Rr + flare * i / n : L - flare * i / n) + (wave ? side * Math.sin(i * 1.7) * wave : 0);
+  for (let i = 1; i <= n; i++) {
+    const y = 100 + (len - 100) * i / n, py = 100 + (len - 100) * (i - 0.5) / n;
+    d += `Q${(sx(1, i - 0.5) + (wave ? wave * 1.2 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(1, i).toFixed(1)} ${y.toFixed(1)}`;
+  }
+  const right = sx(1, n), left = sx(-1, n), segs = 6;
+  for (let i = 1; i <= segs; i++) {
+    const x = right - (right - left) * i / segs, y = len - (i % 2 ? 16 : 2) - (i === segs ? -2 : 0);
+    d += `L${x.toFixed(1)} ${y.toFixed(1)}`;
+  }
+  for (let i = n - 1; i >= 0; i--) {
+    const y = 100 + (len - 100) * i / n, py = 100 + (len - 100) * (i + 0.5) / n;
+    d += `Q${(sx(-1, i + 0.5) - (wave ? wave * 1.2 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(-1, i).toFixed(1)} ${y.toFixed(1)}`;
+  }
+  return d + 'Z';
+}
+function bodyPath(cx, y0, sw) {
+  return `M${cx - 12} ${y0}C${cx - 30} ${y0 + 2} ${cx - sw} ${y0 + 6} ${cx - sw - 6} ${y0 + 30}L${cx - sw - 16} 302L${cx + sw + 16} 302L${cx + sw + 6} ${y0 + 30}C${cx + sw} ${y0 + 6} ${cx + 30} ${y0 + 2} ${cx + 12} ${y0}Z`;
+}
+const BG_TONES = {
+  pink: ['#ffe3ef', '#f3d9f5', '#f6a5c0'], blue: ['#e0ecff', '#e8e0ff', '#a8c0f0'], gold: ['#fff4d6', '#ffe0ec', '#f0c860'],
+  dark: ['#3a2440', '#1e1630', '#8a3a6a'], green: ['#e6f7e6', '#fff3e0', '#f0a0b8'], lav: ['#efe6ff', '#ffe6f2', '#c8a8f0']
+};
+function portrait(a, o = {}) {
+  const id = 'pp' + (++UID);
+  const age = o.age ?? 10, t = clamp((age - 10) / 8, 0, 1);
+  const H = HAIR_COLORS[a.hc][1], Hd = shade(H, -0.32), Hl = shade(H, 0.45);
+  const E = o.eyeOverride || EYE_COLORS[a.ec][1];
+  const SK = SKINS[a.sk], SKd = shade(SK, -0.14);
+  const outfit = o.outfit || 'casual', mood = o.mood || 'smile';
+  const acc = o.acc || a.acc;
+  const cx = 120, hw = 56 - t * 3, eyeY = 138 + t * 4, chinY = 180 + t * 10, es = 1.12 - 0.14 * t;
+  const y0 = chinY + 16, sw = 36 + t * 10;
+  const tone = BG_TONES[o.bg || 'pink'] || BG_TONES.pink;
+  const lash = shade(H === '#d6d8e6' ? '#6a6a80' : H, -0.6);
+  let s = `<svg viewBox="0 0 240 300" width="${o.size || 300}" style="max-width:100%;height:auto;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><defs>
+   <linearGradient id="${id}bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${tone[0]}"/><stop offset="1" stop-color="${tone[1]}"/></linearGradient>
+   <linearGradient id="${id}ir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(E, -0.55)}"/><stop offset=".55" stop-color="${E}"/><stop offset="1" stop-color="${shade(E, 0.55)}"/></linearGradient>
+   <linearGradient id="${id}hr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(H, 0.12)}"/><stop offset="1" stop-color="${shade(H, -0.12)}"/></linearGradient>
+   <linearGradient id="${id}mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fb"/><stop offset=".5" stop-color="#b9c2d4"/><stop offset="1" stop-color="#e6eaf3"/></linearGradient>
+   <pattern id="${id}dt" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="${tone[2]}"/></pattern>
+   <clipPath id="${id}fr"><rect x="0" y="0" width="240" height="300" rx="16"/></clipPath>
+  </defs><g clip-path="url(#${id}fr)">`;
+  // ---- 배경: 스크린톤, 장미, 반짝이, 비눗방울
+  if (o.bg !== false) {
+    s += `<rect width="240" height="300" fill="url(#${id}bg)"/><rect width="240" height="300" fill="url(#${id}dt)" opacity=".18"/>`;
+    s += `<circle cx="40" cy="60" r="26" fill="#fff" opacity=".35"/><circle cx="205" cy="120" r="18" fill="#fff" opacity=".3"/><circle cx="30" cy="190" r="12" fill="#fff" opacity=".35"/><circle cx="215" cy="40" r="10" fill="#fff" opacity=".4"/>`;
+    if (o.bg === 'dark') s += `<circle cx="190" cy="50" r="22" fill="#f6e7c8" opacity=".9"/><circle cx="182" cy="44" r="20" fill="#2a1a34"/>`;
+    s += rose(18, 22, 13, o.bg === 'dark' ? '#8a1a3a' : '#f58fb0') + rose(222, 282, 15, o.bg === 'dark' ? '#6a1030' : '#f7a8c2') + rose(16, 262, 10, o.bg === 'dark' ? '#5a1030' : '#fbc0d2');
+    s += star(205, 78, 9, '#fff', .95) + star(30, 120, 6, '#fff', .9) + star(215, 200, 5, '#fff', .8) + star(60, 25, 5, '#fff', .9) + star(180, 18, 4, '#fff', .8);
+  }
+  // ---- 뒤쪽 장식 (망토/베일)
+  if (outfit === 'armor' || outfit === 'queen') {
+    const cc = outfit === 'queen' ? '#a8203a' : '#b0263a';
+    s += `<path d="M${cx - sw - 4} ${y0 + 6}L${cx - sw - 40} 302L${cx + sw + 40} 302L${cx + sw + 4} ${y0 + 6}Z" fill="${cc}" stroke="${shade(cc, -0.35)}" stroke-width="1.5"/><path d="M${cx - sw - 20} 240L${cx - sw - 30} 300M${cx + sw + 20} 240L${cx + sw + 30} 300" stroke="${shade(cc, -0.3)}" stroke-width="1.5"/>`;
+  }
+  if (acc === 'wveil') s += `<path d="M${cx - hw - 4} 60C${cx - hw - 50} 120 ${cx - sw - 50} 230 ${cx - sw - 46} 302L${cx + sw + 46} 302C${cx + sw + 50} 230 ${cx + hw + 50} 120 ${cx + hw + 4} 60Z" fill="#fff" opacity=".55" stroke="#f0e8f0"/>`;
+  // ---- 뒷머리
+  const longLen = 205 + t * 75;
+  const hairFill = `fill="url(#${id}hr)" stroke="${Hd}" stroke-width="1.6" stroke-linejoin="round"`;
+  if (outfit === 'nun') {
+    s += `<path d="M${cx - hw - 16} 92C${cx - hw - 24} 18 ${cx + hw + 24} 18 ${cx + hw + 16} 92L${cx + sw + 12} ${y0 + 70}L${cx - sw - 12} ${y0 + 70}Z" fill="#26222e" stroke="#000" stroke-width="1.5"/>`;
+  } else {
+    const st = a.hair;
+    if (st === 'pony') {
+      const pl = 175 + t * 80;
+      s += `<path d="M${cx + 22} 46C${cx + 80} 40 ${cx + 92} 100 ${cx + 82} ${pl * 0.7}C${cx + 78} ${pl * 0.85} ${cx + 92} ${pl} ${cx + 80} ${pl + 6}C${cx + 64} ${pl - 20} ${cx + 66} ${pl * 0.7} ${cx + 60} 120C${cx + 56} 90 ${cx + 40} 70 ${cx + 22} 64Z" ${hairFill}/>`;
+      s += `<path d="${backHairPath(cx, hw, 30, 150, 0, 2)}" ${hairFill}/>`;
+    } else if (st === 'twin') {
+      const tl = 170 + t * 90;
+      for (const sd of [-1, 1]) {
+        const x = cx + sd * (hw + 2);
+        s += `<path d="M${x} 58C${x + sd * 46} 66 ${x + sd * 40} ${tl * 0.55} ${x + sd * 30} ${tl * 0.8}C${x + sd * 24} ${tl * 0.92} ${x + sd * 36} ${tl} ${x + sd * 30} ${tl + 8}C${x + sd * 8} ${tl * 0.85} ${x + sd * 16} ${tl * 0.6} ${x + sd * 14} 110C${x + sd * 12} 92 ${x + sd * 4} 84 ${x - sd * 4} 80Z" ${hairFill}/>`;
+        s += `<path d="M${x + sd * 20} 80Q${x + sd * 30} ${tl * 0.5} ${x + sd * 24} ${tl * 0.85}" stroke="${Hd}" stroke-width="1.2" fill="none" opacity=".6"/>`;
+      }
+      s += `<path d="${backHairPath(cx, hw, 30, 150, 0, 2)}" ${hairFill}/>`;
+    } else if (st === 'bob') {
+      s += `<path d="${backHairPath(cx, hw, 30, 170 + t * 14, 0, 8)}" ${hairFill}/>`;
+    } else if (st === 'braid') {
+      s += `<path d="${backHairPath(cx, hw, 30, 165, 0, 4)}" ${hairFill}/>`;
+    } else {
+      s += `<path d="${backHairPath(cx, hw, 30, longLen, st === 'wavy' ? 7 : 0, st === 'wavy' ? 16 : 8)}" ${hairFill}/>`;
+      s += `<path d="M${cx - hw - 4} 120Q${cx - hw - 10} ${longLen * 0.7} ${cx - hw - 4} ${longLen - 10}M${cx + hw + 4} 120Q${cx + hw + 10} ${longLen * 0.7} ${cx + hw + 4} ${longLen - 10}" stroke="${Hd}" stroke-width="1.2" fill="none" opacity=".5"/>`;
+    }
+    if (st === 'odango') for (const sd of [-1, 1]) {
+      const x = cx + sd * 42;
+      s += `<circle cx="${x}" cy="40" r="19" ${hairFill}/><path d="M${x - 10} 36Q${x} 26 ${x + 9} 38Q${x + 2} 48 ${x - 6} 42" stroke="${Hd}" stroke-width="1.3" fill="none"/>`;
+    }
+  }
+  // ---- 목, 몸, 옷
+  s += `<path d="M${cx - 11} ${chinY - 22}L${cx - 12} ${y0 + 10}L${cx + 12} ${y0 + 10}L${cx + 11} ${chinY - 22}Z" fill="${SK}" stroke="${SKd}" stroke-width="1"/>
+        <path d="M${cx - 11} ${chinY - 6}Q${cx} ${chinY + 8} ${cx + 11} ${chinY - 6}L${cx + 11} ${chinY + 2}Q${cx} ${chinY + 12} ${cx - 11} ${chinY + 2}Z" fill="${SKd}" opacity=".5"/>`;
+  s += outfitSVG(outfit, a, cx, y0, sw, t, id, SK);
+  // ---- 얼굴
+  s += `<path d="M${cx - hw} 104C${cx - hw} 146 ${cx - hw * 0.5} ${chinY - 8} ${cx} ${chinY}C${cx + hw * 0.5} ${chinY - 8} ${cx + hw} 146 ${cx + hw} 104C${cx + hw} 48 ${cx - hw} 48 ${cx - hw} 104Z" fill="${SK}" stroke="${SKd}" stroke-width="1.4"/>`;
+  // 볼터치 + 빗금
+  const blushOp = mood === 'sick' ? 0.15 : (mood === 'joy' || mood === 'shy' ? 0.7 : 0.45);
+  for (const sd of [-1, 1]) {
+    const bx = cx + sd * 34, by = eyeY + 26;
+    s += `<ellipse cx="${bx}" cy="${by}" rx="11" ry="5.5" fill="#ff8fab" opacity="${blushOp}"/>`;
+    s += `<path d="M${bx - 6} ${by + 2}l3 -5M${bx - 1} ${by + 2}l3 -5M${bx + 4} ${by + 2}l3 -5" stroke="#e8607e" stroke-width="1" opacity="${blushOp + 0.1}"/>`;
+  }
+  if (mood === 'sick') s += `<path d="M${cx - hw + 10} 88L${cx - hw + 10} 112M${cx - hw + 18} 86L${cx - hw + 18} 116M${cx - hw + 26} 86L${cx - hw + 26} 112" stroke="#7a8ad8" stroke-width="1.5" opacity=".5"/><path d="M${cx - hw} 80H${cx + hw}V118H${cx - hw}Z" fill="#8090e0" opacity=".12"/>`;
+  // 눈
+  for (const sd of [-1, 1]) s += eyeSVG(cx + sd * 28, eyeY, sd, es, a.eye, mood, E, lash, id, SK);
+  // 눈썹
+  for (const sd of [-1, 1]) {
+    const w = 34 * es, by = eyeY - 36 * es;
+    const inY = mood === 'angry' ? by + 7 : (mood === 'sad' || mood === 'tired' || mood === 'sick') ? by - 4 : by + 1;
+    const ix = cx + sd * 28 - sd * w * 0.3, ox = cx + sd * 28 + sd * w * 0.5;
+    s += `<path d="M${ix} ${inY}Q${cx + sd * 28} ${by - 4} ${ox} ${by + 3}" stroke="${Hd}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>`;
+  }
+  // 코, 입
+  s += `<path d="M${cx + 1} ${eyeY + 22}l-2 5" stroke="${SKd}" stroke-width="1.4" stroke-linecap="round"/>`;
+  const my = chinY - 24 + t * 2;
+  if (mood === 'joy') s += `<path d="M${cx - 9} ${my - 2}Q${cx} ${my - 1} ${cx + 9} ${my - 2}Q${cx + 6} ${my + 10} ${cx} ${my + 10}Q${cx - 6} ${my + 10} ${cx - 9} ${my - 2}Z" fill="#c8405e" stroke="#9a2a44" stroke-width="1"/><path d="M${cx - 4} ${my + 7}Q${cx} ${my + 4} ${cx + 4} ${my + 7}" fill="#ff8fa0"/>`;
+  else if (mood === 'smile' || mood === 'shy') s += `<path d="M${cx - 7} ${my}Q${cx} ${my + 6} ${cx + 7} ${my}" stroke="#b8405a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'angry') s += `<path d="M${cx - 7} ${my + 4}Q${cx} ${my - 2} ${cx + 7} ${my + 4}" stroke="#a03a50" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'tired' || mood === 'sick') s += `<path d="M${cx - 8} ${my + 2}q2 -3 4 0t4 0t4 0t4 0" stroke="#a03a50" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'sad') s += `<path d="M${cx - 6} ${my + 3}Q${cx} ${my - 1} ${cx + 6} ${my + 3}" stroke="#a03a50" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  else s += `<path d="M${cx - 5} ${my + 1}Q${cx} ${my + 3} ${cx + 5} ${my + 1}" stroke="#b8405a" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+  // ---- 옆머리 + 앞머리
+  if (outfit !== 'nun' || true) {
+    for (const sd of [-1, 1]) {
+      const x0 = cx + sd * (hw + 5), lenS = (a.hair === 'bob' ? chinY - 4 : chinY + 14 + t * 10);
+      s += `<path d="M${x0} 86C${x0 + sd * 6} 130 ${x0 + sd * 2} ${lenS - 30} ${x0 - sd * 6} ${lenS}C${x0 - sd * 8} ${lenS - 34} ${x0 - sd * 12} 130 ${x0 - sd * 18} 96Z" ${hairFill}/>`;
+    }
+    s += bangsSVG(a.bangs, cx, hw, eyeY, hairFill, Hd);
+    // 천사의 고리
+    s += `<path d="M${cx - hw + 10} 76Q${cx} 54 ${cx + hw - 10} 76Q${cx} 62 ${cx - hw + 10} 76Z" fill="${Hl}" opacity=".55"/><path d="M${cx - hw + 22} 70Q${cx - 10} 58 ${cx - 2} 60" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round"/>`;
+  }
+  if (outfit === 'nun') s += `<path d="M${cx - hw - 10} 104C${cx - hw - 12} 34 ${cx + hw + 12} 34 ${cx + hw + 10} 104L${cx + hw + 2} 104C${cx + hw + 2} 46 ${cx - hw - 2} 46 ${cx - hw - 2} 104Z" fill="#fff" stroke="#bbb" stroke-width="1"/>`;
+  if (a.hair === 'braid' && outfit !== 'nun') {
+    const bl = 210 + t * 50;
+    for (let i = 0; i < 7; i++) {
+      const by = 150 + (bl - 160) * i / 6, bx = cx - hw - 4 + i * 1.5;
+      s += `<ellipse cx="${bx}" cy="${by}" rx="${11 - i * 0.6}" ry="10" fill="${H}" stroke="${Hd}" stroke-width="1.3" transform="rotate(${i % 2 ? 20 : -20} ${bx} ${by})"/>`;
+    }
+    s += bow(cx - hw + 6, bl + 4, 0.45, '#e8607e') + `<path d="M${cx - hw + 4} ${bl + 8}l-6 16l8 -4l4 6Z" fill="${H}" stroke="${Hd}"/>`;
+  }
+  if (a.hair === 'twin' && outfit !== 'nun') for (const sd of [-1, 1]) s += bow(cx + sd * (hw + 4), 64, 0.5, acc === 'ribbon' ? shade(a.dc === '#ffffff' ? '#e8607e' : a.dc, -0.15) : '#e8607e');
+  if (a.hair === 'pony' && outfit !== 'nun') s += `<circle cx="${cx + 30}" cy="52" r="5" fill="#e8607e" stroke="#a03a50"/>`;
+  // ---- 액세서리
+  s += accSVG(acc, a, cx, hw, eyeY, es);
+  // ---- 기분 연출
+  if (mood === 'tired' || mood === 'sick') s += `<path d="M${cx + hw + 2} 92q-6 10 0 14q6 -4 0 -14Z" fill="#a8d8f8" stroke="#6aa8d8"/>`;
+  if (mood === 'angry') s += `<path d="M${cx + hw - 6} 52l6 6m4 -10l-6 6m4 6l6 6m-12 -4l-6 6" stroke="#e03a3a" stroke-width="2.4" stroke-linecap="round"/>`;
+  if (mood === 'sad') s += `<path d="M${cx - 27} ${eyeY + 16}q-4 10 0 14q4 -4 0 -14Z" fill="#a8d8f8" stroke="#6aa8d8"/>`;
+  if (mood === 'joy' || o.sparkle) s += star(cx - hw - 14, 70, 9, '#fff6a8') + star(cx + hw + 16, 140, 7, '#fff6a8') + star(cx + hw + 6, 40, 5, '#fff');
+  s += `</g><rect x="1.5" y="1.5" width="237" height="297" rx="15" fill="none" stroke="#fff" stroke-width="3"/><rect x="6" y="6" width="228" height="288" rx="12" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="2 4" opacity=".9"/></svg>`;
+  return s;
+}
+function eyeSVG(ex, ey, sd, es, shape, mood, E, lash, id, SK) {
+  const w = 34 * es, h = (shape === 'round' ? 44 : 40) * es;
+  const rot = shape === 'cat' ? 9 : shape === 'droopy' ? -8 : 0;
+  const tr = `transform="rotate(${sd < 0 ? rot : -rot} ${ex} ${ey})"`;
+  const inner = ex - sd * w / 2, outer = ex + sd * w / 2;
+  if (mood === 'joy') {
+    return `<g ${tr}><path d="M${ex - w / 2} ${ey + 3}Q${ex} ${ey - h * 0.5} ${ex + w / 2} ${ey + 3}" stroke="${lash}" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M${outer} ${ey + 2}l${sd * 5} -5" stroke="${lash}" stroke-width="2" stroke-linecap="round"/></g>`;
+  }
+  const cid = `${id}e${sd > 0 ? 'r' : 'l'}`;
+  let s = `<g ${tr}><clipPath id="${cid}"><ellipse cx="${ex}" cy="${ey}" rx="${w / 2}" ry="${h / 2}"/></clipPath>
+  <ellipse cx="${ex}" cy="${ey}" rx="${w / 2}" ry="${h / 2}" fill="#fff"/>
+  <g clip-path="url(#${cid})">
+   <ellipse cx="${ex}" cy="${ey + h * 0.05}" rx="${w * 0.42}" ry="${h * 0.47}" fill="url(#${id}ir)" stroke="${shade(E, -0.6)}" stroke-width="1.2"/>
+   <ellipse cx="${ex}" cy="${ey + h * 0.06}" rx="${w * 0.27}" ry="${h * 0.32}" fill="none" stroke="${shade(E, 0.3)}" stroke-width="1" opacity=".6"/>
+   <ellipse cx="${ex}" cy="${ey + h * 0.02}" rx="${w * 0.13}" ry="${h * 0.19}" fill="${shade(E, -0.75)}"/>
+   <path d="M${ex - w * 0.3} ${ey + h * 0.22}Q${ex} ${ey + h * 0.5} ${ex + w * 0.3} ${ey + h * 0.22}Q${ex} ${ey + h * 0.36} ${ex - w * 0.3} ${ey + h * 0.22}Z" fill="${shade(E, 0.7)}" opacity=".7"/>
+   <rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.62}" fill="${shade(E, -0.6)}" opacity=".28"/>
+   ${mood === 'tired' || mood === 'sick' ? `<rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.85}" fill="${SK}"/>` : ''}
+  </g>`;
+  // 하이라이트 (양쪽 눈 모두 같은 방향)
+  s += `<ellipse cx="${ex - w * 0.14}" cy="${ey - h * 0.1}" rx="${w * 0.15}" ry="${h * 0.16}" fill="#fff"/><circle cx="${ex + w * 0.16}" cy="${ey + h * 0.22}" r="${w * 0.07}" fill="#fff" opacity=".95"/><circle cx="${ex - w * 0.2}" cy="${ey + h * 0.2}" r="${w * 0.035}" fill="#fff" opacity=".8"/>`;
+  s += star(ex + w * 0.14, ey - h * 0.18, w * 0.12, '#fff', 0.95);
+  // 속눈썹
+  const lidY = mood === 'tired' || mood === 'sick' ? ey - h * 0.1 : ey - h * 0.28;
+  s += `<path d="M${inner} ${ey - h * 0.12}Q${ex} ${mood === 'tired' || mood === 'sick' ? ey - h * 0.3 : ey - h * 0.72} ${outer + sd * 4} ${lidY}" stroke="${lash}" stroke-width="${3.4 * es}" fill="none" stroke-linecap="round"/>`;
+  s += `<path d="M${outer} ${lidY + 2}L${outer + sd * 8} ${lidY - 7}L${outer + sd * 3} ${lidY + 7}Z" fill="${lash}"/>`;
+  s += `<path d="M${outer + sd * 3} ${lidY + 1}l${sd * 7} 1M${outer + sd * 1} ${lidY - 4}l${sd * 6} -6" stroke="${lash}" stroke-width="1.3" stroke-linecap="round"/>`;
+  s += `<path d="M${outer - sd * 2} ${ey + h * 0.26}Q${ex} ${ey + h * 0.56} ${inner} ${ey + h * 0.3}" stroke="${lash}" stroke-width="1" fill="none" opacity=".55"/>`;
+  s += `<path d="M${inner + sd * 3} ${ey - h * 0.66}Q${ex} ${ey - h * 0.86} ${outer} ${ey - h * 0.52}" stroke="${lash}" stroke-width="1" fill="none" opacity=".45"/>`;
+  return s + '</g>';
+}
+function bangsSVG(type, cx, hw, eyeY, hairFill, Hd) {
+  const P = {
+    hime: [[1, -26], [0.84, -13], [0.7, -20], [0.52, -12], [0.36, -20], [0.18, -12], [0, -20], [-0.18, -12], [-0.36, -20], [-0.52, -12], [-0.7, -20], [-0.84, -13], [-1, -26]],
+    side: [[1, -30], [0.82, -18], [0.64, -34], [0.4, -14], [0.2, -32], [-0.08, -10], [-0.3, -30], [-0.56, -6], [-0.76, -26], [-0.92, -4], [-1, -24]],
+    part: [[1, -28], [0.84, -6], [0.66, -24], [0.44, -10], [0.24, -30], [0.06, -46], [-0.06, -46], [-0.24, -30], [-0.44, -10], [-0.66, -24], [-0.84, -6], [-1, -28]]
+  }[type] || [];
+  const fx = x => cx + x * (hw + 8), fy = y => eyeY + y - 15;
+  const pts = P.map(([x, y]) => [fx(x), fy(y)]);
+  const [rx, ry] = pts[0], [lx, ly] = pts[pts.length - 1];
+  let d = `M${rx} ${ry}C${rx + 10} 10 ${lx - 10} 10 ${lx} ${ly}`;
+  for (let i = pts.length - 2; i >= 0; i--) {
+    const [ax, ay] = pts[i + 1], [bx, by] = pts[i];
+    const mx = (ax + bx) / 2, my = Math.min(ay, by) + (by > ay ? -2 : 4);
+    d += `Q${(mx - (type === 'side' ? 3 : 0)).toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+  }
+  let s = `<path d="${d}Z" ${hairFill}/>`;
+  // 머리결
+  pts.forEach(([x, y], i) => { if (i % 2 === 1 && i < pts.length - 1) s += `<path d="M${(cx + (x - cx) * 0.4).toFixed(1)} 52Q${((x + cx) / 2).toFixed(1)} ${(y - 30).toFixed(1)} ${x.toFixed(1)} ${(y - 3).toFixed(1)}" stroke="${Hd}" stroke-width="1.1" fill="none" opacity=".55"/>`; });
+  return s;
+}
+function outfitSVG(kind, a, cx, y0, sw, t, id, SK) {
+  const dc = a.dc, B = bodyPath(cx, y0, sw);
+  const st = (c, w = 1.5) => `stroke="${shade(c, -0.35)}" stroke-width="${w}"`;
+  const collar = (c, fill = '#fff') => `<path d="M${cx - 1} ${y0 + 5}C${cx - 10} ${y0 + 2} ${cx - 30} ${y0} ${cx - 28} ${y0 + 12}C${cx - 26} ${y0 + 25} ${cx - 8} ${y0 + 24} ${cx - 1} ${y0 + 10}Z" fill="${fill}" ${st(c, 1.2)}/><path d="M${cx + 1} ${y0 + 5}C${cx + 10} ${y0 + 2} ${cx + 30} ${y0} ${cx + 28} ${y0 + 12}C${cx + 26} ${y0 + 25} ${cx + 8} ${y0 + 24} ${cx + 1} ${y0 + 10}Z" fill="${fill}" ${st(c, 1.2)}/>`;
+  const folds = c => `<path d="M${cx - sw + 4} ${y0 + 50}Q${cx - sw + 2} ${y0 + 80} ${cx - sw - 4} 300M${cx + sw - 4} ${y0 + 50}Q${cx + sw - 2} ${y0 + 80} ${cx + sw + 4} 300M${cx - 14} ${y0 + 70}Q${cx - 16} ${y0 + 90} ${cx - 18} 300" stroke="${shade(c, -0.18)}" stroke-width="1.2" fill="none" opacity=".7"/>`;
+  const uNeck = (dep, c) => `<path d="M${cx - 26} ${y0 + 2}Q${cx} ${y0 + dep} ${cx + 26} ${y0 + 2}Z" fill="${SK}"/>` + Array.from({ length: 9 }, (_, i) => { const u = (i + 0.5) / 9, x = cx - 26 + 52 * u, y = y0 + 2 + (dep - 2) * 2 * u * (1 - u) * 1.0; return `<circle cx="${x.toFixed(1)}" cy="${(y + 2).toFixed(1)}" r="3" fill="#fff" stroke="${shade(c, -0.2)}" stroke-width=".8"/>`; }).join('');
+  const pearls = (y, n = 9, r = 1.8, c = '#fff') => Array.from({ length: n }, (_, i) => { const u = i / (n - 1), x = cx - 14 + 28 * u, yy = y + 10 * Math.sin(Math.PI * u); return `<circle cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="${r}" fill="${c}" stroke="#d8c8d0" stroke-width=".5"/>`; }).join('');
+  switch (kind) {
+    case 'silk': return `<path d="${B}" fill="${SK}" stroke="${shade(SK, -0.14)}"/><path d="M${cx - sw - 6} ${y0 + 26}Q${cx} ${y0 + 46} ${cx + sw + 6} ${y0 + 26}L${cx + sw + 16} 302L${cx - sw - 16} 302Z" fill="${dc}" ${st(dc)}/>` + Array.from({ length: 11 }, (_, i) => { const u = i / 10, x = cx - sw - 6 + (2 * sw + 12) * u, y = y0 + 26 + 20 * 4 * u * (1 - u) * 0.95; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="#fff" opacity=".9"/>`; }).join('') + pearls(y0 + 2) + folds(dc);
+    case 'ball': case 'wedding': {
+      const c = kind === 'wedding' ? '#ffffff' : dc;
+      return `<path d="${B}" fill="${c}" ${st(c === '#ffffff' ? '#d8d0e0' : c)}/>${uNeck(30, c === '#ffffff' ? '#d8d0e0' : c)}
+      ${kind === 'ball' ? `<ellipse cx="${cx - sw + 2}" cy="${y0 + 12}" rx="15" ry="10" fill="${shade(c, 0.25)}" ${st(c === '#ffffff' ? '#d8d0e0' : c, 1.2)}/><ellipse cx="${cx + sw - 2}" cy="${y0 + 12}" rx="15" ry="10" fill="${shade(c, 0.25)}" ${st(c === '#ffffff' ? '#d8d0e0' : c, 1.2)}/>` : ''}
+      <path d="M${cx - 30} ${y0 + 40}Q${cx} ${y0 + 56} ${cx + 30} ${y0 + 40}" stroke="${kind === 'wedding' ? '#e8d8f0' : '#e8c060'}" stroke-width="3" fill="none"/>
+      ${kind === 'wedding' ? pearls(y0 - 4, 11, 2) : `<circle cx="${cx}" cy="${y0 + 6}" r="4" fill="#e03a5a" stroke="#c9a040" stroke-width="1.5"/>`}${folds(c === '#ffffff' ? '#e0d8e8' : c)}`;
+    }
+    case 'queen': return `<path d="${B}" fill="#fff6e6" ${st('#d8c8a0')}/>${uNeck(28, '#e8c060')}<path d="M${cx - sw - 8} ${y0 + 10}Q${cx - sw + 10} ${y0 + 34} ${cx - 26} ${y0 + 8}M${cx + sw + 8} ${y0 + 10}Q${cx + sw - 10} ${y0 + 34} ${cx + 26} ${y0 + 8}" stroke="#fff" stroke-width="14" fill="none"/>` + [-1, 1].map(sd => [0, 1, 2].map(i => `<path d="M${cx + sd * (32 + i * 10)} ${y0 + 10 + i * 4}l0 5" stroke="#222" stroke-width="2.4"/>`).join('')).join('') + `<path d="M${cx - 20} ${y0 + 50}L${cx} ${y0 + 60}L${cx + 20} ${y0 + 50}" stroke="#e0b040" stroke-width="3" fill="none"/><circle cx="${cx}" cy="${y0 + 6}" r="5" fill="#3a6ad0" stroke="#e0b040" stroke-width="2"/>`;
+    case 'armor': return `<path d="${B}" fill="#2e3a5c" ${st('#2e3a5c')}/>
+      <path d="M${cx - sw + 8} ${y0 + 18}Q${cx} ${y0 + 8} ${cx + sw - 8} ${y0 + 18}L${cx + sw - 14} ${y0 + 92}Q${cx} ${y0 + 104} ${cx - sw + 14} ${y0 + 92}Z" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/>
+      <path d="M${cx} ${y0 + 14}L${cx} ${y0 + 98}" stroke="#8a92a8" stroke-width="1.2"/>
+      <ellipse cx="${cx - sw + 2}" cy="${y0 + 18}" rx="21" ry="13" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/><ellipse cx="${cx + sw - 2}" cy="${y0 + 18}" rx="21" ry="13" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/>
+      <path d="M${cx - sw - 14} ${y0 + 22}Q${cx - sw + 2} ${y0 + 30} ${cx - sw + 18} ${y0 + 22}M${cx + sw + 14} ${y0 + 22}Q${cx + sw - 2} ${y0 + 30} ${cx + sw - 18} ${y0 + 22}" stroke="#5a6278" fill="none"/>
+      <path d="M${cx - 14} ${y0 + 2}L${cx + 14} ${y0 + 2}L${cx + 10} ${y0 + 12}L${cx - 10} ${y0 + 12}Z" fill="#c8cede" stroke="#5a6278"/>
+      <path d="M${cx} ${y0 + 34}l8 8l-8 12l-8 -12Z" fill="#e8c048" stroke="#9a7420"/>`;
+    case 'robe': return `<path d="${B}" fill="#4a3a7a" ${st('#4a3a7a')}/><path d="M${cx - 18} ${y0 - 14}L${cx - 30} ${y0 + 18}L${cx - 4} ${y0 + 10}ZM${cx + 18} ${y0 - 14}L${cx + 30} ${y0 + 18}L${cx + 4} ${y0 + 10}Z" fill="#5a4a90" stroke="#2a1a4a"/><path d="M${cx} ${y0 + 12}L${cx} 302" stroke="#e0b848" stroke-width="3"/><path d="M${cx - 26} ${y0 + 18}L${cx - sw - 12} 300M${cx + 26} ${y0 + 18}L${cx + sw + 12} 300" stroke="#e0b848" stroke-width="2"/>${star(cx, y0 + 16, 8, '#ffe070')}${folds('#4a3a7a')}`;
+    case 'nun': return `<path d="${B}" fill="#26222e" ${st('#26222e')}/><path d="M${cx - 34} ${y0 + 4}Q${cx} ${y0 + 44} ${cx + 34} ${y0 + 4}Q${cx} ${y0 + 14} ${cx - 34} ${y0 + 4}Z" fill="#fff" stroke="#bbb"/><path d="M${cx} ${y0 + 34}v24M${cx - 8} ${y0 + 42}h16" stroke="#e0b848" stroke-width="3.4" stroke-linecap="round"/>`;
+    case 'maid': return `<path d="${B}" fill="#2c2a3e" ${st('#2c2a3e')}/><path d="M${cx - 22} ${y0 + 30}L${cx + 22} ${y0 + 30}L${cx + 30} 302L${cx - 30} 302Z" fill="#fff" stroke="#ccc"/>` + Array.from({ length: 6 }, (_, i) => `<circle cx="${cx - 20 + i * 8}" cy="${y0 + 30}" r="4" fill="#fff" stroke="#ccc" stroke-width=".8"/>`).join('') + collar('#888') + bow(cx, y0 + 14, 0.38, '#e04a6a');
+    case 'dancer': return `<path d="${B}" fill="${dc}" ${st(dc)}/><path d="M${cx - 22} ${y0 + 2}L${cx} ${y0 + 36}L${cx + 22} ${y0 + 2}Z" fill="${SK}"/><path d="M${cx - sw - 10} ${y0 + 40}Q${cx} ${y0 + 80} ${cx + sw + 10} ${y0 + 40}" stroke="#fff" stroke-width="12" fill="none" opacity=".45"/>` + Array.from({ length: 10 }, (_, i) => `<circle cx="${cx - 40 + i * 9}" cy="${y0 + 70 + (i % 3) * 8}" r="1.6" fill="#fff8c0"/>`).join('') + folds(dc);
+    case 'demon': return `<path d="${B}" fill="#1e1424" ${st('#5a1030')}/><path d="M${cx - 16} ${y0 - 18}L${cx - 36} ${y0 + 14}L${cx - 6} ${y0 + 8}ZM${cx + 16} ${y0 - 18}L${cx + 36} ${y0 + 14}L${cx + 6} ${y0 + 8}Z" fill="#3a1030" stroke="#c0204a"/><path d="M${cx - sw} ${y0 + 30}Q${cx} ${y0 + 60} ${cx + sw} ${y0 + 30}" stroke="#c0204a" stroke-width="2.4" fill="none"/><circle cx="${cx}" cy="${y0 + 18}" r="5" fill="#ff3050" stroke="#a01030" stroke-width="1.5"/>`;
+    case 'chef': return `<path d="${B}" fill="#ffffff" ${st('#c8c8d0')}/>` + [-1, 1].map(sd => [0, 1, 2].map(i => `<circle cx="${cx + sd * 12}" cy="${y0 + 34 + i * 18}" r="3" fill="#ddd" stroke="#999"/>`).join('')).join('') + `<path d="M${cx - 16} ${y0 + 2}L${cx} ${y0 + 22}L${cx + 16} ${y0 + 2}Z" fill="#e04848" stroke="#a02828"/>`;
+    default: { // casual — 나이에 따라 원피스
+      return `<path d="${B}" fill="${dc}" ${st(dc === '#ffffff' ? '#d0c0d0' : dc)}/>${collar(dc === '#ffffff' ? '#d0c0d0' : dc)}${bow(cx, y0 + 16, 0.42, dc === '#ffffff' || dc === '#fff0a8' ? '#e8607e' : shade(dc, -0.3))}${folds(dc === '#ffffff' ? '#e0d0e0' : dc)}`;
+    }
+  }
+}
+function accSVG(acc, a, cx, hw, eyeY, es) {
+  const rib = a.dc === '#ffffff' || a.dc === '#fff0a8' ? '#e8607e' : shade(a.dc, -0.2);
+  switch (acc) {
+    case 'ribbon': return a.hair === 'twin' ? '' : bow(cx + hw - 8, 50, 0.85, rib);
+    case 'flower': return `<g transform="translate(${cx - hw + 2} 70)">` + [0, 72, 144, 216, 288].map(r => `<ellipse cx="0" cy="-7" rx="5" ry="7" fill="#ffd0e0" stroke="#e890b0" transform="rotate(${r})"/>`).join('') + `<circle r="4" fill="#ffe070" stroke="#d0a030"/></g>`;
+    case 'band': return `<path d="M${cx - hw - 4} 82Q${cx} 26 ${cx + hw + 4} 82" stroke="${rib}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+    case 'tiara': return `<path d="M${cx - 34} 60Q${cx} 40 ${cx + 34} 60" stroke="#e8eaf4" stroke-width="3.5" fill="none"/><path d="M${cx - 12} 50L${cx} 30L${cx + 12} 50Z" fill="#eef0f8" stroke="#a8acc0"/><circle cx="${cx}" cy="44" r="4" fill="#7ac0f0" stroke="#fff"/><circle cx="${cx - 22}" cy="52" r="2.5" fill="#f08ab0"/><circle cx="${cx + 22}" cy="52" r="2.5" fill="#f08ab0"/>`;
+    case 'crown': return `<path d="M${cx - 30} 52L${cx - 34} 18L${cx - 18} 34L${cx} 10L${cx + 18} 34L${cx + 34} 18L${cx + 30} 52Z" fill="#f2c440" stroke="#a87810" stroke-width="1.8"/><path d="M${cx - 30} 46H${cx + 30}" stroke="#a87810" stroke-width="1.5"/><circle cx="${cx}" cy="38" r="5" fill="#e0304a" stroke="#fff"/><circle cx="${cx - 18}" cy="42" r="3" fill="#3a7ae0"/><circle cx="${cx + 18}" cy="42" r="3" fill="#3a7ae0"/>${star(cx, 10, 5, '#fff')}`;
+    case 'hat': return `<path d="M${cx - 50} 62L${cx - 14} -6Q${cx + 30} -18 ${cx + 52} 6Q${cx + 26} 4 ${cx + 22} 20L${cx + 50} 62Z" fill="#3a2a6a" stroke="#1a1040" stroke-width="1.6"/><ellipse cx="${cx}" cy="62" rx="92" ry="15" fill="#3a2a6a" stroke="#1a1040" stroke-width="1.6"/><path d="M${cx - 46} 54Q${cx} 64 ${cx + 46} 54" stroke="#e0b848" stroke-width="6" fill="none"/>${star(cx + 10, 30, 8, '#ffe070')}`;
+    case 'glasses': { const r = 14 * es; return `<g fill="none" stroke="#6a4a5a" stroke-width="1.8"><circle cx="${cx - 27}" cy="${eyeY + 2}" r="${r}"/><circle cx="${cx + 27}" cy="${eyeY + 2}" r="${r}"/><path d="M${cx - 27 + r} ${eyeY}Q${cx} ${eyeY - 5} ${cx + 27 - r} ${eyeY}"/></g><path d="M${cx - 34} ${eyeY - 6}l6 -4M${cx + 20} ${eyeY - 6}l6 -4" stroke="#fff" stroke-width="2" opacity=".8"/>`; }
+    case 'beret': return `<ellipse cx="${cx - 8}" cy="44" rx="56" ry="20" fill="#b03a4a" stroke="#7a2030" stroke-width="1.6" transform="rotate(-10 ${cx - 8} 44)"/><circle cx="${cx - 10}" cy="24" r="4" fill="#7a2030"/>`;
+    case 'chefhat': return `<path d="M${cx - 34} 54L${cx - 30} 30Q${cx - 50} 0 ${cx - 16} 6Q${cx} -12 ${cx + 18} 6Q${cx + 50} 0 ${cx + 30} 30L${cx + 34} 54Z" fill="#fff" stroke="#bbb" stroke-width="1.5"/>`;
+    case 'maidcap': return `<path d="M${cx - 40} 60Q${cx} 34 ${cx + 40} 60` + '" stroke="#fff" stroke-width="10" fill="none"/>' + Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 36 + i * 12}" cy="${52 - Math.sin(i / 6 * Math.PI) * 12}" r="5" fill="#fff" stroke="#ccc" stroke-width=".8"/>`).join('');
+    case 'horns': return `<path d="M${cx - 30} 52Q${cx - 50} 30 ${cx - 40} 6Q${cx - 34} 30 ${cx - 18} 46Z" fill="#2a1a2a" stroke="#c0204a" stroke-width="1.4"/><path d="M${cx + 30} 52Q${cx + 50} 30 ${cx + 40} 6Q${cx + 34} 30 ${cx + 18} 46Z" fill="#2a1a2a" stroke="#c0204a" stroke-width="1.4"/>`;
+    case 'wveil': return Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 36 + i * 12}" cy="${56 - Math.sin(i / 6 * Math.PI) * 14}" r="5.5" fill="${i % 2 ? '#fff' : '#ffd0e0'}" stroke="#e8b0c8" stroke-width=".8"/>`).join('');
+    case 'kerchief': return `<path d="M${cx - hw - 6} 76Q${cx} 20 ${cx + hw + 6} 76L${cx + hw - 6} 62Q${cx} 30 ${cx - hw + 6} 62Z" fill="#e87a6a" stroke="#a04a3a"/>`;
+    default: return '';
+  }
+}
+
+// ================= 게임 데이터 =================
+const SN = { hp: '체력', str: '근력', int: '지능', ele: '기품', cha: '매력', mor: '도덕심', fai: '신앙심', kar: '업보', sen: '감수성', stress: '스트레스', cmb: '전투기술', atk: '공격력', def: '방어력', mag: '마법기술', mp: '마력', res: '항마력', dec: '예의범절', art: '예술', spk: '화술', cook: '요리', clean: '청소세탁', tmp: '기질' };
+const GROUPS = [['기본 능력', ['hp', 'str', 'int', 'ele', 'cha', 'mor', 'fai', 'kar', 'sen'], ''], ['전투 능력', ['cmb', 'atk', 'def', 'mag', 'mp', 'res'], 'c'], ['기술', ['dec', 'art', 'spk', 'cook', 'clean', 'tmp'], 'k']];
+const ZODIAC = [['염소자리', 1, 19, 'saturn'], ['물병자리', 2, 18, 'uranus'], ['물고기자리', 3, 20, 'neptune'], ['양자리', 4, 19, 'mars'], ['황소자리', 5, 20, 'venus'], ['쌍둥이자리', 6, 21, 'mercury'], ['게자리', 7, 22, 'luna'], ['사자자리', 8, 22, 'sol'], ['처녀자리', 9, 22, 'mercury'], ['천칭자리', 10, 23, 'venus'], ['전갈자리', 11, 22, 'pluto'], ['사수자리', 12, 21, 'jupiter']];
+const GODS = {
+  saturn: ['토성신 사투르누스', ['str', 'def']], uranus: ['천왕성신 우라누스', ['mag', 'mp']], neptune: ['해왕성신 넵투누스', ['fai', 'res']], mars: ['화성신 마르스', ['cmb', 'atk']],
+  venus: ['금성신 베누스', ['cha', 'art']], mercury: ['수성신 메르쿠리우스', ['int', 'spk']], luna: ['달의 여신 루나', ['sen', 'tmp']], sol: ['태양신 솔', ['ele', 'dec']],
+  pluto: ['명왕성신 플루토', ['mp', 'res']], jupiter: ['목성신 유피테르', ['hp', 'mor']]
+};
+const BLOOD = { A: 'A형 — 도덕심이 잘 오르지만 스트레스도 잘 쌓임', B: 'B형 — 스트레스가 덜 쌓임', O: 'O형 — 무난함', AB: 'AB형 — 감수성이 잘 오름' };
+function zodiacOf(m, d) { const i = m - 1; return d <= ZODIAC[i][2] ? i : (i + 1) % 12; }
+const TIERS = ['초급', '중급', '상급', '고급', '마스터'];
+const EDU = [
+  { id: 'sci', n: '자연과학', ic: '🔬', cost: 30, g: { int: 9, fai: -2, res: 2 }, st: 5 },
+  { id: 'poe', n: '시문학', ic: '📜', cost: 30, g: { int: 4, sen: 7, art: 4 }, st: 4 },
+  { id: 'the', n: '신학', ic: '📖', cost: 30, g: { int: 4, fai: 9, res: 4 }, st: 4 },
+  { id: 'mil', n: '군사학', ic: '🗺️', cost: 40, g: { int: 6, cmb: 6 }, st: 5 },
+  { id: 'swd', n: '검술', ic: '⚔️', cost: 40, g: { cmb: 7, atk: 8, str: 2 }, st: 6 },
+  { id: 'fgt', n: '격투술', ic: '🥋', cost: 40, g: { cmb: 6, def: 8, hp: 3 }, st: 6 },
+  { id: 'mag', n: '마법', ic: '🔮', cost: 50, g: { mag: 8, mp: 8, fai: -2 }, st: 5 },
+  { id: 'eti', n: '예법', ic: '🫖', cost: 40, g: { dec: 9, ele: 5 }, st: 5 },
+  { id: 'drw', n: '미술', ic: '🎨', cost: 35, g: { art: 8, sen: 5 }, st: 2 },
+  { id: 'dan', n: '무용', ic: '💃', cost: 40, g: { art: 4, cha: 6, hp: 4 }, st: 4 }
+];
+const JOBS = [
+  { id: 'house', n: '집안일 돕기', ic: '🧹', age: 10, pay: 40, need: ['clean'], g: { clean: 6, tmp: 3, sen: -1 }, st: 3, bad: true },
+  { id: 'nanny', n: '보모', ic: '🍼', age: 10, pay: 50, need: ['sen'], g: { sen: 5, tmp: 3, cha: -1 }, st: 4 },
+  { id: 'inn', n: '여관', ic: '🛏️', age: 10, pay: 60, need: ['clean'], g: { clean: 6, spk: 2, cmb: -1 }, st: 4 },
+  { id: 'farm', n: '농장', ic: '🌾', age: 10, pay: 70, need: ['hp', 'str'], g: { hp: 6, str: 5, ele: -1 }, st: 6 },
+  { id: 'church', n: '성당', ic: '⛪', age: 10, pay: 10, need: ['fai'], g: { fai: 6, mor: 4, kar: -5 }, st: 2, bad: true },
+  { id: 'rest', n: '레스토랑', ic: '🍝', age: 11, pay: 80, need: ['cook'], g: { cook: 7, spk: 2 }, st: 5 },
+  { id: 'wood', n: '나무꾼', ic: '🪓', age: 12, pay: 100, need: ['str'], g: { str: 7, hp: 4, ele: -2 }, st: 7 },
+  { id: 'salon', n: '미용실', ic: '💇', age: 12, pay: 90, need: ['sen'], g: { sen: 4, cha: 2, art: 3 }, st: 5 },
+  { id: 'mason', n: '미장이', ic: '🧱', age: 12, pay: 110, need: ['hp'], g: { hp: 6, str: 3, cha: -2 }, st: 8 },
+  { id: 'hunt', n: '사냥꾼', ic: '🏹', age: 13, pay: 120, need: ['cmb'], g: { cmb: 4, atk: 3, mor: -2, kar: 2 }, st: 7, bad: true },
+  { id: 'grave', n: '묘지기', ic: '🪦', age: 13, pay: 100, need: ['res'], g: { res: 6, mp: 2, cha: -2, sen: -1 }, st: 6 },
+  { id: 'tutor', n: '가정교사', ic: '✏️', age: 13, pay: 130, need: ['int'], g: { int: 3, mor: 4, spk: 3 }, st: 5 },
+  { id: 'bar', n: '주점', ic: '🍺', age: 15, pay: 150, need: ['spk'], g: { spk: 6, cook: 3, int: -2 }, st: 6, bad: true },
+  { id: 'pub', n: '비밀 주점', ic: '🍷', age: 16, pay: 220, need: ['cha'], g: { cha: 6, spk: 4, ele: -4, mor: -4, kar: 3 }, st: 6, bad: true },
+  { id: 'night', n: '밤의 전당', ic: '🌙', age: 17, pay: 300, need: ['cha', 'art'], g: { cha: 8, art: 3, ele: -6, mor: -6, kar: 5 }, st: 7, bad: true }
+];
+const REGIONS = [
+  { id: 'east', n: '동부 숲', ic: '🌲', age: 11, pw: 45, gold: 40, foes: ['슬라임', '들개', '숲 도적', '거대 버섯'], ev: '요정의 다과회' },
+  { id: 'south', n: '남부 바다', ic: '🌊', age: 12, pw: 110, gold: 80, foes: ['해적', '거대 게', '세이렌', '바다뱀'], ev: '라플레시아 섬의 보물' },
+  { id: 'west', n: '서부 사막', ic: '🏜️', age: 13, pw: 190, gold: 130, foes: ['사막 전갈', '모래 도적단', '미라', '샌드웜'], ev: '고대 유적' },
+  { id: 'north', n: '북부 빙산', ic: '🏔️', age: 14, pw: 300, gold: 200, foes: ['설인', '얼음 늑대', '프로스트 자이언트', '빙룡'], ev: '얼음다리의 상자' }
+];
+const CONTESTS = [
+  { id: 'fight', n: '무투회', ic: '🤺', age: 10 }, { id: 'art', n: '미술전', ic: '🖼️', age: 10 }, { id: 'cook', n: '요리 대회', ic: '🥧', age: 10 },
+  { id: 'dance', n: '무도회', ic: '🩰', age: 12 }, { id: 'miss', n: '미스 왕국', ic: '👑', age: 14 }
+];
+const DRESSES = [
+  { id: 'casual', n: '면 원피스', price: 0, eff: {} }, { id: 'maid', n: '메이드복', price: 400, eff: { clean: 2 } }, { id: 'chef', n: '요리사복', price: 400, eff: { cook: 2 } },
+  { id: 'silk', n: '실크 드레스', price: 700, eff: { cha: 1, ele: 2 } }, { id: 'dancer', n: '무희 의상', price: 800, eff: { art: 1, cha: 2 } },
+  { id: 'robe', n: '마법사 로브', price: 1000, eff: { res: 2, mp: 1 } }, { id: 'armor', n: '기사 갑옷', price: 1200, eff: { def: 3 } }, { id: 'ball', n: '무도회 드레스', price: 1600, eff: { cha: 2, ele: 3 } }
+];
+const ITEMS = [
+  { id: 'cake', n: '딸기 케이크', ic: '🍰', price: 60, eff: { stress: -20 }, d: '스트레스 -20' },
+  { id: 'doll', n: '곰 인형', ic: '🧸', price: 120, eff: { stress: -15, sen: 6 }, d: '스트레스 -15, 감수성 +6' },
+  { id: 'cat', n: '고양이 눈', ic: '🐱', price: 300, eff: { height: 3 }, d: '키가 쑥 자라는 신비한 보석' },
+  { id: 'book', n: '백과사전', ic: '📚', price: 400, eff: { int: 20 }, d: '지능 +20' },
+  { id: 'perf', n: '장미 향수', ic: '🌹', price: 350, eff: { cha: 20 }, d: '매력 +20' },
+  { id: 'bible', n: '성서', ic: '✝️', price: 300, eff: { fai: 20, mor: 5 }, d: '신앙심 +20, 도덕심 +5' },
+  { id: 'poem', n: '시집', ic: '🪶', price: 250, eff: { sen: 15, art: 5 }, d: '감수성 +15, 예술 +5' },
+  { id: 'dumb', n: '철제 아령', ic: '🏋️', price: 250, eff: { str: 15, hp: 5 }, d: '근력 +15, 체력 +5' },
+  { id: 'sword', n: '강철 롱소드', ic: '🗡️', price: 700, eff: { atk: 30 }, d: '공격력 +30' },
+  { id: 'shield', n: '미스릴 방패', ic: '🛡️', price: 700, eff: { def: 30 }, d: '방어력 +30' },
+  { id: 'staff', n: '마법 지팡이', ic: '🪄', price: 800, eff: { mp: 30 }, d: '마력 +30' },
+  { id: 'tea', n: '홍차 세트', ic: '☕', price: 300, eff: { dec: 15, ele: 5 }, d: '예의범절 +15, 기품 +5' }
+];
+const ROYAL = ['성문 앞', '위병', '위병대장', '시종', '시종장', '왕비 전하', '국왕 폐하'];
+const ROYAL_NEED = [0, 40, 90, 150, 220, 300, 380];
+
+let S = null;
+function newState(f) {
+  return {
+    v: 1, father: f.father, name: f.name, bm: f.bm, bd: f.bd, blood: f.blood, app: f.app,
+    zod: zodiacOf(f.bm, f.bd), turn: 0, gold: 500, st: f.st, fame: { war: 0, mag: 0, soc: 0, house: 0 },
+    lv: {}, cnt: {}, outfit: 'casual', owned: ['casual'], royal: 0, prince: 0, trust: 50, bad: false, sick: false,
+    titles: [], flags: {}, log: [], height: 138 + RI(0, 4), weight: 32 + RI(0, 3), sched: [null, null, null], done: { talk: false, royal: false }, last: null, offer: 0
+  };
+}
+const god = () => GODS[ZODIAC[S.zod][3]];
+const ageOf = (s = S) => 10 + Math.floor(s.turn / 12);
+const monthOf = (s = S) => (s.bm - 1 + s.turn) % 12 + 1;
+const yearOf = (s = S) => 1210 + Math.floor((s.bm - 1 + s.turn) / 12);
+const upkeep = () => 20 + (ageOf() - 10) * 4;
+function evals(s = S) {
+  const t = s.st, f = s.fame;
+  return {
+    war: Math.round(t.cmb * 0.4 + t.atk * 0.3 + t.def * 0.3 + f.war),
+    mag: Math.round(t.mag * 0.4 + t.mp * 0.3 + t.res * 0.3 + f.mag),
+    soc: Math.round(t.dec * 0.3 + t.ele * 0.25 + t.spk * 0.25 + t.cha * 0.2 + f.soc),
+    house: Math.round(t.cook * 0.35 + t.clean * 0.35 + t.tmp * 0.3 + f.house)
+  };
+}
+function power(s = S) { const t = s.st; return t.cmb * 0.45 + t.atk * 0.35 + t.def * 0.3 + t.mag * 0.25 + t.mp * 0.2 + t.hp * 0.08 + 10; }
+function growth(k, v) {
+  if (k === 'stress') { addStress(v); return 0; }
+  if (k === 'height') { S.height += v; return v; }
+  if (v > 0) {
+    if (god()[1].includes(k)) v *= 1.2;
+    if (S.blood === 'A' && k === 'mor') v *= 1.15;
+    if (S.blood === 'AB' && k === 'sen') v *= 1.2;
+  }
+  v *= R(0.8, 1.2);
+  let iv = Math.round(v); if (iv === 0 && v !== 0) iv = v > 0 ? 1 : -1;
+  const b = S.st[k]; S.st[k] = clamp(b + iv, 0, 999); return S.st[k] - b;
+}
+function addStress(v) {
+  if (v > 0) v *= S.blood === 'A' ? 1.15 : S.blood === 'B' ? 0.8 : 1;
+  S.st.stress = clamp(Math.round(S.st.stress + v), 0, 100);
+}
+function applyG(g, mult, diff) {
+  for (const k in g) {
+    if (k === 'stress') { const b = S.st.stress; addStress(g[k] * (g[k] > 0 ? 1 : mult)); diff.stress = (diff.stress || 0) + S.st.stress - b; continue; }
+    const d = growth(k, g[k] * (g[k] > 0 ? mult : 1)); if (d) diff[k] = (diff[k] || 0) + d;
+  }
+}
+function tierOf(id) { return Math.min(4, Math.floor((S.lv[id] || 0) / 6)); }
+function moodOf(s = S) { if (s.sick) return 'sick'; if (s.bad) return 'angry'; if (s.st.stress >= 70) return 'tired'; if (s.st.stress >= 45) return 'normal'; return 'smile'; }
+
+// ================= 한 순(10일) 실행 =================
+function runPhase(act, slot) {
+  const r = { slot, act, icon: '', title: '', days: [], lines: [], diff: {}, gold: 0, mood: null };
+  S.cnt[act.id] = (S.cnt[act.id] || 0) + 1;
+  if (act.k === 'sickbed') {
+    r.icon = '🤒'; r.title = '병상에서 요양'; const fee = 80; S.gold -= fee; r.gold = -fee;
+    applyG({ stress: -30, hp: 2 }, 1, r.diff); S.sick = false; r.lines.push('의사 선생님이 다녀가셨다. 푹 쉬었더니 많이 나아졌다.'); r.mood = 'sick'; return r;
+  }
+  if (act.k === 'edu') {
+    const e = EDU.find(x => x.id === act.id), tier = tierOf(e.id), cost = e.cost + tier * 15;
+    r.icon = e.ic; r.title = `${e.n} 수업 (${TIERS[tier]})`;
+    if (S.gold < cost) { r.lines.push(`수업료 ${cost}G가 없어서 수업을 듣지 못했다…`); applyG({ stress: -5 }, 1, r.diff); r.days = Array(10).fill(0); r.mood = 'sad'; return r; }
+    S.gold -= cost; r.gold = -cost;
+    const ditch = S.bad ? 0.4 : S.st.stress > 75 ? (S.st.stress - 75) / 50 : 0;
+    let ok = 0;
+    for (let i = 0; i < 10; i++) { const d = Math.random() >= ditch; r.days.push(d ? 1 : 0); ok += d; }
+    const conc = S.st.stress < 50 ? 1 : Math.max(0.4, 1 - (S.st.stress - 50) / 80);
+    const mult = (ok / 10) * conc * (1 + tier * 0.2) * 0.55;
+    applyG(e.g, mult, r.diff); applyG({ stress: e.st * (0.6 + 0.4 * ok / 10) }, 1, r.diff);
+    S.lv[e.id] = (S.lv[e.id] || 0) + 1;
+    if (ok < 10) { r.lines.push(`${10 - ok}일은 수업을 빼먹고 놀러 나갔다…`); growth('mor', -(10 - ok) * 0.4); }
+    if (tierOf(e.id) > tier) r.lines.push(`✨ ${e.n} 실력이 늘어 「${TIERS[tierOf(e.id)]}」 과정으로 올라갔다!`);
+    if (ok === 10 && Math.random() < 0.25) { r.lines.push('선생님께 칭찬을 받았다!'); r.mood = 'joy'; }
+    return r;
+  }
+  if (act.k === 'job') {
+    const j = JOBS.find(x => x.id === act.id);
+    r.icon = j.ic; r.title = `${j.n} 아르바이트`;
+    const need = j.need.reduce((a, k) => a + S.st[k], 0) / j.need.length;
+    const p = clamp(0.5 + need / 300 - Math.max(0, S.st.stress - 60) / 90 + (ageOf() - 10) * 0.01, 0.15, 0.97);
+    let ok = 0; for (let i = 0; i < 10; i++) { const d = Math.random() < p; r.days.push(d ? 1 : 0); ok += d; }
+    let pay = Math.round(j.pay / 10 * ok * (1 + (ageOf() - 10) * 0.04));
+    if (ok === 10) { pay = Math.round(pay * 1.2); r.lines.push('🎉 열흘 내내 완벽! 주인이 보너스를 주었다.'); r.mood = 'joy'; }
+    else if (ok <= 3) { r.lines.push('실수투성이라 주인에게 혼났다…'); r.mood = 'sad'; }
+    S.gold += pay; r.gold = pay;
+    applyG(j.g, (0.4 + 0.6 * ok / 10) * 0.8, r.diff); applyG({ stress: j.st }, 1, r.diff);
+    return r;
+  }
+  if (act.k === 'rest') {
+    if (act.id === 'home') {
+      r.icon = '🏡'; r.title = '집에서 휴식'; const c = 15; S.gold -= c; r.gold = -c;
+      applyG({ stress: -24, hp: 2 }, 1, r.diff); r.lines.push(pick(['낮잠도 자고 고양이랑 뒹굴었다.', '정원에서 꽃에 물을 주며 쉬었다.', '하루 종일 소설을 읽었다.', '아빠랑 같이 산책을 했다.']));
+      r.days = Array(10).fill(1); r.mood = 'smile'; return r;
+    }
+    const m = monthOf(), sea = m >= 6 && m <= 8, snow = m === 12 || m <= 2;
+    const cost = 100 + ageOf() * 8; S.gold -= cost; r.gold = -cost;
+    r.icon = sea ? '🏖️' : snow ? '⛷️' : '🧺'; r.title = sea ? '바캉스 — 여름 바다' : snow ? '바캉스 — 설산 별장' : '바캉스 — 호숫가 소풍';
+    applyG({ stress: sea ? -55 : -45, sen: sea ? 8 : 6, hp: 4 }, 1, r.diff);
+    r.lines.push(sea ? '파도 소리를 들으며 실컷 놀았다! 피부가 조금 탔다.' : snow ? '눈사람을 만들고 따뜻한 코코아를 마셨다.' : '호숫가에서 도시락을 먹고 백조를 구경했다.');
+    r.days = Array(10).fill(1); r.mood = 'joy'; return r;
+  }
+  if (act.k === 'adv') {
+    const g = REGIONS.find(x => x.id === act.id);
+    r.icon = g.ic; r.title = `무사수행 — ${g.n}`; r.adv = [];
+    let alive = true;
+    for (let i = 0; i < 4 && alive; i++) {
+      const roll = Math.random();
+      if (roll < 0.14) {
+        if (g.id === 'east') { applyG({ stress: -15, sen: 6 }, 1, r.diff); r.adv.push(['🧚', '요정의 다과회에 초대받았다! 마음이 편안해졌다.', 1]); }
+        else if (g.id === 'south') { const gg = RI(150, 400); S.gold += gg; r.gold += gg; r.adv.push(['💎', `라플레시아 섬에서 보물 ${gg}G를 찾았다!`, 1]); }
+        else if (g.id === 'west') { applyG({ int: 8, mag: 6 }, 1, r.diff); r.adv.push(['🏺', '고대 유적의 벽화를 연구했다. (지능·마법기술 상승)', 1]); }
+        else { if (Math.random() < 0.5) { S.gold += 400; r.gold += 400; r.adv.push(['🧰', '얼음다리 아래 상자에서 400G!', 1]); } else { applyG({ atk: 25 }, 1, r.diff); r.adv.push(['🗡️', '얼음다리 아래 상자에서 「동방검」을 얻었다! (공격력 +25)', 1]); } }
+        continue;
+      }
+      if (roll < 0.22) { applyG({ mor: 3, kar: -3 }, 1, r.diff); r.adv.push(['🧒', '길 잃은 아이를 마을까지 데려다주었다.', 1]); continue; }
+      // 전투
+      let foe = pick(g.foes), E = g.pw * R(0.7, 1.3);
+      if (g.id === 'north' && ageOf() >= 16 && !S.flags.demonLord && i === 3 && Math.random() < 0.35) { foe = '⚠️ 마왕'; E = 700 * R(0.9, 1.1); }
+      const P = power(), wp = Math.pow(P, 1.4) / (Math.pow(P, 1.4) + Math.pow(E, 1.4));
+      if (Math.random() < wp) {
+        const gg = Math.round(g.gold * R(0.5, 1.4)); S.gold += gg; r.gold += gg;
+        applyG({ cmb: 3 + g.pw / 80, atk: 2 + g.pw / 120, def: 2 + g.pw / 120 }, 1, r.diff); S.fame.war += 1 + REGIONS.indexOf(g);
+        if (foe === '⚠️ 마왕') { S.flags.demonLord = true; S.fame.war += 150; r.adv.push(['👑', '마왕을 쓰러뜨렸다!!! 왕국 전역에 용사의 딸 이름이 퍼졌다!', 1]); r.mood = 'joy'; }
+        else r.adv.push(['⚔️', `${foe}을(를) 물리쳤다! (+${gg}G)`, 1]);
+      } else {
+        applyG({ stress: 10, cmb: 1 }, 1, r.diff); r.adv.push(['💥', `${foe}에게 지고 말았다… 상처를 입고 집으로 돌아왔다.`, 0]); alive = false; r.mood = 'sad';
+      }
+    }
+    applyG({ stress: 6 }, 1, r.diff);
+    r.days = r.adv.map(x => x[2]); return r;
+  }
+  if (act.k === 'fest') return runContest(act.id, r);
+  return r;
+}
+function contestScore(id) {
+  const t = S.st;
+  const bonus = S.outfit === 'ball' ? 60 : S.outfit === 'silk' ? 30 : S.outfit === 'dancer' && id === 'dance' ? 50 : 0;
+  if (id === 'art') return t.art * 0.6 + t.sen * 0.4;
+  if (id === 'cook') return t.cook * 0.7 + t.sen * 0.15 + t.tmp * 0.15;
+  if (id === 'dance') return t.art * 0.4 + t.cha * 0.4 + t.hp * 0.2 + bonus;
+  if (id === 'miss') return t.cha * 0.45 + t.ele * 0.35 + t.dec * 0.2 + bonus;
+  return power();
+}
+function runContest(id, r) {
+  const c = CONTESTS.find(x => x.id === id), yr = ageOf() - 10;
+  r.icon = c.ic; r.title = `🎪 수확제 — ${c.n}`; r.adv = [];
+  const names = id === 'fight' ? ['떠돌이 검사 로이', '근위병 마틸다', '도끼의 가렛', '🏆 챔피언 「철벽」 바나드'] : ['이웃집 엘레나', '상인의 딸 쥬디', '귀족 영애 로잘린', '🏆 작년 우승자 큐리아'];
+  const rivals = [60, 120, 190, 260].map((v, i) => v + yr * (12 + i * 6));
+  const me = contestScore(id);
+  let place = 5;
+  if (id === 'fight') {
+    let w = 0;
+    for (let i = 0; i < 4; i++) {
+      const E = rivals[i] * R(0.85, 1.15), wp = Math.pow(me, 1.4) / (Math.pow(me, 1.4) + Math.pow(E, 1.4));
+      if (Math.random() < wp) { w++; r.adv.push(['⚔️', `${i + 1}회전: ${names[i]}에게 승리!`, 1]); } else { r.adv.push(['💥', `${i + 1}회전: ${names[i]}에게 패배…`, 0]); break; }
+    }
+    place = 5 - w;
+  } else {
+    const mine = me * R(0.85, 1.15);
+    const scores = rivals.map((v, i) => [names[i], v * R(0.85, 1.15)]);
+    place = 1 + scores.filter(x => x[1] > mine).length;
+    scores.concat([[S.name + ' (우리 딸)', mine]]).sort((a, b) => b[1] - a[1]).forEach((x, i) => r.adv.push([i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🎗️', `${i + 1}위 ${x[0]} — ${Math.round(x[1])}점`, x[0].includes('우리 딸') ? 1 : 0]));
+  }
+  const famK = { fight: 'war', art: 'soc', cook: 'house', dance: 'soc', miss: 'soc' }[id];
+  if (place === 1) {
+    S.gold += 500; r.gold += 500; S.fame[famK] += 40; if (id === 'fight') S.fame.war += 20;
+    S.titles.push(`${yearOf()}년 ${c.n} 우승`); r.lines.push(`🏆 우승!! 상금 500G와 명성을 얻었다!`); r.mood = 'joy';
+    if (id === 'miss') { S.flags.missQueen = true; S.prince = Math.min(100, S.prince + 10); }
+  } else if (place === 2) { S.gold += 200; r.gold += 200; S.fame[famK] += 20; r.lines.push('🥈 준우승! 상금 200G.'); r.mood = 'smile'; }
+  else if (place === 3) { S.gold += 100; r.gold += 100; S.fame[famK] += 10; r.lines.push('🥉 3위 입상! 상금 100G.'); }
+  else { r.lines.push('아쉽게도 입상하지 못했다. 내년엔 꼭…!'); r.mood = 'sad'; }
+  applyG({ stress: -10 }, 1, r.diff);
+  r.days = r.adv.map(x => x[2]); return r;
+}
+
+// ================= 월말 처리 & 이벤트 =================
+function monthEnd() {
+  const ev = []; // {title, text, mood, choices:[{t, f}]}
+  const up = upkeep(); S.gold -= up;
+  const dr = DRESSES.find(d => d.id === S.outfit); if (dr) for (const k in dr.eff) growth(k, dr.eff[k] * 0.5);
+  if (S.bad) growth('kar', 3);
+  // 질병
+  if (!S.sick && S.st.stress >= 80 && Math.random() < (S.st.stress - 70) / 40 + (S.st.hp < 60 ? 0.15 : 0)) {
+    S.sick = true; ev.push({ title: '🤒 딸이 앓아누웠다', text: `무리를 했는지 ${S.name}이(가) 열이 펄펄 끓는다. 다음 달 상순은 병상에서 쉬어야 한다. (치료비 80G)`, mood: 'sick' });
+  }
+  // 비행화
+  if (!S.bad && S.st.stress >= 85 && (S.st.mor < 80 || Math.random() < 0.3)) {
+    S.bad = true; ev.push({ title: '💢 반항기', text: `"아빠는 아무것도 몰라!" ${S.name}이(가) 문을 쾅 닫고 들어가 버렸다. 공부를 자주 빼먹고, 일부 아르바이트만 하려 든다. (스트레스를 낮추고 도덕심을 높이면 돌아옵니다)`, mood: 'angry' });
+  } else if (S.bad && S.st.stress <= 40 && S.st.mor >= 60) {
+    S.bad = false; S.trust = Math.min(100, S.trust + 10); ev.push({ title: '🌷 착한 딸로 돌아왔다', text: `"아빠… 그동안 미안해요." ${S.name}이(가) 수줍게 사과했다.`, mood: 'shy' });
+  }
+  if (S.gold < 0) ev.push({ title: '🎩 집사 큐브', text: `"주인님, 가계가 적자입니다. (${S.gold}G) 수업은 수업료가 없으면 들을 수 없으니 아르바이트를 시키시는 게 좋겠습니다."`, mood: 'normal', cube: true });
+  // 랜덤 이벤트
+  if (Math.random() < 0.42) { const e = randomEvent(); if (e) ev.push(e); }
+  S.turn++;
+  S.done = { talk: false, royal: false };
+  // 생일
+  if (S.turn % 12 === 0 && S.turn < 96) ev.push(birthdayEvent());
+  if (monthOf() === 10) ev.push({ title: '🎪 수확제가 다가온다', text: '이번 달 하순은 왕국 수확제! 스케줄에서 참가할 대회를 골라주세요.', mood: 'joy' });
+  return ev;
+}
+function birthdayEvent() {
+  const g = god(), grow = RI(3, 7) - (ageOf() >= 15 ? 2 : 0);
+  S.height += grow; S.weight += RI(2, 4); S.gold += 500; applyG({ stress: -10 }, 1, {});
+  const off = (amt, mul) => () => { if (S.gold < amt) { toast('돈이 부족해요'); return false; } S.gold -= amt; for (const k of g[1]) growth(k, mul); S.offer += amt; toast(`${g[0]}의 축복! ${g[1].map(k => SN[k]).join('·')} 상승`); };
+  return {
+    title: `🎂 ${S.name}의 ${ageOf()}번째 생일`, mood: 'joy', sparkle: true,
+    text: `생일 축하해! 키가 ${grow}cm 자라 ${S.height}cm가 되었다. 국왕 폐하께서 용사의 딸 양육비 500G를 보내주셨다.<br><br>수호신 <b>${g[0]}</b>께 공물을 바칠까요?`,
+    choices: [{ t: '공물 없이 기도만 한다', f: () => { growth(g[1][0], 2); } }, { t: '100G 봉납', f: off(100, 8) }, { t: '300G 봉납', f: off(300, 22) }, { t: '1000G 봉납', f: off(1000, 60) }]
+  };
+}
+function randomEvent() {
+  const a = ageOf();
+  const list = [
+    () => ({ title: '🧚 요정의 방문', text: '창가에 작은 요정이 날아와 밤새 함께 노래를 불렀다.', mood: 'joy', eff: { sen: 8, stress: -10 } }),
+    () => a >= 13 && S.royal >= 1 ? ({
+      title: '🤴 왕자님과의 우연한 만남', text: '시장에서 변장한 왕자님과 부딪쳤다! "괜찮으세요, 아가씨?"', mood: 'shy',
+      choices: [{ t: '우아하게 인사한다', f: () => { const ok = S.st.dec + S.st.ele > 200; S.prince = Math.min(100, S.prince + (ok ? 8 : 2)); toast(ok ? '왕자님이 미소지었다 (호감 ↑)' : '어색한 인사… (호감 조금 ↑)'); } }, { t: '얼굴이 빨개져 도망친다', f: () => { S.prince = Math.min(100, S.prince + 3); growth('sen', 5); } }]
+    }) : null,
+    () => ({ title: '🧑‍🌾 소꿉친구 루크', text: '옆집 소년 루크가 놀자고 찾아왔다.', mood: 'smile', choices: [{ t: '같이 놀게 한다', f: () => { addStress(-12); growth('cha', 3); } }, { t: '공부하라고 돌려보낸다', f: () => { growth('mor', 4); addStress(5); } }] }),
+    () => {
+      const it = pick(ITEMS.filter(x => x.price >= 200)), p = Math.round(it.price / 2);
+      return { title: '🧳 떠돌이 상인', text: `"좋은 물건 있어요~" ${it.ic} ${it.n}(${it.d})을(를) 반값 ${p}G에 판다고 한다.`, mood: 'normal', choices: [{ t: `산다 (${p}G)`, f: () => { if (S.gold < p) { toast('돈이 부족해요'); return false; } S.gold -= p; useItem(it); } }, { t: '사지 않는다', f: () => { } }] };
+    },
+    () => ({ title: '🐈 길 잃은 고양이', text: '비에 젖은 아기 고양이를 주워 왔다. "아빠, 키우면 안 돼요?"', mood: 'sad', choices: [{ t: '키우게 해준다', f: () => { growth('mor', 5); growth('sen', 5); addStress(-8); S.flags.cat = true; } }, { t: '안 된다고 한다', f: () => { addStress(8); } }] }),
+    () => S.bad ? ({ title: '😎 동네 불량배', text: '불량배들이 같이 어울리자고 꼬드긴다.', mood: 'angry', choices: [{ t: '모른 척한다', f: () => { growth('kar', 10); addStress(-15); } }, { t: '단호하게 막는다', f: () => { growth('mor', 6); addStress(8); } }] }) : null,
+    () => ({ title: '🤧 감기', text: '환절기 감기에 걸려 며칠 콜록거렸다.', mood: 'sick', eff: { stress: 8, hp: -2 } }),
+    () => ({ title: '🎻 음유시인', text: '광장에서 떠돌이 음유시인의 노래를 들었다.', mood: 'smile', eff: { art: 5, sen: 5 } }),
+    () => ({ title: '🌠 별똥별', text: '밤하늘에 별똥별이 떨어진다! 무엇을 빌까?', mood: 'joy', choices: [['int', '똑똑해지게 해주세요'], ['cha', '예뻐지게 해주세요'], ['hp', '튼튼해지게 해주세요'], ['art', '그림을 잘 그리게 해주세요']].map(([k, t]) => ({ t, f: () => { growth(k, 12); } })) }),
+    () => ({ title: '⛪ 성당 바자회', text: '성당에서 고아원을 위한 바자회가 열렸다.', mood: 'smile', choices: [{ t: '50G 기부한다', f: () => { if (S.gold < 50) { toast('돈이 부족해요'); return false; } S.gold -= 50; growth('mor', 5); growth('fai', 5); growth('kar', -8); } }, { t: '구경만 한다', f: () => { } }] }),
+    () => a >= 12 ? ({ title: '🐎 기사단 퍼레이드', text: '반짝이는 갑옷의 왕국 기사단이 거리를 행진했다. 딸의 눈이 반짝인다.', mood: 'joy', eff: { cmb: 4, sen: 3 } }) : null,
+    () => a >= 14 ? ({ title: '💌 러브레터', text: '누군가 문틈에 러브레터를 끼워두고 갔다. 딸이 몰래 읽고 얼굴이 새빨개졌다.', mood: 'shy', eff: { cha: 5, sen: 4 } }) : null,
+    () => ({ title: '🎩 큐브의 티타임', text: '집사 큐브가 홍차 예절을 가르쳐 주었다. "찻잔은 소리 없이 내려놓으셔야 합니다, 아가씨."', mood: 'smile', eff: { dec: 6, ele: 3 } })
+  ];
+  for (let i = 0; i < 6; i++) { const e = pick(list)(); if (e) return e; }
+  return null;
+}
+function useItem(it) {
+  for (const k in it.eff) growth(k, it.eff[k]);
+  toast(`${it.ic} ${it.n} 사용! ${it.d}`);
+}
+
+// ================= 엔딩 =================
+const ENDINGS = [
+  { id: 'queen', n: '여왕', tier: 'S', o: 'queen', acc: 'crown', bg: 'gold', c: x => x.s.royal >= 6 && x.e.soc >= 380 && x.t.int >= 350 && x.t.ele >= 400 && x.e.war + x.e.mag >= 300 && x.t.mor >= 150, fit: x => 9, txt: n => `국왕 폐하는 후계자로 ${n}을(를) 지목하셨다. 용사의 딸은 지혜와 품격으로 왕국을 다스리는 위대한 여왕이 되었다. 백성들은 그녀의 치세를 「장미의 시대」라 불렀다.` },
+  { id: 'princess', n: '왕자비', tier: 'S', o: 'wedding', acc: 'tiara', bg: 'pink', c: x => x.s.prince >= 80 && x.s.royal >= 5 && x.t.ele >= 300 && x.t.cha >= 280 && x.t.dec >= 250, fit: x => x.s.prince / 60, txt: n => `왕자님은 무릎을 꿇고 ${n}에게 청혼했다. 왕국 전체가 축복하는 성대한 결혼식. 용사의 딸은 모두가 사랑하는 왕자비가 되었다.` },
+  { id: 'hero', n: '전설의 용사', tier: 'S', o: 'armor', acc: 'none', bg: 'gold', c: x => x.s.flags.demonLord && x.e.war >= 300, fit: x => 5, txt: n => `마왕을 쓰러뜨린 ${n}의 이름은 아버지를 넘어서는 전설이 되었다. 음유시인들은 대륙 곳곳에서 그녀의 모험을 노래한다.` },
+  { id: 'archmage', n: '궁정 대마법사', tier: 'S', o: 'robe', acc: 'hat', bg: 'blue', c: x => x.e.mag >= 450 && x.t.int >= 220 && x.s.royal >= 2, fit: x => x.e.mag / 450, txt: n => `${n}은(는) 왕국 역사상 가장 젊은 궁정 대마법사로 임명되었다. 그녀의 별빛 마법은 왕도를 지키는 결계가 되었다.` },
+  { id: 'saint', n: '성녀', tier: 'S', o: 'nun', acc: 'none', bg: 'gold', c: x => x.t.fai >= 480 && x.t.mor >= 380 && x.t.kar <= 60, fit: x => Math.min(x.t.fai / 480, x.t.mor / 380), txt: n => `기도로 병자를 낫게 하는 ${n}은(는) 교단에서 「성녀」로 추대되었다. 그녀가 지나가는 길에는 꽃이 피어난다고 한다.` },
+  { id: 'general', n: '왕국 장군', tier: 'S', o: 'armor', acc: 'none', bg: 'blue', c: x => x.e.war >= 500 && x.t.int >= 220 && x.s.royal >= 2, fit: x => x.e.war / 500, txt: n => `${n}은(는) 지략과 무용을 겸비한 왕국 최초의 여성 장군이 되었다. 병사들은 그녀를 「붉은 장미 장군」이라 부르며 따랐다.` },
+  { id: 'chancellor', n: '재상', tier: 'S', o: 'silk', acc: 'glasses', bg: 'blue', c: x => x.t.int >= 480 && x.e.soc >= 320 && x.s.royal >= 4 && x.t.spk >= 200, fit: x => Math.min(x.t.int / 480, x.e.soc / 320), txt: n => `날카로운 지성과 화술로 ${n}은(는) 왕국의 재상이 되었다. 그녀의 개혁으로 왕국은 전례 없는 번영을 누렸다.` },
+  { id: 'demon', n: '마왕', tier: 'X', o: 'demon', acc: 'horns', bg: 'dark', eye: '#e02040', c: x => x.t.kar >= 300 && x.t.mp >= 200, fit: x => x.t.kar + x.t.mp, txt: n => `어둠에 마음을 빼앗긴 ${n}은(는) 북쪽 마왕성의 옥좌에 앉았다. 집사 큐브가 공손히 고개를 숙인다. "드디어 돌아오셨군요, 마왕님."` },
+  { id: 'knight', n: '근위 기사', tier: 'A', o: 'armor', acc: 'none', bg: 'blue', c: x => x.e.war >= 320 && x.t.kar < 150, fit: x => x.e.war / 320, txt: n => `${n}은(는) 왕실 근위기사단에 입단했다. 은빛 갑옷을 입고 왕성을 지키는 그녀는 소녀들의 동경의 대상이 되었다.` },
+  { id: 'mage', n: '마법사', tier: 'A', o: 'robe', acc: 'hat', bg: 'lav', c: x => x.e.mag >= 300, fit: x => x.e.mag / 300, txt: n => `마법 학원을 수석으로 졸업한 ${n}은(는) 마법사로 이름을 떨쳤다. 그녀의 탑에는 매일 제자가 되고 싶은 아이들이 찾아온다.` },
+  { id: 'scholar', n: '왕립 학자', tier: 'A', o: 'casual', acc: 'glasses', bg: 'blue', c: x => x.t.int >= 400, fit: x => x.t.int / 400, txt: n => `${n}은(는) 왕립 아카데미의 학자가 되었다. 그녀가 쓴 논문은 대륙의 학문을 한 걸음 앞으로 나아가게 했다.` },
+  { id: 'painter', n: '궁정 화가', tier: 'A', o: 'casual', acc: 'beret', bg: 'lav', c: x => x.t.art >= 340 && x.t.sen >= 250, fit: x => Math.min(x.t.art / 340, x.t.sen / 250), txt: n => `${n}의 그림은 왕비 전하의 눈에 들어 궁정 화가로 발탁되었다. 그녀가 그린 「장미 정원의 오후」는 국보가 되었다.` },
+  { id: 'writer', n: '인기 작가', tier: 'A', o: 'silk', acc: 'glasses', bg: 'lav', c: x => x.t.int >= 300 && x.t.sen >= 350 && x.t.art >= 200, fit: x => Math.min(x.t.int / 300, x.t.sen / 350, x.t.art / 200), txt: n => `${n}이(가) 쓴 연애 소설은 왕국 최고의 베스트셀러가 되었다. 귀족 영애들은 다음 권을 손꼽아 기다린다.` },
+  { id: 'dancer', n: '프리마 발레리나', tier: 'A', o: 'dancer', acc: 'flower', bg: 'pink', c: x => x.t.art >= 260 && x.t.cha >= 260 && x.t.hp >= 180, fit: x => Math.min(x.t.art / 260, x.t.cha / 260, x.t.hp / 180), txt: n => `왕립 극장의 무대 위, 스포트라이트를 받는 ${n}. 그녀의 춤은 관객들의 숨을 멎게 했다.` },
+  { id: 'noble', n: '귀부인', tier: 'A', o: 'ball', acc: 'tiara', bg: 'pink', c: x => x.t.ele >= 300 && x.t.cha >= 220 && x.e.soc >= 220, fit: x => Math.min(x.t.ele / 300, x.t.cha / 220, x.e.soc / 220), txt: n => `사교계의 꽃 ${n}은(는) 명문 공작가의 청혼을 받아들였다. 우아한 공작부인으로서 그녀의 살롱은 늘 사람들로 붐볐다.` },
+  { id: 'chef', n: '궁정 요리장', tier: 'A', o: 'chef', acc: 'chefhat', bg: 'gold', c: x => x.t.cook >= 330, fit: x => x.t.cook / 330, txt: n => `${n}의 요리는 국왕 폐하의 입맛까지 사로잡았다. 왕궁 주방의 최연소 요리장이 탄생했다.` },
+  { id: 'merchant', n: '대상인', tier: 'A', o: 'silk', acc: 'band', bg: 'gold', c: x => x.t.spk >= 250 && x.t.int >= 200 && x.s.gold >= 3000, fit: x => Math.min(x.s.gold / 3000, x.t.spk / 250), txt: n => `아르바이트로 다진 수완과 모아둔 밑천으로 ${n}은(는) 상회를 차렸다. 몇 년 뒤, 그녀의 상회는 대륙 최대의 무역상이 되었다.` },
+  { id: 'nun', n: '수녀', tier: 'A', o: 'nun', acc: 'none', bg: 'lav', c: x => x.t.fai >= 300 && x.t.mor >= 250, fit: x => Math.min(x.t.fai / 300, x.t.mor / 250), txt: n => `${n}은(는) 수녀가 되어 고아원 아이들을 돌보며 살아간다. 아이들은 그녀를 「장미 언니」라고 부른다.` },
+  { id: 'merc', n: '용병', tier: 'B', o: 'armor', acc: 'none', bg: 'green', c: x => x.e.war >= 180, fit: x => x.e.war / 180, txt: n => `검 한 자루를 등에 메고 ${n}은(는) 떠돌이 용병이 되었다. 거친 일이지만 그녀는 자유로운 삶이 즐겁다.` },
+  { id: 'fortune', n: '점술가', tier: 'B', o: 'robe', acc: 'flower', bg: 'lav', c: x => x.t.mp >= 150 && x.t.sen >= 180, fit: x => Math.min(x.t.mp / 150, x.t.sen / 180), txt: n => `골목 안쪽 보랏빛 천막. ${n}의 점은 무섭도록 잘 맞는다는 소문이 자자하다.` },
+  { id: 'tutor', n: '가정교사', tier: 'B', o: 'casual', acc: 'glasses', bg: 'green', c: x => x.t.int >= 220 && x.t.mor >= 150, fit: x => Math.min(x.t.int / 220, x.t.mor / 150), txt: n => `${n}은(는) 귀족 집안의 가정교사가 되었다. 엄하지만 다정한 선생님으로 아이들에게 인기 만점이다.` },
+  { id: 'maid', n: '왕궁 메이드장', tier: 'B', o: 'maid', acc: 'maidcap', bg: 'pink', c: x => x.e.house >= 200, fit: x => x.e.house / 200, txt: n => `완벽한 살림 솜씨의 ${n}은(는) 왕궁 메이드장이 되었다. 그녀의 손이 닿으면 왕궁의 은식기가 반짝인다.` },
+  { id: 'show', n: '밤의 여왕', tier: 'B', o: 'dancer', acc: 'flower', bg: 'dark', c: x => x.t.cha >= 300 && x.t.mor < 120 && (x.s.cnt.night || 0) >= 6, fit: x => x.t.cha / 250, txt: n => `밤의 전당 최고의 스타 ${n}. 화려한 무대 뒤로 아빠는 조용히 한숨을 쉬었다.` },
+  { id: 'clown', n: '광대', tier: 'B', o: 'casual', acc: 'ribbon', bg: 'pink', c: x => x.t.spk >= 180 && x.t.art >= 120, fit: x => Math.min(x.t.spk / 180, x.t.art / 120), txt: n => `${n}은(는) 유랑 극단의 광대가 되었다. 그녀가 가는 마을마다 웃음꽃이 핀다.` },
+  { id: 'florist', n: '꽃집 주인', tier: 'B', o: 'casual', acc: 'flower', bg: 'green', c: x => x.t.sen >= 220, fit: x => x.t.sen / 220 * 0.9, txt: n => `${n}은(는) 광장 모퉁이에 작은 꽃집을 열었다. 매일 아침 장미 향기로 가게 문을 연다.` },
+  { id: 'bandit', n: '도적단 두목', tier: 'C', o: 'armor', acc: 'none', bg: 'dark', c: x => x.t.kar >= 220 && x.e.war >= 150, fit: x => x.t.kar, txt: n => `${n}은(는) 산적 패거리를 이끄는 두목이 되었다. 용사였던 아빠는 차마 고개를 들 수 없었다.` },
+  { id: 'barmadam', n: '주점 마담', tier: 'C', o: 'silk', acc: 'flower', bg: 'dark', c: x => (x.s.cnt.bar || 0) + (x.s.cnt.pub || 0) >= 12 && x.t.spk >= 120, fit: x => x.t.spk, txt: n => `${n}은(는) 항구 주점의 마담이 되었다. 뱃사람들의 이야기를 들어주는 것이 그녀의 일이다.` },
+  { id: 'farm', n: '농부의 아내', tier: 'C', o: 'casual', acc: 'kerchief', bg: 'green', c: x => x.t.hp >= 120 || x.t.str >= 100, fit: x => x.t.hp, txt: n => `${n}은(는) 성실한 농부 청년과 결혼해 들판의 작은 집에서 살아간다. 소박하지만 행복한 나날이다.` },
+  { id: 'home', n: '아빠의 딸', tier: 'C', o: 'casual', acc: 'ribbon', bg: 'pink', c: x => x.s.trust >= 85, fit: x => x.s.trust, txt: n => `"난 아직 아빠 곁에 있을래요." ${n}은(는) 집에 남아 아빠와 함께 살기로 했다. 큐브가 홍차를 내오며 미소 짓는다.` },
+  { id: 'bride', n: '평범한 신부', tier: 'C', o: 'wedding', acc: 'wveil', bg: 'pink', c: x => true, fit: x => 0, txt: n => `${n}은(는) 마을 청년과 결혼했다. 특별하진 않아도, 따뜻하고 평범한 행복이 그녀를 기다리고 있다.` }
+];
+const RUNAWAY = { id: 'runaway', n: '가출', tier: 'D', o: 'casual', acc: 'none', bg: 'dark', txt: n => `어느 날 아침, ${n}의 방은 텅 비어 있었다. 책상 위에는 "찾지 마세요"라는 쪽지 한 장. 아빠는 오래도록 그 쪽지를 쥐고 있었다.` };
+const TIER_BONUS = { S: 1500, X: 1000, A: 800, B: 400, C: 150, D: 0 };
+function decideEnding(s = S) {
+  if (s.bad && s.st.stress >= 75) return RUNAWAY;
+  const x = { s, t: s.st, e: evals(s) };
+  for (const tier of ['S', 'X', 'A', 'B', 'C']) {
+    const ok = ENDINGS.filter(en => en.tier === tier && en.c(x));
+    if (ok.length) return ok.sort((a, b) => b.fit(x) - a.fit(x))[0];
+  }
+  return ENDINGS[ENDINGS.length - 1];
+}
+function finalScore(s = S, en = decideEnding(s)) {
+  const e = evals(s);
+  return Math.round(e.war + e.mag + e.soc + e.house + TIER_BONUS[en.tier] + s.titles.length * 100 + s.royal * 40 + s.trust * 2);
+}
+
+// ================= 저장 =================
+function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { } }
+function loadSave() { try { const j = JSON.parse(localStorage.getItem(SAVE_KEY)); return j && j.v === 1 ? j : null; } catch (e) { return null; } }
+function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) { } }
+
+// ================= 화면: 타이틀 =================
+function renderTitle() {
+  const sv = loadSave();
+  const demo = { hair: pick(['long', 'twin', 'wavy', 'odango']), bangs: pick(['hime', 'part']), hc: RI(0, 7), ec: RI(0, 7), sk: 0, eye: 'round', acc: 'tiara', dc: pick(DRESS_COLORS) };
+  app.innerHTML = `<div class="title-wrap">
+   <div class="float">${portrait(demo, { age: 17, outfit: 'ball', acc: 'tiara', mood: 'smile', size: 420, bg: 'pink', sparkle: true })}</div>
+   <div>
+    <h1 class="logo"><small>✦ PRINCESS MAKER ✦</small>프린세스<br>메이커</h1>
+    <p class="muted" style="font-size:15px;line-height:1.7;margin-top:14px">마왕을 물리친 용사, 그대는 전쟁고아 소녀를 딸로 맞이했습니다.<br>열 살 소녀가 열여덟 살이 되는 8년 동안,<br>그녀를 어떤 어른으로 키우시겠습니까?</p>
+    <div class="title-menu">
+     ${sv ? `<button class="btn" id="bCont">📖 이어하기 — ${esc(sv.name)} (${10 + Math.floor(sv.turn / 12)}세)</button>` : ''}
+     <button class="btn ${sv ? 'sub' : ''}" id="bNew">🌹 새로 키우기</button>
+     <button class="btn lav" id="bRank">🏆 명예의 전당</button>
+     <button class="btn sub" id="bHelp">❔ 게임 방법</button>
+    </div>
+   </div></div>`;
+  if (sv) $('#bCont').onclick = () => { S = sv; renderMain(); };
+  $('#bNew').onclick = () => { if (sv && !confirm('이어하던 딸의 기록이 사라집니다. 새로 시작할까요?')) return; renderCreate(); };
+  $('#bRank').onclick = () => renderRanking();
+  $('#bHelp').onclick = helpModal;
+}
+function helpModal() {
+  modal(`<h3>❔ 게임 방법</h3><div style="font-size:14px;line-height:1.75">
+  • 딸이 <b>10살 생일</b>부터 <b>18살 생일</b>까지, 8년(96개월) 동안 키웁니다.<br>
+  • 매달 <b>상순·중순·하순</b> 3번 스케줄을 짜요 — <b>교육</b>(돈이 들고 능력치 ↑), <b>아르바이트</b>(돈 벌기), <b>휴식/바캉스</b>(스트레스 ↓), <b>무사수행</b>(전투).<br>
+  • 같은 수업을 6번 들을 때마다 초급→중급→상급…으로 올라가 효과가 커집니다.<br>
+  • 한 달에 한 번 <b>대화</b>와 <b>왕성 방문</b>을 할 수 있어요. 왕성에서 높은 분들을 만날수록 사교 평가가 오르고, 왕자님도 만날 수 있어요.<br>
+  • 매년 10월 하순은 <b>수확제</b> — 무투회·미술전·요리대회·무도회·미스 왕국!<br>
+  • 스트레스가 쌓이면 병에 걸리거나 <b>반항기</b>가 와요. 생일에는 수호신께 공물을 바칠 수 있어요.<br>
+  • 18살 생일에 능력치에 따라 <b>30가지 엔딩</b> 중 하나가 결정되고, 최종 기록이 <b>명예의 전당(DB)</b>에 올라갑니다.<br>
+  • 점수 = 전사·마법·사교·가사 평가 합 + 엔딩 등급 보너스 + 수확제 우승 + 왕성 알현 + 부녀 친밀도</div>
+  <div class="center" style="margin-top:14px"><button class="btn" onclick="closeModal()">알겠어요!</button></div>`);
+}
+
+// ================= 화면: 캐릭터 만들기 =================
+let C = null;
+function rollStats(blood, zod) {
+  const r = (a, b) => RI(a, b);
+  const st = { hp: r(30, 50), str: r(15, 35), int: r(15, 35), ele: r(15, 35), cha: r(20, 40), mor: r(25, 45), fai: r(15, 35), kar: 0, sen: r(15, 35), stress: 0, cmb: r(0, 12), atk: r(0, 12), def: r(0, 12), mag: r(0, 12), mp: r(0, 12), res: r(0, 12), dec: r(0, 12), art: r(0, 12), spk: r(0, 12), cook: r(0, 12), clean: r(0, 12), tmp: r(5, 20) };
+  for (const k of GODS[ZODIAC[zod][3]][1]) st[k] += 10;
+  if (blood === 'A') st.mor += 8; if (blood === 'B') st.cha += 5; if (blood === 'O') st.hp += 8; if (blood === 'AB') st.sen += 8;
+  return st;
+}
+function renderCreate() {
+  C = { father: '', name: '', bm: RI(1, 12), bd: RI(1, 28), blood: pick(['A', 'B', 'O', 'AB']), rolls: 3, previewAge: 10,
+    app: { hair: pick(HAIR_STYLES)[0], bangs: pick(BANGS)[0], hc: RI(0, 7), ec: RI(0, 7), sk: RI(0, 2), eye: pick(EYE_SHAPES)[0], acc: pick(ACCS)[0], dc: pick(DRESS_COLORS) } };
+  C.st = rollStats(C.blood, zodiacOf(C.bm, C.bd));
+  drawCreate();
+}
+function drawCreate() {
+  const a = C.app, zi = zodiacOf(C.bm, C.bd), g = GODS[ZODIAC[zi][3]];
+  const chips = (key, list) => `<div class="chips">${list.map(([v, n]) => `<button class="ch ${a[key] === v ? 'on' : ''}" data-k="${key}" data-v="${v}">${n}</button>`).join('')}</div>`;
+  const sws = (key, list, isIdx) => `<div class="chips">${list.map((c, i) => { const col = Array.isArray(c) ? c[1] : c; const v = isIdx ? i : c; return `<button class="sw ${a[key] === v ? 'on' : ''}" data-k="${key}" data-v="${v}" data-idx="${isIdx ? 1 : 0}" title="${Array.isArray(c) ? c[0] : ''}" style="background:${col}"></button>`; }).join('')}</div>`;
+  app.innerHTML = `<div class="create">
+   <div class="card pv"><div id="pvSvg">${portrait(a, { age: C.previewAge, mood: 'smile', size: 330 })}</div>
+     <div class="row" style="justify-content:center;margin-top:10px">${[10, 14, 18].map(x => `<button class="ch ${C.previewAge === x ? 'on' : ''}" data-age="${x}">${x}살 모습</button>`).join('')}</div>
+     <div class="center" style="margin-top:10px"><button class="btn sub sm" id="bRand">🎲 외모 랜덤</button></div></div>
+   <div class="card" style="padding:18px">
+     <h2 style="margin:0 0 4px;color:#c2416d">🌹 딸을 맞이하기</h2><div class="muted" style="font-size:13px">마왕을 무찌른 용사인 당신이 데려온 전쟁고아 소녀. 어떤 아이일까요?</div>
+     <div class="row" style="margin-top:14px"><div class="opt" style="flex:1;min-width:150px;margin:0"><div class="lb">아버지(플레이어) 이름</div><input type="text" id="iF" maxlength="12" placeholder="예: 용사 아르스" value="${esc(C.father)}" style="width:100%"></div>
+     <div class="opt" style="flex:1;min-width:150px;margin:0"><div class="lb">딸의 이름</div><input type="text" id="iN" maxlength="10" placeholder="예: 올리브" value="${esc(C.name)}" style="width:100%"></div></div>
+     <div class="row"><div class="opt"><div class="lb">생일</div><select id="iM">${Array.from({ length: 12 }, (_, i) => `<option ${C.bm === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select> 월 <select id="iD">${Array.from({ length: 31 }, (_, i) => `<option ${C.bd === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select> 일</div>
+     <div class="opt"><div class="lb">혈액형</div><div class="chips">${['A', 'B', 'O', 'AB'].map(b => `<button class="ch ${C.blood === b ? 'on' : ''}" data-blood="${b}">${b}형</button>`).join('')}</div></div></div>
+     <div class="muted" style="font-size:13px;background:#fdf0f6;border-radius:10px;padding:8px 10px">⭐ ${ZODIAC[zi][0]} · 수호신 <b>${g[0]}</b> (${g[1].map(k => SN[k]).join('·')} 성장 ↑) &nbsp;|&nbsp; 🩸 ${BLOOD[C.blood]}</div>
+     <div class="opt"><div class="lb">헤어스타일</div>${chips('hair', HAIR_STYLES)}</div>
+     <div class="opt"><div class="lb">앞머리</div>${chips('bangs', BANGS)}</div>
+     <div class="opt"><div class="lb">머리색</div>${sws('hc', HAIR_COLORS, true)}</div>
+     <div class="row"><div class="opt"><div class="lb">눈매</div>${chips('eye', EYE_SHAPES)}</div><div class="opt"><div class="lb">눈동자</div>${sws('ec', EYE_COLORS, true)}</div></div>
+     <div class="row"><div class="opt"><div class="lb">피부</div>${sws('sk', SKINS, true)}</div><div class="opt"><div class="lb">옷 색</div>${sws('dc', DRESS_COLORS, false)}</div></div>
+     <div class="opt"><div class="lb">머리 장식</div>${chips('acc', ACCS)}</div>
+     <div class="opt"><div class="lb">타고난 능력치 <button class="btn sub sm" id="bRoll" ${C.rolls ? '' : 'disabled'}>🎲 다시 뽑기 (${C.rolls})</button></div>
+       <div class="statgrid">${['hp', 'str', 'int', 'ele', 'cha', 'mor', 'fai', 'sen', 'tmp'].map(k => `<div>${SN[k]} <b>${C.st[k]}</b></div>`).join('')}</div></div>
+     <div class="row" style="justify-content:space-between;margin-top:16px"><button class="btn sub" id="bBack">← 타이틀</button><button class="btn" id="bGo">💐 이 아이로 키울게요</button></div>
+   </div></div>`;
+  const keep = () => { C.father = $('#iF').value; C.name = $('#iN').value; };
+  app.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { keep(); const k = b.dataset.k; let v = b.dataset.v; if (b.dataset.idx === '1') v = +v; C.app[k] = v; drawCreate(); });
+  app.querySelectorAll('[data-age]').forEach(b => b.onclick = () => { keep(); C.previewAge = +b.dataset.age; drawCreate(); });
+  app.querySelectorAll('[data-blood]').forEach(b => b.onclick = () => { keep(); C.blood = b.dataset.blood; C.st = rollStats(C.blood, zodiacOf(C.bm, C.bd)); drawCreate(); });
+  $('#iM').onchange = $('#iD').onchange = () => { keep(); C.bm = +$('#iM').value; C.bd = +$('#iD').value; if (C.bm === 2 && C.bd > 29) C.bd = 29; C.st = rollStats(C.blood, zodiacOf(C.bm, C.bd)); drawCreate(); };
+  $('#bRand').onclick = () => { keep(); C.app = { hair: pick(HAIR_STYLES)[0], bangs: pick(BANGS)[0], hc: RI(0, 7), ec: RI(0, 7), sk: RI(0, 3), eye: pick(EYE_SHAPES)[0], acc: pick(ACCS)[0], dc: pick(DRESS_COLORS) }; drawCreate(); };
+  $('#bRoll').onclick = () => { keep(); if (!C.rolls) return; C.rolls--; C.st = rollStats(C.blood, zodiacOf(C.bm, C.bd)); drawCreate(); };
+  $('#bBack').onclick = renderTitle;
+  $('#bGo').onclick = () => {
+    keep();
+    if (!C.father.trim()) { toast('아버지 이름을 입력해 주세요'); $('#iF').focus(); return; }
+    if (!C.name.trim()) { toast('딸의 이름을 지어주세요'); $('#iN').focus(); return; }
+    S = newState({ father: C.father.trim(), name: C.name.trim(), bm: C.bm, bd: C.bd, blood: C.blood, app: C.app, st: C.st });
+    save(); renderMain();
+    showEvents([{ title: '🌹 새로운 가족', text: `"오늘부터 제가 아빠의 딸이에요…?"<br><br>${esc(S.name)}이(가) 쭈뼛쭈뼛 고개를 숙인다. 오늘은 ${esc(S.name)}의 열 번째 생일.<br>집사 큐브가 정중하게 인사한다. "앞으로 잘 부탁드립니다, 아가씨. 주인님, 가계는 제가 관리하겠습니다."<br><br><span class="muted">국왕 폐하께서 양육비 500G를 보내주셨다.</span>`, mood: 'shy', sparkle: true }]);
+  };
+}
+
+// ================= 화면: 메인 =================
+function sayLine() {
+  const n = S.name, a = ageOf(), st = S.st.stress;
+  if (S.sick) return '콜록… 아빠, 머리가 아파요…';
+  if (S.bad) return pick(['…뭐. 볼일 있어?', '잔소리할 거면 나가.', '아빠는 아무것도 몰라!']);
+  if (st >= 70) return pick(['너무 피곤해요… 좀 쉬고 싶어요.', '요즘 너무 힘들어요, 아빠…']);
+  if (monthOf() === 10) return '수확제다! 올해는 꼭 우승할 거예요!';
+  if (a <= 12) return pick(['아빠! 오늘은 뭐 해요?', '큐브 아저씨가 쿠키 구워줬어요!', '이번 달도 열심히 할게요!', '아빠 다리 위에 앉아도 돼요?']);
+  if (a <= 15) return pick(['아빠, 노크 좀 하고 들어와요!', '저… 요즘 좀 예뻐진 것 같지 않아요?', '오늘 거리에서 왕자님 마차를 봤어요!', '할 일 정해주세요~']);
+  return pick(['아빠, 저도 이제 어른이 다 됐어요.', '나중에 어떤 사람이 될지… 가끔 생각해요.', `아빠 딸로 태어나서 다행이에요.`, '이번 달은 뭘 하면 좋을까요?']);
+}
+function renderMain() {
+  const a = ageOf(), m = monthOf(), y = yearOf(), e = evals();
+  if (monthOf() === 10 && !S.sched[2]) S.sched[2] = null;
+  const slotHTML = i => {
+    const when = ['상순 (1~10일)', '중순 (11~20일)', '하순 (21~말일)'][i];
+    if (i === 0 && S.sick) return `<button class="slot set lock" disabled><div class="when">${when}</div><div class="ic">🤒</div><div class="nm2">병상 요양</div><div class="muted" style="font-size:11px">치료비 80G</div></button>`;
+    const fest = m === 10 && i === 2;
+    const ac = S.sched[i];
+    if (!ac) return `<button class="slot ${fest ? 'lock' : ''}" data-slot="${i}"><div class="when">${when}</div><div class="ic">${fest ? '🎪' : '➕'}</div><div class="nm2">${fest ? '수확제 종목 선택' : '스케줄 정하기'}</div></button>`;
+    const info = actInfo(ac);
+    return `<button class="slot set ${fest ? 'lock' : ''}" data-slot="${i}"><div class="when">${when}</div><div class="ic">${info.ic}</div><div class="nm2">${info.n}</div><div class="muted" style="font-size:11px">${info.sub}</div></button>`;
+  };
+  const bar = (k, cls, max = 500) => { const v = S.st[k]; return `<div class="bar ${cls}"><div class="l"><span>${SN[k]}</span><b>${v}</b></div><div class="t"><i style="width:${clamp(v / max * 100, 0, 100)}%"></i></div></div>`; };
+  const ev = (n, v, k) => `<div class="bar e"><div class="l"><span>${n}</span><b>${v}</b></div><div class="t"><i style="width:${clamp(v / 500 * 100, 0, 100)}%"></i></div></div>`;
+  const tab = S._tab || 0;
+  let statsHTML;
+  if (tab < 3) { const [, ks, cls] = GROUPS[tab]; statsHTML = ks.map(k => bar(k, k === 'kar' ? 'x' : cls)).join(''); }
+  else statsHTML = ev('⚔️ 전사 평가', e.war) + ev('🔮 마법 평가', e.mag) + ev('🫖 사교 평가', e.soc) + ev('🧺 가사 평가', e.house) +
+    `<div class="bar s"><div class="l"><span>💗 부녀 친밀도</span><b>${S.trust}</b></div><div class="t"><i style="width:${S.trust}%"></i></div></div>` +
+    `<div class="bar"><div class="l"><span>🤴 왕자님 호감</span><b>${S.royal >= 5 || S.prince ? S.prince : '???'}</b></div><div class="t"><i style="width:${S.prince}%"></i></div></div>`;
+  const ready = S.sched.every((x, i) => x || (i === 0 && S.sick));
+  app.innerHTML = `
+  <div class="card top"><div class="date">📅 ${y}년 ${m}월 <span class="muted" style="font-size:14px">· 18살 생일까지 ${96 - S.turn}개월</span></div>
+   <div class="row"><span class="gold">💰 ${S.gold.toLocaleString()} G</span><button class="btn sub sm" id="bMenu">☰ 메뉴</button></div></div>
+  <div class="main">
+   <div class="card pcard">
+     ${portrait(S.app, { age: a, outfit: S.outfit, mood: moodOf(), size: 300, bg: S.bad ? 'dark' : 'pink' })}
+     <div class="nm">${esc(S.name)} <span class="muted" style="font-size:15px">${a}세</span></div>
+     <div class="muted" style="font-size:12px">${ZODIAC[S.zod][0]} · ${S.blood}형 · ${S.height}cm · ${S.weight}kg ${S.bad ? '· <b style="color:#d9536b">반항기</b>' : ''}</div>
+     <div class="bubble">${esc(sayLine())}</div>
+     <div class="bar s" style="text-align:left;margin:0 4px 8px"><div class="l"><span>😣 스트레스</span><b>${S.st.stress}</b></div><div class="t"><i style="width:${S.st.stress}%"></i></div></div>
+     <div class="acts">
+      <button class="act" id="aTalk" ${S.done.talk ? 'disabled' : ''}><b>💬</b>대화</button>
+      <button class="act" id="aRoyal" ${S.done.royal ? 'disabled' : ''}><b>🏰</b>왕성 방문</button>
+      <button class="act" id="aShop"><b>🛍️</b>상점</button>
+      <button class="act" id="aWard"><b>👗</b>옷장</button>
+      <button class="act" id="aCube"><b>🎩</b>집사 큐브</button>
+      <button class="act" id="aTitle"><b>🏅</b>기록</button>
+     </div>
+   </div>
+   <div>
+     <div class="card sched"><div class="row" style="justify-content:space-between"><h3 style="margin:0">📜 ${m}월 스케줄</h3><span class="muted" style="font-size:12px">생활비 ${upkeep()}G/월</span></div>
+       <div class="slots">${[0, 1, 2].map(slotHTML).join('')}</div>
+       <div class="row" style="justify-content:space-between"><button class="btn sub sm" id="bSame">🔁 지난달과 같게</button><button class="btn" id="bRun" ${ready ? '' : 'disabled'}>▶ 이번 달 시작</button></div></div>
+     <div class="card stats" style="margin-top:14px"><div class="tabs">${['기본', '전투', '기술', '평가'].map((t, i) => `<button class="tab ${tab === i ? 'on' : ''}" data-tab="${i}">${t}</button>`).join('')}</div><div class="bars">${statsHTML}</div></div>
+     <div class="card" style="margin-top:14px"><div class="log">${S.log.length ? S.log.slice(-30).reverse().map(l => `<div>${l}</div>`).join('') : '<div class="muted">아직 기록이 없어요.</div>'}</div></div>
+   </div></div>`;
+  app.querySelectorAll('[data-slot]').forEach(b => b.onclick = () => pickModal(+b.dataset.slot));
+  app.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { S._tab = +b.dataset.tab; renderMain(); });
+  $('#bRun').onclick = runMonth;
+  $('#bSame').onclick = () => {
+    if (!S.last) { toast('지난달 스케줄이 없어요'); return; }
+    S.last.forEach((ac, i) => { if (!ac || (m === 10 && i === 2)) return; if (actAvailable(ac).ok) S.sched[i] = ac; });
+    renderMain();
+  };
+  $('#aTalk').onclick = talkModal; $('#aRoyal').onclick = royalModal; $('#aShop').onclick = shopModal; $('#aWard').onclick = wardModal; $('#aCube').onclick = cubeModal; $('#aTitle').onclick = recordModalSelf;
+  $('#bMenu').onclick = () => modal(`<h3>☰ 메뉴</h3><div class="choice"><button class="btn sub" onclick="closeModal();helpModal()">❔ 게임 방법</button><button class="btn sub" onclick="closeModal();renderRanking()">🏆 명예의 전당</button><button class="btn sub" onclick="closeModal();save();renderTitle()">🏠 타이틀로 (자동 저장됨)</button><button class="btn sub" onclick="closeModal()">닫기</button></div>`);
+}
+function actInfo(ac) {
+  if (ac.k === 'edu') { const e = EDU.find(x => x.id === ac.id), t = tierOf(e.id); return { ic: e.ic, n: e.n, sub: `${TIERS[t]} · ${e.cost + t * 15}G` }; }
+  if (ac.k === 'job') { const j = JOBS.find(x => x.id === ac.id); return { ic: j.ic, n: j.n, sub: `일당 ~${Math.round(j.pay * (1 + (ageOf() - 10) * 0.04))}G/순` }; }
+  if (ac.k === 'rest') return ac.id === 'home' ? { ic: '🏡', n: '휴식', sub: '15G' } : { ic: '🏖️', n: '바캉스', sub: `${100 + ageOf() * 8}G` };
+  if (ac.k === 'adv') { const g = REGIONS.find(x => x.id === ac.id); return { ic: g.ic, n: g.n, sub: '무사수행' }; }
+  if (ac.k === 'fest') { const c = CONTESTS.find(x => x.id === ac.id); return { ic: c.ic, n: c.n, sub: '수확제' }; }
+  return { ic: '?', n: '?', sub: '' };
+}
+function actAvailable(ac, slot) {
+  const a = ageOf();
+  if (ac.k === 'job') { const j = JOBS.find(x => x.id === ac.id); if (a < j.age) return { ok: false, why: `${j.age}세부터` }; if (S.bad && !j.bad) return { ok: false, why: '반항기라 싫대요' }; }
+  if (ac.k === 'adv') { const g = REGIONS.find(x => x.id === ac.id); if (a < g.age) return { ok: false, why: `${g.age}세부터` }; }
+  if (ac.k === 'rest' && ac.id === 'vac' && S.sched.some((x, i) => i !== slot && x && x.k === 'rest' && x.id === 'vac')) return { ok: false, why: '바캉스는 한 달에 한 번' };
+  return { ok: true };
+}
+function pickModal(slot) {
+  const m = monthOf();
+  if (m === 10 && slot === 2) {
+    modal(`<h3>🎪 수확제 — 참가 종목</h3><div class="muted" style="font-size:13px;margin-bottom:10px">왕국 최대의 축제! 우승하면 상금 500G와 큰 명성을 얻어요.</div><div class="opts">${CONTESTS.map(c => {
+      const ok = ageOf() >= c.age; const hint = { fight: '전투 능력', art: '예술·감수성', cook: '요리', dance: '예술·매력·체력', miss: '매력·기품·예의범절 (+드레스)' }[c.id];
+      return `<button class="op" data-c="${c.id}" ${ok ? '' : 'disabled'}><div class="h">${c.ic} ${c.n}</div><div class="muted">${ok ? hint : c.age + '세부터'}</div></button>`;
+    }).join('')}</div>`);
+    document.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { S.sched[2] = { k: 'fest', id: b.dataset.c }; closeModal(); renderMain(); });
+    return;
+  }
+  const tab = pickModal.tab || 'edu';
+  const eff = g => Object.entries(g).map(([k, v]) => `<span class="chip ${v > 0 ? 'up' : 'dn'}">${SN[k]}${v > 0 ? '↑' : '↓'}</span>`).join('');
+  let body = '';
+  if (tab === 'edu') body = EDU.map(e => { const t = tierOf(e.id); return `<button class="op" data-a="edu:${e.id}"><div class="h">${e.ic} ${e.n} <span class="muted" style="font-weight:400">${TIERS[t]}</span></div><div><span class="chip g">-${e.cost + t * 15}G</span>${eff(e.g)}</div></button>`; }).join('');
+  if (tab === 'job') body = JOBS.map(j => { const av = actAvailable({ k: 'job', id: j.id }); return `<button class="op" data-a="job:${j.id}" ${av.ok ? '' : 'disabled'}><div class="h">${j.ic} ${j.n}</div><div>${av.ok ? `<span class="chip g">+${Math.round(j.pay * (1 + (ageOf() - 10) * 0.04))}G</span>${eff(j.g)}` : `<span class="muted">🔒 ${av.why}</span>`}</div></button>`; }).join('');
+  if (tab === 'rest') { const av = actAvailable({ k: 'rest', id: 'vac' }, slot); body = `<button class="op" data-a="rest:home"><div class="h">🏡 집에서 휴식</div><div><span class="chip g">-15G</span><span class="chip up">스트레스↓↓</span><span class="chip up">체력↑</span></div></button><button class="op" data-a="rest:vac" ${av.ok ? '' : 'disabled'}><div class="h">🏖️ 바캉스</div><div>${av.ok ? `<span class="chip g">-${100 + ageOf() * 8}G</span><span class="chip up">스트레스↓↓↓</span><span class="chip up">감수성↑</span>` : av.why}</div></button>`; }
+  if (tab === 'adv') body = REGIONS.map(g => { const av = actAvailable({ k: 'adv', id: g.id }); return `<button class="op" data-a="adv:${g.id}" ${av.ok ? '' : 'disabled'}><div class="h">${g.ic} ${g.n}</div><div>${av.ok ? `<span class="muted">적의 강함 ${'★'.repeat(REGIONS.indexOf(g) + 1)} · 우리 딸 전투력 ${Math.round(power())}</span>` : `<span class="muted">🔒 ${av.why}</span>`}</div></button>`; }).join('');
+  modal(`<h3>${['상순', '중순', '하순'][slot]} 스케줄</h3>
+   <div class="tabs">${[['edu', '📚 교육'], ['job', '💼 아르바이트'], ['rest', '☕ 휴식'], ['adv', '🗡️ 무사수행']].map(([k, n]) => `<button class="tab ${tab === k ? 'on' : ''}" data-pt="${k}">${n}</button>`).join('')}</div>
+   <div class="opts">${body}</div>
+   <label class="row muted" style="margin-top:12px;font-size:13px"><input type="checkbox" id="cAll" ${pickModal.all ? 'checked' : ''}> 남은 칸도 모두 이걸로 채우기</label>`);
+  document.querySelectorAll('[data-pt]').forEach(b => b.onclick = () => { pickModal.tab = b.dataset.pt; pickModal.all = $('#cAll').checked; pickModal(slot); });
+  document.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+    const [k, id] = b.dataset.a.split(':'); const ac = { k, id }; pickModal.all = $('#cAll').checked;
+    S.sched[slot] = ac;
+    if (pickModal.all) for (let i = 0; i < 3; i++) { if (i === 0 && S.sick) continue; if (m === 10 && i === 2) continue; if (!S.sched[i] && actAvailable(ac, i).ok) S.sched[i] = ac; }
+    closeModal(); renderMain();
+  });
+}
+
+// ================= 한 달 진행 =================
+async function runMonth() {
+  const plan = S.sched.map((x, i) => (i === 0 && S.sick) ? { k: 'sickbed', id: 'sickbed' } : x);
+  S.last = S.sched.slice();
+  const m = monthOf();
+  const results = [];
+  for (let i = 0; i < 3; i++) {
+    const r = runPhase(plan[i], i); results.push(r);
+    const diffTxt = Object.entries(r.diff).filter(([, v]) => v).map(([k, v]) => `${SN[k]}${v > 0 ? '+' : ''}${v}`).join(' ');
+    S.log.push(`<b>${m}월 ${['상순', '중순', '하순'][i]}</b> ${r.icon} ${r.title} ${r.gold ? `<span class="chip g">${r.gold > 0 ? '+' : ''}${r.gold}G</span>` : ''} <span class="muted">${diffTxt}</span>`);
+  }
+  if (S.log.length > 120) S.log = S.log.slice(-120);
+  S.sched = [null, null, null];
+  for (const r of results) await showPhase(r);
+  const evs = monthEnd();
+  save();
+  if (S.turn >= 96) { await showEvents(evs); renderEnding(); return; }
+  renderMain();
+  await showEvents(evs);
+  renderMain(); save();
+}
+let skipAnim = false;
+function showPhase(r) {
+  return new Promise(res => {
+    const mood = r.mood || moodOf();
+    const daysHTML = r.adv ? `<div style="text-align:left;font-size:14px;line-height:1.9">${r.adv.map((x, i) => `<div class="advl" style="opacity:0;transition:.3s" data-i="${i}">${x[0]} ${esc(x[1])}</div>`).join('')}</div>` :
+      `<div class="days">${r.days.map((d, i) => `<div class="day" data-i="${i}">${i + 1}</div>`).join('')}</div>`;
+    const chips = Object.entries(r.diff).filter(([, v]) => v).map(([k, v]) => `<span class="chip ${(k === 'stress' || k === 'kar') ? (v > 0 ? 'dn' : 'up') : (v > 0 ? 'up' : 'dn')}">${SN[k]} ${v > 0 ? '+' : ''}${v}</span>`).join('');
+    modal(`<div class="muted" style="font-size:13px">${['상순', '중순', '하순'][r.slot]}</div><h3>${r.icon} ${esc(r.title)}</h3>
+      <div class="phase-wrap"><div>${portrait(S.app, { age: ageOf(), outfit: S.outfit, mood, size: 150, bg: mood === 'joy' ? 'gold' : 'pink' })}</div>
+      <div>${daysHTML}<div id="phRes" style="opacity:0;transition:.3s">${r.lines.map(l => `<div style="margin:4px 0">${esc(l)}</div>`).join('')}
+      <div style="margin-top:6px">${r.gold ? `<span class="chip g">${r.gold > 0 ? '+' : ''}${r.gold}G</span>` : ''}${chips}</div></div></div></div>
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn sub sm" id="phSkip">⏩ 빨리</button><button class="btn" id="phNext" disabled>다음 ▶</button></div>`, true);
+    let done = false;
+    const finish = () => { if (done) return; done = true; document.querySelectorAll('.day').forEach((el, i) => el.classList.add(r.days[i] ? 'ok' : 'ng')); document.querySelectorAll('.advl').forEach(el => el.style.opacity = 1); $('#phRes').style.opacity = 1; $('#phNext').disabled = false; $('#phNext').focus(); };
+    $('#phSkip').onclick = () => { skipAnim = true; finish(); };
+    $('#phNext').onclick = () => { closeModal(); res(); };
+    (async () => {
+      const n = r.adv ? r.adv.length : r.days.length, step = r.adv ? 420 : 110;
+      for (let i = 0; i < n && !done; i++) {
+        if (skipAnim) break; await sleep(step);
+        if (r.adv) { const el = document.querySelector(`.advl[data-i="${i}"]`); if (el) el.style.opacity = 1; }
+        else { const el = document.querySelector(`.day[data-i="${i}"]`); if (el) { el.classList.add(r.days[i] ? 'ok' : 'ng'); el.textContent = r.days[i] ? '♥' : '×'; } }
+      }
+      if (!skipAnim) await sleep(200);
+      finish();
+      document.querySelectorAll('.day').forEach((el, i) => el.textContent = r.days[i] ? '♥' : '×');
+    })();
+  });
+}
+async function showEvents(evs) {
+  for (const e of evs) {
+    await new Promise(res => {
+      const ch = e.choices || [{ t: '확인', f: () => { } }];
+      modal(`<h3>${e.title}</h3><div class="phase-wrap"><div>${e.cube ? cubeSVG(150) : portrait(S.app, { age: ageOf(), outfit: S.outfit, mood: e.mood || moodOf(), size: 150, sparkle: e.sparkle })}</div>
+        <div style="font-size:15px;line-height:1.7">${e.text}${e.eff ? `<div style="margin-top:8px">${Object.entries(e.eff).map(([k, v]) => `<span class="chip ${(k === 'stress') === (v > 0) ? 'dn' : 'up'}">${SN[k]} ${v > 0 ? '+' : ''}${v}</span>`).join('')}</div>` : ''}</div></div>
+        <div class="choice">${ch.map((c, i) => `<button class="btn ${i ? 'sub' : ''}" data-ch="${i}">${c.t}</button>`).join('')}</div>`, true);
+      document.querySelectorAll('[data-ch]').forEach(b => b.onclick = () => {
+        const c = ch[+b.dataset.ch]; if (c.f() === false) return;
+        if (e.eff) for (const k in e.eff) growth(k, e.eff[k]);
+        closeModal(); res();
+      });
+    });
+  }
+}
+
+// ================= 대화 / 왕성 / 상점 / 옷장 / 집사 =================
+function talkModal() {
+  modal(`<h3>💬 ${esc(S.name)}와(과) 대화</h3><div class="phase-wrap"><div>${portrait(S.app, { age: ageOf(), outfit: S.outfit, mood: moodOf(), size: 150 })}</div><div class="choice" style="margin:0">
+   <button class="btn sub" data-t="talk">☕ 이런저런 이야기를 나눈다</button><button class="btn sub" data-t="praise">🌸 칭찬해준다</button><button class="btn sub" data-t="scold">⚡ 따끔하게 꾸중한다</button><button class="btn sub" data-t="money">💰 용돈을 준다 (50G)</button></div></div>`);
+  document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+    const t = b.dataset.t; let line = '';
+    if (t === 'talk') { addStress(-6); S.trust = Math.min(100, S.trust + 3); line = S.bad ? '"…흥. 뭐, 조금은 들어줄게."' : pick(['"아빠, 오늘 있잖아요~" 한참 수다를 떨었다.', '"헤헤, 아빠랑 얘기하는 거 좋아요."']); }
+    if (t === 'praise') { addStress(-10); S.trust = Math.min(100, S.trust + 4); growth('tmp', -2); line = S.bad ? '"…칭찬해도 아무것도 안 나와."' : '"정말요? 헤헤… 더 열심히 할게요!"'; }
+    if (t === 'scold') { growth('mor', S.bad ? 10 : 6); addStress(12); growth('kar', -4); S.trust = Math.max(0, S.trust - 5); line = S.bad ? '"……알았다고." 조금은 반성하는 눈치다.' : '"…죄송해요." 시무룩해졌다.'; }
+    if (t === 'money') { if (S.gold < 50) { toast('돈이 부족해요'); return; } S.gold -= 50; addStress(-15); S.trust = Math.min(100, S.trust + 2); growth('tmp', -1); line = '"와아! 고마워요 아빠!"'; }
+    S.done.talk = true; save(); closeModal(); renderMain(); toast(line);
+  });
+}
+function royalModal() {
+  const v = Math.round((S.st.ele + S.st.dec) / 2 + evals().soc * 0.15);
+  const next = S.royal < 6 ? ROYAL[S.royal + 1] : null;
+  modal(`<h3>🏰 왕성 방문</h3><div style="font-size:14px;line-height:1.8">
+    지금까지 만난 분: <b>${S.royal ? ROYAL[S.royal] : '아직 없음'}</b> (${S.royal}/6)<br>
+    ${next ? `다음 단계: <b>${next}</b> — 기품·예의범절이 충분해야 만날 수 있어요. <span class="muted">(현재 품격 ${v} / 필요 ${ROYAL_NEED[S.royal + 1]})</span>` : '국왕 폐하까지 모두 알현했습니다! 폐하께 문안을 올릴 수 있어요.'}</div>
+    <div class="choice"><button class="btn" id="rv">${next ? `🚪 ${next}을(를) 만나러 간다` : '👑 국왕 폐하께 문안드린다'}</button>
+    ${S.royal >= 4 ? `<button class="btn lav" id="rp">🤴 왕자님을 뵈러 간다</button>` : ''}<button class="btn sub" onclick="closeModal()">그만둔다</button></div>`);
+  $('#rv').onclick = () => {
+    S.done.royal = true;
+    let text, mood;
+    if (!next) { S.fame.soc += 8; S.gold += 100; text = '국왕 폐하께서 반갑게 맞아주셨다. "용사의 딸이 참 훌륭하게 자랐구나." (하사금 100G, 사교 평가 ↑)'; mood = 'joy'; }
+    else if (v + R(-15, 15) >= ROYAL_NEED[S.royal + 1]) { S.royal++; S.fame.soc += 12; growth('ele', 4); text = `${ROYAL[S.royal]}을(를) 알현했다! 품위 있는 인사에 모두가 감탄했다. (사교 평가 ↑)`; mood = 'joy'; if (S.royal === 6) S.titles.push('국왕 폐하 알현'); }
+    else { addStress(6); text = `"용사의 딸이라도 예의가 부족하군." ${next}을(를) 만나지 못하고 돌아왔다…`; mood = 'sad'; }
+    closeModal(); save(); renderMain(); showEvents([{ title: '🏰 왕성 방문', text, mood }]).then(renderMain);
+  };
+  if ($('#rp')) $('#rp').onclick = () => {
+    S.done.royal = true;
+    const g = Math.round(1 + S.st.cha / 120 + S.st.ele / 150 + (S.outfit === 'ball' ? 3 : S.outfit === 'silk' ? 2 : 0));
+    S.prince = Math.min(100, S.prince + g); growth('cha', 2);
+    const line = S.prince >= 70 ? '"당신과 함께 있으면 시간 가는 줄 모르겠군요." 왕자님의 눈빛이 다정하다.' : S.prince >= 35 ? '왕자님과 정원을 산책하며 이야기를 나눴다.' : '왕자님은 예의 바르게 인사했지만, 아직 조금 서먹하다.';
+    closeModal(); save(); renderMain(); showEvents([{ title: '🤴 왕자님', text: `${line}<br><span class="muted">왕자님 호감 +${g} (현재 ${S.prince})</span>`, mood: 'shy', sparkle: S.prince >= 70 }]).then(renderMain);
+  };
+}
+function shopModal() {
+  const tab = shopModal.tab || 'item';
+  const body = tab === 'item' ? ITEMS.map(it => `<button class="op" data-it="${it.id}" ${S.gold >= it.price ? '' : 'disabled'}><div class="h">${it.ic} ${it.n}</div><div class="muted">${it.d}</div><span class="chip g">${it.price}G</span></button>`).join('')
+    : DRESSES.filter(d => d.price).map(d => { const own = S.owned.includes(d.id); return `<button class="op" data-dr="${d.id}" ${own || S.gold < d.price ? 'disabled' : ''}><div style="pointer-events:none">${portrait(S.app, { age: ageOf(), outfit: d.id, mood: 'smile', size: 120, bg: 'lav' })}</div><div class="h">${d.n}</div><div class="muted">${Object.entries(d.eff).map(([k]) => SN[k] + '↑').join(' ')} (입고 있으면 매달)</div><span class="chip g">${own ? '보유 중' : d.price + 'G'}</span></button>`; }).join('');
+  modal(`<h3>🛍️ 상점 <span class="muted" style="font-size:14px">💰 ${S.gold}G</span></h3><div class="tabs"><button class="tab ${tab === 'item' ? 'on' : ''}" data-st="item">🎁 잡화점</button><button class="tab ${tab === 'dress' ? 'on' : ''}" data-st="dress">👗 의상실</button></div><div class="opts">${body}</div><div class="center" style="margin-top:12px"><button class="btn sub" onclick="closeModal();renderMain()">나가기</button></div>`);
+  document.querySelectorAll('[data-st]').forEach(b => b.onclick = () => { shopModal.tab = b.dataset.st; shopModal(); });
+  document.querySelectorAll('[data-it]').forEach(b => b.onclick = () => { const it = ITEMS.find(x => x.id === b.dataset.it); if (S.gold < it.price) return; S.gold -= it.price; useItem(it); save(); shopModal(); });
+  document.querySelectorAll('[data-dr]').forEach(b => b.onclick = () => { const d = DRESSES.find(x => x.id === b.dataset.dr); if (S.gold < d.price) return; S.gold -= d.price; S.owned.push(d.id); S.outfit = d.id; save(); toast(`${d.n}을(를) 샀어요! 바로 입혀봤어요.`); shopModal(); });
+}
+function wardModal() {
+  const accs = ACCS.concat(S.royal >= 6 || S.flags.missQueen ? [['tiara', '티아라']] : []);
+  modal(`<h3>👗 옷장</h3><div class="opts">${S.owned.map(id => { const d = DRESSES.find(x => x.id === id); return `<button class="op" data-w="${id}" style="${S.outfit === id ? 'border-color:var(--pink);background:#fff4f8' : ''}"><div style="pointer-events:none">${portrait(S.app, { age: ageOf(), outfit: id, mood: 'smile', size: 120, bg: 'lav' })}</div><div class="h">${d.n} ${S.outfit === id ? '✔' : ''}</div></button>`; }).join('')}</div>
+   <div class="opt"><div class="lb">머리 장식</div><div class="chips">${accs.map(([v, n]) => `<button class="ch ${S.app.acc === v ? 'on' : ''}" data-ac="${v}">${n}</button>`).join('')}</div></div>
+   <div class="center"><button class="btn sub" onclick="closeModal();renderMain()">닫기</button></div>`);
+  document.querySelectorAll('[data-w]').forEach(b => b.onclick = () => { S.outfit = b.dataset.w; save(); wardModal(); });
+  document.querySelectorAll('[data-ac]').forEach(b => b.onclick = () => { S.app.acc = b.dataset.ac; save(); wardModal(); });
+}
+function cubeSVG(size) {
+  return `<svg viewBox="0 0 240 300" width="${size}" style="max-width:100%;display:block;margin:0 auto"><rect width="240" height="300" rx="16" fill="#e8e4f4"/><rect width="240" height="300" rx="16" fill="url(#none)"/>
+   <path d="M40 300L60 200Q120 180 180 200L200 300Z" fill="#2a2638"/><path d="M104 196L120 250L136 196Z" fill="#fff"/><path d="M112 204l8 6l8 -6l-8 -4Z" fill="#c0304a"/>
+   <path d="M108 170L108 200L132 200L132 170Z" fill="#f2dcc8"/>
+   <path d="M76 110C76 60 164 60 164 110C164 150 148 178 120 182C92 178 76 150 76 110Z" fill="#f6e2d0" stroke="#c8a890"/>
+   <path d="M72 112C66 50 174 50 168 112L160 92Q140 70 120 84Q100 70 80 92Z" fill="#4a4660" stroke="#2a2638"/>
+   <path d="M90 120Q100 114 110 120M130 120Q140 114 150 120" stroke="#2a2638" stroke-width="3" fill="none" stroke-linecap="round"/>
+   <circle cx="140" cy="122" r="13" fill="none" stroke="#c8a040" stroke-width="2"/><path d="M153 124Q160 150 158 176" stroke="#c8a040" fill="none"/>
+   <path d="M108 154Q120 160 132 154" stroke="#8a5050" stroke-width="2" fill="none" stroke-linecap="round"/>
+   <path d="M94 56L120 6L146 56Z" fill="#2a2638"/><ellipse cx="120" cy="58" rx="40" ry="7" fill="#2a2638"/>
+   ${star(200, 50, 7, '#fff')}${star(40, 90, 5, '#fff')}</svg>`;
+}
+function cubeModal() {
+  const en = decideEnding(), e = evals(), a = ageOf();
+  const tips = [];
+  if (S.st.stress >= 60) tips.push('아가씨께서 많이 지치셨습니다. 휴식이나 바캉스를 권해드립니다.');
+  if (S.gold < 100) tips.push('가계가 빠듯합니다. 아르바이트로 생활비를 버셔야겠습니다.');
+  if (S.bad) tips.push('반항기이십니다… 꾸중으로 도덕심을 다잡고, 스트레스를 풀어드리십시오.');
+  if (S.royal < 2 && a >= 11) tips.push('왕성 방문은 매달 하실 수 있습니다. 예법 수업이 도움이 될 겁니다.');
+  if (!tips.length) tips.push('아가씨께서는 건강하게 잘 자라고 계십니다.');
+  const best = [['전사', e.war], ['마법', e.mag], ['사교', e.soc], ['가사', e.house]].sort((x, y) => y[1] - x[1])[0];
+  modal(`<h3>🎩 집사 큐브</h3><div class="phase-wrap"><div>${cubeSVG(150)}</div><div style="font-size:14px;line-height:1.8">
+   "주인님, 보고드립니다."<br>${tips.map(t => '• ' + t).join('<br>')}<br><br>
+   "지금 아가씨는 <b>${best[0]}</b> 쪽 재능이 돋보이십니다. 이대로라면 장차… <b>「${en.n}」</b>의 길을 걸으실 것 같군요."</div></div>
+   <div class="center" style="margin-top:12px"><button class="btn" onclick="closeModal()">고맙네, 큐브</button></div>`);
+}
+function recordModalSelf() {
+  modal(`<h3>🏅 ${esc(S.name)}의 기록</h3><div style="font-size:14px;line-height:1.8">
+    🏰 왕성: ${S.royal ? ROYAL[S.royal] + '까지 알현' : '아직 방문 전'}<br>💗 부녀 친밀도: ${S.trust} &nbsp; 🎁 수호신 봉납: ${S.offer}G<br>
+    🏆 칭호: ${S.titles.length ? S.titles.map(esc).join(', ') : '없음'}<br>
+    📚 수업: ${EDU.filter(e => S.lv[e.id]).map(e => `${e.n} ${TIERS[tierOf(e.id)]}(${S.lv[e.id]}회)`).join(', ') || '없음'}<br>
+    💼 아르바이트: ${JOBS.filter(j => S.cnt[j.id]).map(j => `${j.n} ${S.cnt[j.id]}회`).join(', ') || '없음'}</div>
+    <div class="center" style="margin-top:12px"><button class="btn" onclick="closeModal()">닫기</button></div>`);
+}
+
+// ================= 모달 =================
+function modal(html, locked) {
+  closeModal();
+  const m = document.createElement('div'); m.className = 'mask'; m.id = 'mask';
+  m.innerHTML = `<div class="modal">${html}</div>`;
+  if (!locked) m.onclick = ev => { if (ev.target === m) { closeModal(); } };
+  document.body.appendChild(m);
+}
+function closeModal() { const m = $('#mask'); if (m) m.remove(); }
+
+// ================= 엔딩 & 랭킹 =================
+function renderEnding() {
+  const en = decideEnding(), e = evals(), score = finalScore(S, en);
+  const face = JSON.stringify({ ...S.app, o: en.o, acc: en.acc, bg: en.bg, eye: en.eye || '' });
+  const rec = {
+    player: S.father, daughter: S.name, face, ending: en.n, grade: en.tier, score,
+    detail: JSON.stringify({ e, st: S.st, titles: S.titles, royal: S.royal, prince: S.prince, trust: S.trust, h: S.height, zod: ZODIAC[S.zod][0], blood: S.blood, gold: S.gold, txt: en.txt(S.name) })
+  };
+  app.innerHTML = `<div class="card" style="padding:22px;margin-top:10px"><div class="center muted serif" style="font-size:16px;letter-spacing:4px">— 그리고 8년 후 —</div>
+   <div class="ending" style="margin-top:12px"><div>${portrait(S.app, { age: 18, outfit: en.o, acc: en.acc, bg: en.bg, eyeOverride: en.eye, mood: en.id === 'runaway' ? 'sad' : 'smile', size: 380, sparkle: en.tier === 'S' })}</div>
+   <div><div class="muted">${esc(S.name)}, 18세 · 등급 <b style="color:#c2416d">${en.tier}</b></div><div class="etitle">「${en.n}」</div>
+   <p style="font-size:16px;line-height:1.85">${esc(en.txt(S.name))}</p>
+   <div class="bars" style="margin:14px 0">${[['⚔️ 전사', e.war], ['🔮 마법', e.mag], ['🫖 사교', e.soc], ['🧺 가사', e.house]].map(([n, v]) => `<div class="bar e"><div class="l"><span>${n} 평가</span><b>${v}</b></div><div class="t"><i style="width:${clamp(v / 5, 0, 100)}%"></i></div></div>`).join('')}</div>
+   <div style="font-size:14px">🏆 칭호 ${S.titles.length}개 · 🏰 ${S.royal ? ROYAL[S.royal] : '-'} · 💗 친밀도 ${S.trust}</div>
+   <div class="serif" style="font-size:30px;color:#a77a1c;margin:10px 0">총점 ${score.toLocaleString()}</div>
+   <div id="rankMsg" class="muted">🏆 명예의 전당에 기록하는 중…</div>
+   <div class="row" style="margin-top:14px"><button class="btn" id="bAgain">🌹 새 딸 키우기</button><button class="btn lav" id="bRank">🏆 명예의 전당</button></div></div></div></div>`;
+  clearSave();
+  $('#bAgain').onclick = renderCreate; $('#bRank').onclick = () => renderRanking(rec);
+  submitScore(rec);
+}
+async function fetchRetry(url, opts = {}) {
+  const until = Date.now() + 70000;
+  for (; ;) {
+    try {
+      const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), Math.max(1000, until - Date.now()));
+      const r = await fetch(url, { ...opts, signal: ctl.signal }); clearTimeout(to);
+      if (r.status < 500) return r;
+    } catch (e) { /* 무료 서버가 깨어나는 중 */ }
+    if (Date.now() + 10000 > until) throw new Error('timeout');
+    await sleep(10000);
+  }
+}
+function localRanks() { try { return JSON.parse(localStorage.getItem(LOCAL_RANK_KEY)) || []; } catch (e) { return []; } }
+async function submitScore(rec) {
+  try { const l = localRanks(); l.push({ ...rec, created_at: new Date().toISOString().slice(0, 19).replace('T', ' ') }); l.sort((a, b) => b.score - a.score); localStorage.setItem(LOCAL_RANK_KEY, JSON.stringify(l.slice(0, 50))); } catch (e) { }
+  const msg = t => { const el = $('#rankMsg'); if (el) el.innerHTML = t; };
+  const slow = setTimeout(() => msg('🏆 랭킹 서버 깨우는 중… (최대 1분)'), 4000);
+  try {
+    const r = await fetchRetry(SERVER + '/api/princess/submit', { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ ...rec, key: RANK_API_KEY }) });
+    const j = await r.json(); if (!r.ok) throw new Error(j.error);
+    msg(`🏆 명예의 전당 <b>${j.rank}위</b>로 등록되었습니다!`);
+  } catch (e) { msg('⚠️ 랭킹 서버 연결 실패 — 이 PC 기록에만 저장했어요.'); }
+  clearTimeout(slow);
+}
+function faceThumb(r, size) {
+  let f = null; try { f = JSON.parse(r.face); } catch (e) { }
+  if (!f || f.hc === undefined) return `<div style="width:${size}px;font-size:30px">👧</div>`;
+  return `<div style="width:${size}px;flex:none">${portrait(f, { age: 18, outfit: f.o, acc: f.acc, bg: f.bg, eyeOverride: f.eye || undefined, mood: 'smile', size })}</div>`;
+}
+async function renderRanking(mine) {
+  app.innerHTML = `<div style="max-width:720px;margin:0 auto;padding-top:10px"><h2 class="center" style="color:#c2416d">🏆 명예의 전당</h2>
+   <div class="muted center" style="font-size:12px;margin:-8px 0 10px">총점 = 4대 평가 합 + 엔딩 등급 보너스 + 수확제 우승 + 왕성 알현 + 부녀 친밀도</div>
+   <div class="tabs" style="justify-content:center"><button class="tab on" id="tAll">전체 랭킹</button><button class="tab" id="tLocal">이 PC 기록</button></div>
+   <div class="card" id="rk" style="padding:8px"><div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div></div>
+   <div class="center" style="margin-top:14px"><button class="btn sub" id="bBack">🏠 타이틀로</button></div></div>`;
+  $('#bBack').onclick = renderTitle;
+  const draw = rows => {
+    if (!rows.length) { $('#rk').innerHTML = '<div class="center muted" style="padding:30px 0">아직 기록이 없어요. 첫 번째 공주님을 키워보세요!</div>'; return; }
+    $('#rk').innerHTML = rows.map((r, i) => {
+      const me = mine && r.player === mine.player && r.daughter === mine.daughter && Math.abs(r.score - mine.score) < 1;
+      return `<div class="rank-row ${me ? 'me' : ''}" data-i="${i}"><div class="no">${i + 1}</div>${faceThumb(r, 52)}
+       <div class="info"><div><b>${esc(r.daughter)}</b> <span class="muted" style="font-size:12px">아빠 ${esc(r.player)}</span></div><div style="font-size:13px">「${esc(r.ending)}」 <span class="chip">${esc(r.grade)}</span></div></div>
+       <div class="sc">${Number(r.score).toLocaleString()}<div class="muted" style="font-size:10px;font-weight:400">자세히 ›</div></div></div>`;
+    }).join('');
+    $('#rk').querySelectorAll('.rank-row').forEach(el => el.onclick = () => rankDetail(rows[el.dataset.i]));
+  };
+  const showLocal = () => { $('#tLocal').classList.add('on'); $('#tAll').classList.remove('on'); draw(localRanks()); };
+  const showAll = async () => {
+    $('#tAll').classList.add('on'); $('#tLocal').classList.remove('on');
+    $('#rk').innerHTML = '<div class="center muted" style="padding:30px 0">불러오는 중… (서버가 잠들어 있으면 최대 1분)</div>';
+    try {
+      const r = await fetchRetry(`${SERVER}/api/princess/top?key=${RANK_API_KEY}&limit=50`);
+      const j = await r.json(); if (!r.ok) throw 0;
+      if ($('#tAll')?.classList.contains('on')) draw(j.rows);
+    } catch (e) { if ($('#tAll')?.classList.contains('on')) $('#rk').innerHTML = '<div class="center muted" style="padding:20px 0">⚠️ 랭킹 서버에 연결할 수 없어요.<br>「이 PC 기록」 탭에서 내 기록을 볼 수 있어요.</div>'; }
+  };
+  $('#tAll').onclick = showAll; $('#tLocal').onclick = showLocal;
+  showAll();
+}
+function rankDetail(r) {
+  let d = {}; try { d = JSON.parse(r.detail || '{}'); } catch (e) { }
+  const e = d.e || {};
+  modal(`<div class="phase-wrap" style="grid-template-columns:170px 1fr">${faceThumb(r, 170)}<div><div class="muted" style="font-size:13px">${esc(r.created_at || '')} · 아빠 ${esc(r.player)}</div>
+   <h3 style="margin:4px 0">${esc(r.daughter)} — 「${esc(r.ending)}」</h3><div style="font-size:13px;line-height:1.7">${esc(d.txt || '')}</div></div></div>
+   <div style="font-size:13px;line-height:1.8;margin-top:10px">⚔️ 전사 ${e.war ?? '-'} · 🔮 마법 ${e.mag ?? '-'} · 🫖 사교 ${e.soc ?? '-'} · 🧺 가사 ${e.house ?? '-'}<br>
+   ${d.zod ? `⭐ ${esc(d.zod)} · ${esc(d.blood)}형 · ${d.h}cm · ` : ''}🏰 ${d.royal ? ROYAL[d.royal] : '-'} · 💗 친밀도 ${d.trust ?? '-'}<br>🏆 칭호: ${(d.titles || []).map(esc).join(', ') || '없음'}</div>
+   <div class="center" style="margin-top:12px"><span class="serif" style="font-size:22px;color:#a77a1c">총점 ${Number(r.score).toLocaleString()}</span></div>
+   <div class="center" style="margin-top:10px"><button class="btn" onclick="closeModal()">닫기</button></div>`);
+}
+
+// 밸런스 확인용 (브라우저 콘솔에서 __pm.sim(...))
+window.__pm = {
+  get S() { return S; }, set S(v) { S = v; }, newState, rollStats, runPhase, monthEnd, decideEnding, finalScore, evals, power, ENDINGS, EDU, JOBS,
+  sim(policy, n = 1) {
+    const out = [];
+    for (let k = 0; k < n; k++) {
+      const bm = RI(1, 12), bd = RI(1, 28), blood = pick(['A', 'B', 'O', 'AB']);
+      S = newState({ father: 'bot', name: 'bot', bm, bd, blood, app: { hair: 'long', bangs: 'hime', hc: 0, ec: 0, sk: 0, eye: 'round', acc: 'none', dc: '#f6a5c0' }, st: rollStats(blood, zodiacOf(bm, bd)) });
+      while (S.turn < 96) {
+        if (S.royal < 6 || policy.prince) {
+          const v = (S.st.ele + S.st.dec) / 2 + evals().soc * 0.15;
+          if (S.royal < 6 && v + R(-15, 15) >= ROYAL_NEED[S.royal + 1]) { S.royal++; S.fame.soc += 12; } else if (S.royal >= 4 && policy.prince) S.prince = Math.min(100, S.prince + Math.round(1 + S.st.cha / 120 + S.st.ele / 150));
+        }
+        if (S.st.stress > 30) { addStress(-6); S.trust = Math.min(100, S.trust + 3); }
+        const plan = policy.plan(S);
+        for (let i = 0; i < 3; i++) {
+          let ac = (i === 0 && S.sick) ? { k: 'sickbed', id: 'x' } : plan[i];
+          if (monthOf() === 10 && i === 2) ac = { k: 'fest', id: policy.fest || 'fight' };
+          if (ac.k === 'job' && !actAvailable(ac).ok) ac = { k: 'job', id: 'house' };
+          if (ac.k === 'adv' && !actAvailable(ac).ok) ac = { k: 'rest', id: 'home' };
+          runPhase(ac, i);
+        }
+        const evs = monthEnd();
+        for (const e of evs) { if (e.choices) e.choices[0].f(); if (e.eff) for (const kk in e.eff) growth(kk, e.eff[kk]); }
+      }
+      const en = decideEnding(); out.push({ en: en.n, tier: en.tier, score: finalScore(S, en), e: evals(), gold: S.gold, st: { ...S.st }, royal: S.royal, prince: S.prince });
+    }
+    return out;
+  }
+};
+
+renderTitle();
+</script>
+</body>
+</html>

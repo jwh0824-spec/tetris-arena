@@ -78,6 +78,17 @@ async function initScoreStore() {
         created_at TEXT NOT NULL
       )`);
       await pool.query("ALTER TABLE younggam_scores ADD COLUMN IF NOT EXISTS detail TEXT");
+      await pool.query(`CREATE TABLE IF NOT EXISTS princess_scores (
+        id SERIAL PRIMARY KEY,
+        player TEXT NOT NULL,
+        daughter TEXT,
+        face TEXT,
+        ending TEXT,
+        grade TEXT,
+        score DOUBLE PRECISION NOT NULL,
+        detail TEXT,
+        created_at TEXT NOT NULL
+      )`);
       pg = { pool };
       console.log("Score DB: connected to Postgres (DATABASE_URL) — records persist across redeploys.");
       return;
@@ -140,6 +151,17 @@ async function initScoreStore() {
       created_at TEXT NOT NULL
     )`);
     try { db.exec("ALTER TABLE younggam_scores ADD COLUMN detail TEXT"); } catch (e) { /* already there */ }
+    db.exec(`CREATE TABLE IF NOT EXISTS princess_scores (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      player TEXT NOT NULL,
+      daughter TEXT,
+      face TEXT,
+      ending TEXT,
+      grade TEXT,
+      score REAL NOT NULL,
+      detail TEXT,
+      created_at TEXT NOT NULL
+    )`);
     console.log("Score DB: local SQLite (tetris.db) — set DATABASE_URL for a persistent DB on cloud hosts.");
   } catch (e) {
     console.log("Warning: node:sqlite unavailable (" + e.message + "). Score history disabled; needs Node 22.5+.");
@@ -345,6 +367,53 @@ function handleYounggam(req, res, u) {
   send(res, 404, { error: "not found" });
 }
 
+// ---- 프린세스 메이커 (daughter-raising game) final-result ranking.
+// score = sum of the four evaluations (전사/마법/사교/가사) + ending bonus, computed client-side.
+const PRINCESS_KEY = "princess-2026";
+
+async function savePrincess(d) {
+  const row = [
+    String(d.player).trim().slice(0, 20), String(d.daughter || "").slice(0, 20), String(d.face || "").slice(0, 400),
+    String(d.ending || "").slice(0, 30), String(d.grade || "").slice(0, 10),
+    Number.isFinite(Number(d.score)) ? Math.round(Number(d.score)) : 0,
+    String(d.detail || "").slice(0, 8000), new Date().toISOString().slice(0, 19).replace("T", " ")
+  ];
+  const cols = "(player, daughter, face, ending, grade, score, detail, created_at)";
+  if (pg) {
+    await pg.pool.query(`INSERT INTO princess_scores ${cols} VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`, row);
+    return Number((await pg.pool.query("SELECT COUNT(*) AS c FROM princess_scores WHERE score > $1", [row[5]])).rows[0].c) + 1;
+  }
+  db.prepare(`INSERT INTO princess_scores ${cols} VALUES (?,?,?,?,?,?,?,?)`).run(...row);
+  return db.prepare("SELECT COUNT(*) AS c FROM princess_scores WHERE score > ?").get(row[5]).c + 1;
+}
+
+async function princessTop(limit) {
+  const cols = "player, daughter, face, ending, grade, score, detail, created_at";
+  if (pg) return (await pg.pool.query(`SELECT ${cols} FROM princess_scores ORDER BY score DESC LIMIT $1`, [limit])).rows;
+  return db.prepare(`SELECT ${cols} FROM princess_scores ORDER BY score DESC LIMIT ?`).all(limit);
+}
+
+function handlePrincess(req, res, u) {
+  if (!pg && !db) { send(res, 501, { error: "score db unavailable" }); return; }
+  const fail = () => send(res, 500, { error: "db error" });
+  if (req.method === "POST" && u.pathname === "/api/princess/submit") {
+    readJsonBody(req, (err, d) => {
+      if (err) { send(res, 400, { error: "bad json" }); return; }
+      if (d.key !== PRINCESS_KEY) { send(res, 403, { error: "forbidden" }); return; }
+      if (!String(d.player || "").trim() || !Number.isFinite(Number(d.score))) { send(res, 400, { error: "invalid" }); return; }
+      savePrincess(d).then((rank) => send(res, 200, { ok: true, rank })).catch(fail);
+    });
+    return;
+  }
+  if (req.method === "GET" && u.pathname === "/api/princess/top") {
+    if (u.searchParams.get("key") !== PRINCESS_KEY) { send(res, 403, { error: "forbidden" }); return; }
+    const limit = Math.min(100, Math.max(1, Number(u.searchParams.get("limit")) || 30));
+    princessTop(limit).then((rows) => send(res, 200, { rows })).catch(fail);
+    return;
+  }
+  send(res, 404, { error: "not found" });
+}
+
 /**
  * roomId -> { players: Map(id -> presenceObject), events: [{seq,topic,data,ts}], seq,
  *             joinSeq (join order counter), left: Map("id:sess" -> ts), touched }
@@ -423,6 +492,15 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && (u.pathname === "/younggam" || u.pathname === "/younggam/" || u.pathname === "/younggam.html")) {
     fs.readFile(path.join(__dirname, "younggam.html"), (err, html) => {
       if (err) { send(res, 404, { error: "younggam.html not found" }); return; }
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
+      res.end(html);
+    });
+    return;
+  }
+  // 프린세스 메이커 (daughter-raising game) lives here too, next to its ranking API
+  if (req.method === "GET" && (u.pathname === "/princess" || u.pathname === "/princess/" || u.pathname === "/princess.html")) {
+    fs.readFile(path.join(__dirname, "princess.html"), (err, html) => {
+      if (err) { send(res, 404, { error: "princess.html not found" }); return; }
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
       res.end(html);
     });
@@ -548,6 +626,7 @@ const server = http.createServer((req, res) => {
 
   if (u.pathname.startsWith("/api/homerun/")) { handleHomerun(req, res, u); return; }
   if (u.pathname.startsWith("/api/younggam/")) { handleYounggam(req, res, u); return; }
+  if (u.pathname.startsWith("/api/princess/")) { handlePrincess(req, res, u); return; }
 
   send(res, 404, { error: "not found" });
 });
