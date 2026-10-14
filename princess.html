@@ -373,7 +373,7 @@ function eyeSVG(ex, ey, sd, t, shape, mood, E, id, SK, H) {
     s += `<path d="M${outer} ${ey - h * 0.22 + dy}L${outer + sd * 4.2} ${ey - h * 0.48 + dy}L${outer + sd * 1.2} ${ey - h * 0.02 + dy}Z" fill="${lash}"/>`;
     s += `<path d="M${inner + sd * 4} ${ey - h * 0.84}Q${ex + sd * 1} ${ey - h * 1.0} ${outer - sd * 1.5} ${ey - h * 0.74 + dy}" stroke="#7a5048" stroke-width=".8" fill="none" opacity=".6"/>`;
   }
-  s += `<path d="M${outer - sd * 0.5} ${ey + h * 0.1 + dy * 0.5}Q${ex + sd * 3} ${ey + h * 0.52} ${ex - sd * 1} ${ey + h * 0.5}" stroke="${lash}" stroke-width=".9" fill="none" opacity=".65" stroke-linecap="round"/>`;
+  s += `<path d="M${outer - sd * 0.5} ${ey + h * 0.1 + dy * 0.5}Q${ex + sd * 3} ${ey + h * 0.44} ${ex - sd * 1} ${ey + h * 0.44}" stroke="${lash}" stroke-width=".9" fill="none" opacity=".65" stroke-linecap="round"/>`;
   return s;
 }
 function bangsSVG(type, cx, hw, eyeY, fillAttr, Hd) {
