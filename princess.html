@@ -5,126 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>프린세스 메이커</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#fdf3f7; --bg2:#f6e8f4; --card:#ffffffd9; --ink:#4a3348; --muted:#9a7f97; --line:#ecd3e4;
-  --pink:#e8739a; --pink2:#f7b6cb; --lav:#a58ad6; --gold:#c99a3a; --mint:#59b394; --red:#d9536b; --blue:#5b8fd6;
+  --bg:#efe7d8; --bg2:#e4d9c4; --card:#fbf7efef; --ink:#3a2c27; --muted:#86766a; --line:#dccbad;
+  --pink:#a8434f; --pink2:#d9b98a; --lav:#4c8789; --gold:#b8893a; --mint:#5a8a6a; --red:#a8434f; --blue:#4c6a9a;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:radial-gradient(circle at 15% 10%,#fff 0,transparent 40%),linear-gradient(160deg,var(--bg),var(--bg2));color:var(--ink);font-family:'Gowun Dodum',sans-serif;min-height:100vh}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(#e7b9d0 1px,transparent 1.2px);background-size:14px 14px;opacity:.25}
+body{background:radial-gradient(ellipse at 50% 0%,#fbf6ec 0,transparent 60%),linear-gradient(170deg,var(--bg),var(--bg2));color:var(--ink);font-family:'Gowun Dodum',sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 8C34 16 34 22 30 28C26 22 26 16 30 8ZM14 34C20 32 25 35 30 42C23 44 18 41 14 34ZM46 34C40 32 35 35 30 42C37 44 42 41 46 34Z' fill='%236a4a30'/%3E%3C/svg%3E")}
 #app{max-width:1180px;margin:0 auto;padding:12px 16px 40px;position:relative}
 h1,h2,h3,.serif{font-family:'Gowun Batang',serif}
 button{font-family:inherit;cursor:pointer}
-.btn{border:0;border-radius:999px;padding:10px 18px;font-size:15px;background:linear-gradient(180deg,#f59bb9,#e46f97);color:#fff;box-shadow:0 3px 0 #c2507a,0 6px 14px #e46f9740;transition:.12s}
-.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
-.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #c2507a}
+.btn{border:1px solid #6e2630;border-radius:6px;padding:10px 18px;font-size:15px;font-family:'Gowun Batang',serif;background:linear-gradient(180deg,#b9545f,#8c3340);color:#fbf1e2;box-shadow:inset 0 0 0 1px #d9a0786b,0 2px 0 #5a1c24,0 6px 14px #5a1c2430;transition:.12s;letter-spacing:.5px}
+.btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #5a1c24}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn.sub{background:linear-gradient(180deg,#fff,#f7eaf2);color:var(--ink);box-shadow:0 3px 0 #dcbfd2}
-.btn.lav{background:linear-gradient(180deg,#b9a0ea,#9277cf);box-shadow:0 3px 0 #6f56aa}
-.btn.gold{background:linear-gradient(180deg,#f0cf78,#cf9c34);box-shadow:0 3px 0 #9c7220}
+.btn.sub{background:linear-gradient(180deg,#fdf9f1,#efe5d2);color:var(--ink);border-color:#c9ad7a;box-shadow:inset 0 0 0 1px #fff8,0 2px 0 #c9ad7a}
+.btn.lav{background:linear-gradient(180deg,#5d9a9b,#3d7072);border-color:#2a5254;box-shadow:inset 0 0 0 1px #bfe0d86b,0 2px 0 #24484a}
+.btn.gold{background:linear-gradient(180deg,#dcb468,#b0832f);border-color:#7a5818;box-shadow:0 2px 0 #7a5818}
 .btn.sm{padding:6px 12px;font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px #c98fb022;backdrop-filter:blur(4px)}
+.card{background:var(--card);border:1px solid #c9ad7a;border-radius:8px;box-shadow:inset 0 0 0 4px #fbf7ef,inset 0 0 0 5px #e6d6b6,0 8px 24px #5a3a2018}
 .muted{color:var(--muted)}
 .center{text-align:center}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#f8e6ef;margin:2px}
-.chip.up{background:#e3f4ec;color:#2f7d5c}.chip.dn{background:#fbe3e7;color:#b03a52}.chip.g{background:#fbf0d6;color:#8c6514}
+.chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;background:#f1e7d6;margin:2px}
+.chip.up{background:#e2eee2;color:#3a6a48}.chip.dn{background:#f5e0e0;color:#963a44}.chip.g{background:#f6ead0;color:#7a5818}
 /* title */
-.title-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;min-height:90vh}
-.logo{font-family:'Gowun Batang',serif;font-size:56px;line-height:1.05;margin:0;color:#d3577f;text-shadow:0 2px 0 #fff,0 0 22px #fff,0 4px 18px #e46f9760;letter-spacing:-1px}
-.logo small{display:block;font-size:20px;color:var(--lav);letter-spacing:6px;margin-bottom:6px}
-.title-menu{display:flex;flex-direction:column;gap:12px;max-width:300px;margin-top:26px}
-.sparkle{animation:tw 2.4s infinite ease-in-out}
-@keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
-@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.float{animation:floaty 4s infinite ease-in-out}
+.title-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;min-height:90vh}
+.logo{font-family:'Gowun Batang',serif;font-size:54px;line-height:1.1;margin:0;color:#8c3340;text-shadow:0 1px 0 #fff8}
+.logo small{display:block;font-size:15px;color:var(--gold);letter-spacing:8px;margin-bottom:10px}
+.title-menu{display:flex;flex-direction:column;gap:12px;max-width:320px;margin-top:26px}
+.orn{color:var(--gold);letter-spacing:6px;font-size:14px}
 /* create */
-.create{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
-.create .pv{position:sticky;top:12px;padding:14px}
+.create{display:grid;grid-template-columns:370px 1fr;gap:18px;align-items:start}
+.create .pv{position:sticky;top:12px;padding:16px}
 .opt{margin:10px 0}
 .opt .lb{font-size:13px;color:var(--muted);margin-bottom:5px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.ch{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:6px 10px;font-size:13px;color:var(--ink)}
-.ch.on{border-color:var(--pink);background:#fde9f1;color:#c2416d;font-weight:bold}
-.sw{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--line);padding:0}
+.ch{border:1px solid var(--line);background:#fffdf8;border-radius:5px;padding:6px 10px;font-size:13px;color:var(--ink)}
+.ch.on{border-color:var(--pink);background:#f6e4e0;color:#8c3340;font-weight:bold}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid #fffdf8;box-shadow:0 0 0 1px #c9ad7a;padding:0}
 .sw.on{box-shadow:0 0 0 3px var(--pink)}
-input[type=text],select{font-family:inherit;font-size:15px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+input[type=text],select{font-family:inherit;font-size:15px;padding:8px 10px;border-radius:5px;border:1px solid #c9ad7a;background:#fffdf8;color:var(--ink)}
 .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 12px;font-size:13px}
 /* main */
-.top{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .top .date{font-family:'Gowun Batang',serif;font-size:20px}
-.top .gold{font-weight:bold;color:#a77a1c;font-size:18px}
+.top .gold{font-weight:bold;color:#8a6414;font-size:18px;font-family:'Gowun Batang',serif}
 .main{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
-.pcard{padding:14px;text-align:center}
-.pcard .nm{font-family:'Gowun Batang',serif;font-size:22px;margin:6px 0 0}
-.bubble{position:relative;background:#fff;border:1.5px solid var(--pink2);border-radius:14px;padding:8px 12px;margin:10px 4px 8px;font-size:14px;min-height:38px}
-.bubble:before{content:"";position:absolute;top:-8px;left:50%;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom-color:var(--pink2)}
+.pcard{padding:16px;text-align:center}
+.pcard .nm{font-family:'Gowun Batang',serif;font-size:22px;margin:8px 0 0}
+.bubble{position:relative;background:#fffdf8;border:1px solid #c9ad7a;border-radius:6px;padding:8px 12px;margin:12px 4px 8px;font-size:14px;min-height:38px;font-family:'Gowun Batang',serif}
+.bubble:before{content:"";position:absolute;top:-7px;left:50%;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom-color:#c9ad7a}
 .acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
-.act{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 4px;font-size:13px;color:var(--ink)}
-.act b{display:block;font-size:20px;font-weight:normal}
+.act{border:1px solid var(--line);background:#fffdf8;border-radius:6px;padding:8px 4px;font-size:13px;color:var(--ink)}
+.act:hover:not(:disabled){border-color:var(--gold)}
+.act b{display:block;font-size:19px;font-weight:normal}
 .act:disabled{opacity:.4;cursor:not-allowed}
-.sched{padding:14px}
+.sched{padding:16px}
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
-.slot{border:2px dashed var(--pink2);border-radius:14px;background:#fff;padding:10px 6px;min-height:92px;color:var(--ink);text-align:center}
-.slot.set{border-style:solid;background:linear-gradient(180deg,#fff,#fdf0f6)}
+.slot{border:1px dashed #c9ad7a;border-radius:6px;background:#fffdf8;padding:10px 6px;min-height:92px;color:var(--ink);text-align:center}
+.slot.set{border-style:solid;background:linear-gradient(180deg,#fffdf8,#f6eedf)}
 .slot .when{font-size:12px;color:var(--muted)}
-.slot .ic{font-size:26px}
-.slot .nm2{font-size:14px;font-weight:bold}
-.slot.lock{border-color:var(--gold);background:#fff9ea}
+.slot .ic{font-size:24px}
+.slot .nm2{font-size:14px;font-weight:bold;font-family:'Gowun Batang',serif}
+.slot.lock{border-color:var(--gold);background:#fbf3df}
 .tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-.tab{border:0;background:#f5e4ee;color:var(--ink);padding:6px 14px;border-radius:999px;font-size:13px}
-.tab.on{background:var(--pink);color:#fff}
-.stats{padding:14px}
-.bars{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.tab{border:1px solid var(--line);background:#f6eee0;color:var(--ink);padding:5px 14px;border-radius:4px;font-size:13px}
+.tab.on{background:#4c8789;border-color:#2a5254;color:#fff}
+.stats{padding:16px}
+.bars{display:grid;grid-template-columns:1fr 1fr;gap:7px 20px}
 .bar{font-size:13px}
 .bar .l{display:flex;justify-content:space-between}
-.bar .t{height:8px;background:#f4e5ee;border-radius:9px;overflow:hidden;margin-top:2px}
-.bar .t i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#f7b6cb,#e8739a)}
-.bar.c .t i{background:linear-gradient(90deg,#b7c9f0,#5b8fd6)}
-.bar.k .t i{background:linear-gradient(90deg,#c9e8d8,#59b394)}
-.bar.e .t i{background:linear-gradient(90deg,#f5dd9e,#c99a3a)}
-.bar.x .t i{background:linear-gradient(90deg,#c8b6d9,#6a4a8a)}
-.bar.s .t i{background:linear-gradient(90deg,#ffd0a0,#e05555)}
-.log{font-size:13px;max-height:190px;overflow:auto;padding:10px 14px}
+.bar .t{height:7px;background:#ece2d0;border-radius:2px;overflow:hidden;margin-top:3px;box-shadow:inset 0 1px 1px #0001}
+.bar .t i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#d9a0a0,#a8434f)}
+.bar.c .t i{background:linear-gradient(90deg,#9cc3c0,#3d7072)}
+.bar.k .t i{background:linear-gradient(90deg,#b9cfa8,#5a8a6a)}
+.bar.e .t i{background:linear-gradient(90deg,#ecd59a,#b0832f)}
+.bar.x .t i{background:linear-gradient(90deg,#b8a6c8,#5a3a6a)}
+.bar.s .t i{background:linear-gradient(90deg,#e8c0a0,#b04a3a)}
+.log{font-size:13px;max-height:190px;overflow:auto;padding:12px 16px}
 .log div{padding:3px 0;border-bottom:1px dotted var(--line)}
 /* modal */
-.mask{position:fixed;inset:0;background:#3a2238aa;display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;backdrop-filter:blur(2px)}
-.modal{background:#fffafc;border-radius:20px;max-width:640px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px #0005;border:2px solid #fff}
-.modal h3{margin:0 0 10px;font-size:20px;color:#c2416d}
+.mask{position:fixed;inset:0;background:#2a1c18b0;display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;backdrop-filter:blur(2px)}
+.modal{background:#fbf7ef;border-radius:8px;max-width:660px;width:100%;max-height:90vh;overflow:auto;padding:20px;border:1px solid #c9ad7a;box-shadow:inset 0 0 0 4px #fbf7ef,inset 0 0 0 5px #e1cfa8,0 20px 60px #0006}
+.modal h3{margin:0 0 10px;font-size:20px;color:#8c3340}
 .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
-.op{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:9px 10px;text-align:left;color:var(--ink);font-size:13px}
-.op:hover:not(:disabled){border-color:var(--pink);background:#fff4f8}
-.op .h{font-weight:bold;font-size:14px}
+.op{border:1px solid var(--line);background:#fffdf8;border-radius:6px;padding:9px 10px;text-align:left;color:var(--ink);font-size:13px}
+.op:hover:not(:disabled){border-color:var(--gold);background:#fbf3e2}
+.op .h{font-weight:bold;font-size:14px;font-family:'Gowun Batang',serif}
 .op:disabled{opacity:.45;cursor:not-allowed}
 .days{display:flex;gap:5px;justify-content:center;margin:12px 0;flex-wrap:wrap}
-.day{width:28px;height:28px;border-radius:50%;background:#f4e5ee;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}
-.day.ok{background:#ffd5e3;transform:scale(1.08)}
-.day.ng{background:#e5e1ea;color:#999}
-.phase-wrap{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+.day{width:28px;height:28px;border-radius:50%;background:#ece2d0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.2s;font-family:'Gowun Batang',serif}
+.day.ok{background:#c9a050;color:#fff;transform:scale(1.06)}
+.day.ng{background:#d8cfc4;color:#8a7f74}
+.phase-wrap{display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:center}
 .choice{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.ending{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:center}
-.ending .etitle{font-family:'Gowun Batang',serif;font-size:36px;color:#c2416d;margin:4px 0}
+.ending{display:grid;grid-template-columns:390px 1fr;gap:22px;align-items:center}
+.ending .etitle{font-family:'Gowun Batang',serif;font-size:36px;color:#8c3340;margin:4px 0}
 .rank-row{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px dotted var(--line);cursor:pointer}
-.rank-row:hover{background:#fff4f8}
+.rank-row:hover{background:#fbf3e2}
 .rank-row .no{width:28px;font-weight:bold;color:var(--pink);text-align:center;font-family:'Gowun Batang',serif;font-size:18px}
 .rank-row .info{flex:1;min-width:0}
-.rank-row .sc{font-weight:bold;color:#a77a1c;text-align:right}
-.rank-row.me{background:#fff2d8}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#4a3348;color:#fff;padding:10px 18px;border-radius:999px;z-index:99;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
+.rank-row .sc{font-weight:bold;color:#8a6414;text-align:right;font-family:'Gowun Batang',serif}
+.rank-row.me{background:#f8ecd2}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#3a2c27;color:#fbf1e2;padding:10px 18px;border-radius:6px;z-index:99;font-size:14px;opacity:0;transition:.3s;pointer-events:none;border:1px solid #c9ad7a}
 .toast.on{opacity:1}
 @media (max-width:860px){
   .title-wrap,.create,.main,.ending{grid-template-columns:1fr}
   .create .pv{position:static}
   .logo{font-size:40px}
   .title-menu{margin:20px auto 0}
-  .title-wrap{text-align:center;min-height:auto;padding-top:20px}
+  .title-wrap{text-align:center;min-height:auto;padding-top:10px}
   .bars{grid-template-columns:1fr}
-  .phase-wrap{grid-template-columns:100px 1fr}
+  .phase-wrap{grid-template-columns:110px 1fr}
   .statgrid{grid-template-columns:repeat(2,1fr)}
-  .pcard>svg{max-width:250px!important}
+  .pcard>svg{max-width:260px!important}
 }
 </style>
 </head>
@@ -154,295 +152,331 @@ function shade(hex, p) {
 }
 
 // ================= 외모 데이터 =================
-const HAIR_COLORS = [['밤색', '#8a5a3b'], ['금발', '#efc85e'], ['은발', '#d6d8e6'], ['흑발', '#3a2e42'], ['벚꽃', '#f29bb8'], ['하늘', '#8cc4ee'], ['진홍', '#c8463a'], ['라벤더', '#a68ad8']];
-const EYE_COLORS = [['호박', '#b8742a'], ['사파이어', '#3a6fd0'], ['에메랄드', '#2f9a6a'], ['자수정', '#8a52d8'], ['루비', '#cc3355'], ['아쿠아', '#2aa8c8'], ['초콜릿', '#6a3e28'], ['은회색', '#707a90']];
-const SKINS = ['#fff0e6', '#ffe4d4', '#f7d3b8', '#e6b896'];
-const DRESS_COLORS = ['#f6a5c0', '#a8c8f0', '#c8b0f0', '#fff0a8', '#b8e8c8', '#ffffff', '#f08a8a', '#9fb0d8'];
-const HAIR_STYLES = [['long', '긴 생머리'], ['wavy', '웨이브'], ['twin', '트윈테일'], ['pony', '포니테일'], ['bob', '단발'], ['braid', '땋은 머리'], ['odango', '공주 머리']];
-const BANGS = [['hime', '일자 앞머리'], ['side', '옆으로 넘긴'], ['part', '가르마']];
-const EYE_SHAPES = [['round', '동글동글'], ['cat', '고양이 눈'], ['droopy', '처진 눈']];
-const ACCS = [['ribbon', '리본'], ['flower', '꽃핀'], ['band', '머리띠'], ['none', '없음']];
+const HAIR_COLORS = [['적갈색', '#7a3b2a'], ['흑발', '#2a2224'], ['밤색', '#5e3b2b'], ['금발', '#d2a258'], ['보랏빛', '#7d5a9c'], ['딸기금발', '#cf8a5c'], ['은발', '#bdb9c6'], ['청흑', '#2c3550']];
+const EYE_COLORS = [['갈색', '#7a4a30'], ['청색', '#3d5f9e'], ['녹색', '#3f7a55'], ['자색', '#6e4a8e'], ['적색', '#a33a3a'], ['호박', '#b07a2a'], ['흑색', '#3a3234'], ['회청', '#5f7180']];
+const SKINS = ['#f8e7da', '#f3dac6', '#eac6aa', '#d6a986'];
+const DRESS_COLORS = ['#d98fa0', '#4f9a9a', '#7aa36a', '#c8a050', '#8a6aa8', '#f2ece0', '#a8434f', '#6a7fb0'];
+const HAIR_STYLES = [['long', '긴 생머리'], ['wavy', '풍성한 웨이브'], ['twin', '트윈테일'], ['pony', '포니테일'], ['bob', '단발'], ['braid', '땋은 머리'], ['odango', '올림머리']];
+const BANGS = [['hime', '앞머리 내림'], ['side', '옆 가르마'], ['part', '이마 드러냄']];
+const EYE_SHAPES = [['round', '또렷한 눈'], ['cat', '올라간 눈매'], ['droopy', '처진 눈매']];
+const ACCS = [['ribbon', '리본'], ['flower', '꽃장식'], ['band', '머리띠'], ['none', '없음']];
 
-// ================= 순정만화풍 초상화 (SVG) =================
+// ================= 90년대 수채화풍 초상화 (SVG) =================
 let UID = 0;
+const BG_MAP = { pink: 'rose', blue: 'teal' };
+const BG_TONES = {
+  teal: ['#93c3bd', '#4c8789', '#d6ae62'], rose: ['#eac8c0', '#b47a7c', '#d6ae62'], gold: ['#f1e0b6', '#c49a5a', '#9c7228'],
+  dark: ['#4b3242', '#1b1420', '#b08a50'], green: ['#bfd6aa', '#6a9272', '#d6ae62'], lav: ['#cdbfdd', '#7a6a9a', '#d6ae62']
+};
 function star(x, y, r, fill = '#fff', op = 1) {
   const q = r * 0.22;
   return `<path d="M${x} ${y - r}L${x + q} ${y - q}L${x + r} ${y}L${x + q} ${y + q}L${x} ${y + r}L${x - q} ${y + q}L${x - r} ${y}L${x - q} ${y - q}Z" fill="${fill}" opacity="${op}"/>`;
 }
-function rose(x, y, r, c) {
-  const d = shade(c, -0.25);
-  return `<g><ellipse cx="${x - r * 0.9}" cy="${y + r * 0.7}" rx="${r * 0.7}" ry="${r * 0.32}" fill="#9fcf9a" transform="rotate(-30 ${x - r * 0.9} ${y + r * 0.7})"/>
-  <ellipse cx="${x + r * 0.95}" cy="${y + r * 0.6}" rx="${r * 0.65}" ry="${r * 0.3}" fill="#8cc48a" transform="rotate(25 ${x + r * 0.95} ${y + r * 0.6})"/>
-  <circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>
-  <path d="M${x - r * 0.6} ${y + r * 0.1}Q${x - r * 0.5} ${y - r * 0.7} ${x + r * 0.2} ${y - r * 0.55}M${x - r * 0.2} ${y + r * 0.45}Q${x + r * 0.7} ${y + r * 0.5} ${x + r * 0.55} ${y - r * 0.25}M${x - r * 0.25} ${y - r * 0.15}Q${x} ${y - r * 0.4} ${x + r * 0.2} ${y - r * 0.05}Q${x + r * 0.1} ${y + r * 0.25} ${x - r * 0.15} ${y + r * 0.1}" stroke="${d}" stroke-width="${r * 0.13}" fill="none" stroke-linecap="round"/></g>`;
+function leaf(x, y, r, rot, c) { return `<path d="M${x} ${y - r}Q${x + r * 0.7} ${y} ${x} ${y + r}Q${x - r * 0.7} ${y} ${x} ${y - r}Z" fill="${c}" opacity=".8" transform="rotate(${rot} ${x} ${y})"/>`; }
+function scrollOrn(x, y, s, c, flip) {
+  return `<g transform="translate(${x} ${y}) scale(${flip ? -s : s} ${s})" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round"><path d="M0 0C10 -14 30 -12 30 4C30 16 16 18 12 10C9 4 16 0 20 4"/><path d="M0 0C-4 18 6 36 22 44"/><path d="M8 26c6 -4 12 -2 14 4"/><path d="M22 44c4 -6 10 -6 12 -2"/></g>`;
 }
 function bow(x, y, s, c) {
-  const d = shade(c, -0.3);
-  return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0C-10 -14 -26 -12 -24 0C-26 12 -10 14 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.4"/>
-  <path d="M0 0C10 -14 26 -12 24 0C26 12 10 14 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.4"/>
-  <path d="M-2 2L-10 22L-4 19L-1 24ZM2 2L10 22L4 19L1 24Z" fill="${c}" stroke="${d}" stroke-width="1.2"/>
-  <ellipse cx="0" cy="0" rx="5" ry="6" fill="${shade(c, -0.1)}" stroke="${d}" stroke-width="1.2"/>
-  <path d="M-18 -4Q-12 -8 -6 -3M18 -4Q12 -8 6 -3" stroke="#fff" stroke-width="1.5" fill="none" opacity=".7"/></g>`;
+  const d = shade(c, -0.35), l = shade(c, 0.25);
+  return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0C-8 -14 -26 -14 -25 -1C-25 11 -9 12 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.2"/>
+  <path d="M0 0C8 -14 26 -14 25 -1C25 11 9 12 0 0Z" fill="${c}" stroke="${d}" stroke-width="1.2"/>
+  <path d="M-2 2Q-8 14 -12 26L-5 22L-2 28Q0 14 0 4ZM2 2Q8 14 12 26L5 22L2 28Q0 14 0 4Z" fill="${shade(c, -0.08)}" stroke="${d}" stroke-width="1"/>
+  <ellipse rx="5" ry="6" fill="${shade(c, -0.12)}" stroke="${d}" stroke-width="1"/>
+  <path d="M-20 -5Q-13 -10 -6 -4M20 -5Q13 -10 6 -4" stroke="${l}" stroke-width="1.6" fill="none" opacity=".8"/>
+  <path d="M-16 4Q-10 6 -5 2M16 4Q10 6 5 2" stroke="${d}" stroke-width=".8" fill="none" opacity=".6"/></g>`;
 }
-function backHairPath(cx, hw, top, len, wave, flare) {
-  const L = cx - hw - 8, Rr = cx + hw + 8, n = 6;
-  let d = `M${L} 100C${L - 6} ${top} ${Rr + 6} ${top} ${Rr} 100`;
-  const sx = (side, i) => (side > 0 ? Rr + flare * i / n : L - flare * i / n) + (wave ? side * Math.sin(i * 1.7) * wave : 0);
+function frameBG(id, tone) {
+  const L = '#e9b79c';
+  return `<rect width="240" height="320" fill="url(#${id}bg)"/><rect width="240" height="320" fill="url(#${id}dm)" opacity=".2"/>
+  <ellipse cx="120" cy="110" rx="95" ry="80" fill="#fff" opacity=".12"/>
+  <path d="M15 322V76Q15 18 120 13Q225 18 225 76V322" fill="none" stroke="${tone[2]}" stroke-width="3"/>
+  <path d="M22 322V78Q22 26 120 21Q218 26 218 78V322" fill="none" stroke="${tone[2]}" stroke-width="1" opacity=".8"/>
+  ${scrollOrn(15, 88, 0.9, tone[2], false)}${scrollOrn(225, 88, 0.9, tone[2], true)}${scrollOrn(15, 226, 0.7, tone[2], false)}${scrollOrn(225, 226, 0.7, tone[2], true)}
+  <path d="M112 13l8 -9l8 9l-8 8Z" fill="${tone[2]}"/>
+  ${leaf(38, 36, 6, 30, L)}${leaf(204, 48, 5, -40, L)}${leaf(8, 160, 5, 60, L)}${leaf(233, 186, 6, -20, L)}${leaf(30, 296, 5, 10, L)}${leaf(212, 300, 5, 80, L)}`;
+}
+function backHairPath(cx, w, top, len, wave, flare, curly) {
+  const L = cx - w, Rr = cx + w, n = 7;
+  let d = `M${L} 96C${L - 4} ${top} ${Rr + 4} ${top} ${Rr} 96`;
+  const sx = (side, i) => (side > 0 ? Rr + flare * i / n : L - flare * i / n) + (wave ? side * Math.sin(i * 1.9) * wave : 0);
   for (let i = 1; i <= n; i++) {
-    const y = 100 + (len - 100) * i / n, py = 100 + (len - 100) * (i - 0.5) / n;
-    d += `Q${(sx(1, i - 0.5) + (wave ? wave * 1.2 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(1, i).toFixed(1)} ${y.toFixed(1)}`;
+    const y = 96 + (len - 96) * i / n, py = 96 + (len - 96) * (i - 0.5) / n;
+    d += `Q${(sx(1, i - 0.5) + (wave ? wave * 1.3 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(1, i).toFixed(1)} ${y.toFixed(1)}`;
   }
-  const right = sx(1, n), left = sx(-1, n), segs = 6;
+  const right = sx(1, n), left = sx(-1, n), segs = 7;
+  let px = right;
   for (let i = 1; i <= segs; i++) {
-    const x = right - (right - left) * i / segs, y = len - (i % 2 ? 16 : 2) - (i === segs ? -2 : 0);
-    d += `L${x.toFixed(1)} ${y.toFixed(1)}`;
+    const x = right - (right - left) * i / segs;
+    if (curly) d += `Q${((px + x) / 2).toFixed(1)} ${len + 12} ${x.toFixed(1)} ${(len - 4 + (i % 2) * 3).toFixed(1)}`;
+    else d += `L${((px + x) / 2).toFixed(1)} ${(len + 2 - (i % 2) * 4).toFixed(1)}L${x.toFixed(1)} ${(len - 12).toFixed(1)}`;
+    px = x;
   }
   for (let i = n - 1; i >= 0; i--) {
-    const y = 100 + (len - 100) * i / n, py = 100 + (len - 100) * (i + 0.5) / n;
-    d += `Q${(sx(-1, i + 0.5) - (wave ? wave * 1.2 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(-1, i).toFixed(1)} ${y.toFixed(1)}`;
+    const y = 96 + (len - 96) * i / n, py = 96 + (len - 96) * (i + 0.5) / n;
+    d += `Q${(sx(-1, i + 0.5) - (wave ? wave * 1.3 : 2)).toFixed(1)} ${py.toFixed(1)} ${sx(-1, i).toFixed(1)} ${y.toFixed(1)}`;
   }
   return d + 'Z';
 }
-function bodyPath(cx, y0, sw) {
-  return `M${cx - 12} ${y0}C${cx - 30} ${y0 + 2} ${cx - sw} ${y0 + 6} ${cx - sw - 6} ${y0 + 30}L${cx - sw - 16} 302L${cx + sw + 16} 302L${cx + sw + 6} ${y0 + 30}C${cx + sw} ${y0 + 6} ${cx + 30} ${y0 + 2} ${cx + 12} ${y0}Z`;
+function strands(cx, w, len, wave, Hd, Hl) {
+  let s = '';
+  for (let j = -2; j <= 2; j++) {
+    if (!j) continue;
+    const x0 = cx + j * w * 0.42, x1 = x0 + j * 6;
+    s += `<path d="M${x0.toFixed(1)} 96Q${(x0 + j * 4 + (wave ? Math.sin(j) * 10 : 0)).toFixed(1)} ${(len * 0.62).toFixed(1)} ${x1.toFixed(1)} ${(len - 14).toFixed(1)}" stroke="${Hd}" stroke-width="1" fill="none" opacity=".5"/>`;
+    if (Math.abs(j) === 2) s += `<path d="M${(x0 + j).toFixed(1)} 120Q${(x0 + j * 5).toFixed(1)} ${(len * 0.5).toFixed(1)} ${(x1 - j * 3).toFixed(1)} ${(len * 0.75).toFixed(1)}" stroke="${Hl}" stroke-width="2" fill="none" opacity=".35" stroke-linecap="round"/>`;
+  }
+  return s;
 }
-const BG_TONES = {
-  pink: ['#ffe3ef', '#f3d9f5', '#f6a5c0'], blue: ['#e0ecff', '#e8e0ff', '#a8c0f0'], gold: ['#fff4d6', '#ffe0ec', '#f0c860'],
-  dark: ['#3a2440', '#1e1630', '#8a3a6a'], green: ['#e6f7e6', '#fff3e0', '#f0a0b8'], lav: ['#efe6ff', '#ffe6f2', '#c8a8f0']
-};
 function portrait(a, o = {}) {
   const id = 'pp' + (++UID);
   const age = o.age ?? 10, t = clamp((age - 10) / 8, 0, 1);
-  const H = HAIR_COLORS[a.hc][1], Hd = shade(H, -0.32), Hl = shade(H, 0.45);
-  const E = o.eyeOverride || EYE_COLORS[a.ec][1];
-  const SK = SKINS[a.sk], SKd = shade(SK, -0.14);
-  const outfit = o.outfit || 'casual', mood = o.mood || 'smile';
-  const acc = o.acc || a.acc;
-  const cx = 120, hw = 56 - t * 3, eyeY = 138 + t * 4, chinY = 180 + t * 10, es = 1.12 - 0.14 * t;
-  const y0 = chinY + 16, sw = 36 + t * 10;
-  const tone = BG_TONES[o.bg || 'pink'] || BG_TONES.pink;
-  const lash = shade(H === '#d6d8e6' ? '#6a6a80' : H, -0.6);
-  let s = `<svg viewBox="0 0 240 300" width="${o.size || 300}" style="max-width:100%;height:auto;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"><defs>
-   <linearGradient id="${id}bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${tone[0]}"/><stop offset="1" stop-color="${tone[1]}"/></linearGradient>
-   <linearGradient id="${id}ir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(E, -0.55)}"/><stop offset=".55" stop-color="${E}"/><stop offset="1" stop-color="${shade(E, 0.55)}"/></linearGradient>
-   <linearGradient id="${id}hr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(H, 0.12)}"/><stop offset="1" stop-color="${shade(H, -0.12)}"/></linearGradient>
-   <linearGradient id="${id}mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fb"/><stop offset=".5" stop-color="#b9c2d4"/><stop offset="1" stop-color="#e6eaf3"/></linearGradient>
-   <pattern id="${id}dt" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1" fill="${tone[2]}"/></pattern>
-   <clipPath id="${id}fr"><rect x="0" y="0" width="240" height="300" rx="16"/></clipPath>
-  </defs><g clip-path="url(#${id}fr)">`;
-  // ---- 배경: 스크린톤, 장미, 반짝이, 비눗방울
-  if (o.bg !== false) {
-    s += `<rect width="240" height="300" fill="url(#${id}bg)"/><rect width="240" height="300" fill="url(#${id}dt)" opacity=".18"/>`;
-    s += `<circle cx="40" cy="60" r="26" fill="#fff" opacity=".35"/><circle cx="205" cy="120" r="18" fill="#fff" opacity=".3"/><circle cx="30" cy="190" r="12" fill="#fff" opacity=".35"/><circle cx="215" cy="40" r="10" fill="#fff" opacity=".4"/>`;
-    if (o.bg === 'dark') s += `<circle cx="190" cy="50" r="22" fill="#f6e7c8" opacity=".9"/><circle cx="182" cy="44" r="20" fill="#2a1a34"/>`;
-    s += rose(18, 22, 13, o.bg === 'dark' ? '#8a1a3a' : '#f58fb0') + rose(222, 282, 15, o.bg === 'dark' ? '#6a1030' : '#f7a8c2') + rose(16, 262, 10, o.bg === 'dark' ? '#5a1030' : '#fbc0d2');
-    s += star(205, 78, 9, '#fff', .95) + star(30, 120, 6, '#fff', .9) + star(215, 200, 5, '#fff', .8) + star(60, 25, 5, '#fff', .9) + star(180, 18, 4, '#fff', .8);
-  }
-  // ---- 뒤쪽 장식 (망토/베일)
+  const H = (HAIR_COLORS[a.hc] || HAIR_COLORS[0])[1], Hd = shade(H, -0.4), Hl = shade(H, 0.45);
+  const E = o.eyeOverride || (EYE_COLORS[a.ec] || EYE_COLORS[0])[1];
+  const SK = SKINS[a.sk] || SKINS[0], SKd = shade(SK, -0.16), SKdd = shade(SK, -0.42);
+  const outfit = o.outfit || 'casual', mood = o.mood || 'smile', acc = o.acc || a.acc;
+  const size = o.size || 300, lite = o.lite ?? size < 130;
+  const cx = 120, hw = 34 - t * 1.5, eyeY = 104 + t * 3, chinY = 147 + t * 9;
+  const y0 = chinY + 21, sw = 42 + t * 8;
+  const bgKey = o.bg === false ? null : (BG_MAP[o.bg] || o.bg || 'teal'), tone = BG_TONES[bgKey] || BG_TONES.teal;
+  const lash = shade(H === '#bdb9c6' ? '#5a5664' : H, -0.6);
+  const hairFill = `fill="url(#${id}hr)" stroke="${shade(H, -0.28)}" stroke-width=".8" stroke-linejoin="round"`;
+  const st = a.hair;
+  let s = `<defs>
+   <linearGradient id="${id}bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${tone[0]}"/><stop offset="1" stop-color="${tone[1]}"/></linearGradient>
+   <radialGradient id="${id}ir" cx=".5" cy=".62" r=".6"><stop offset="0" stop-color="${shade(E, 0.45)}"/><stop offset=".55" stop-color="${E}"/><stop offset="1" stop-color="${shade(E, -0.55)}"/></radialGradient>
+   <linearGradient id="${id}hr" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="${shade(H, 0.16)}"/><stop offset=".45" stop-color="${H}"/><stop offset="1" stop-color="${shade(H, -0.22)}"/></linearGradient>
+   <linearGradient id="${id}sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#2a1a20" stop-opacity=".28"/></linearGradient>
+   <linearGradient id="${id}mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef1f6"/><stop offset=".5" stop-color="#a9b2c4"/><stop offset="1" stop-color="#dfe3ec"/></linearGradient>
+   <radialGradient id="${id}bl"><stop offset="0" stop-color="#e88a8a" stop-opacity=".55"/><stop offset="1" stop-color="#e88a8a" stop-opacity="0"/></radialGradient>
+   <pattern id="${id}dm" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M13 3C16 8 16 11 13 15C10 11 10 8 13 3ZM4 17C8 16 11 18 13 22C9 23 6 21 4 17ZM22 17C18 16 15 18 13 22C17 23 20 21 22 17Z" fill="#fff"/></pattern>
+   <clipPath id="${id}fc"><path d="M${cx - hw} 92C${cx - hw} 116 ${cx - hw + 4} 128 ${cx - 14} ${chinY - 8}Q${cx} ${chinY + 2} ${cx + 14} ${chinY - 8}C${cx + hw - 4} 128 ${cx + hw} 116 ${cx + hw} 92C${cx + hw} 48 ${cx - hw} 48 ${cx - hw} 92Z"/></clipPath>
+   ${lite ? '' : `<filter id="${id}wc" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter>
+   <filter id="${id}pp" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="9"/><feColorMatrix type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.2  0 0 0 1.4 -0.45"/></filter>`}
+   <clipPath id="${id}fr"><rect x="0" y="0" width="240" height="320" rx="10"/></clipPath>
+  </defs>`;
+  if (bgKey) s += `<g clip-path="url(#${id}fr)">` + frameBG(id, tone);
+  else s += '<g>';
+  if (o.sparkle && bgKey) s += star(196, 70, 7, '#fff8d8', .9) + star(44, 128, 5, '#fff8d8', .8) + star(200, 168, 4, '#fff', .8);
+  s += `<g transform="translate(-42 -14) scale(1.35)"><g ${lite ? '' : `filter="url(#${id}wc)"`}>`;
+  // ---- 뒤쪽 장식
   if (outfit === 'armor' || outfit === 'queen') {
-    const cc = outfit === 'queen' ? '#a8203a' : '#b0263a';
-    s += `<path d="M${cx - sw - 4} ${y0 + 6}L${cx - sw - 40} 302L${cx + sw + 40} 302L${cx + sw + 4} ${y0 + 6}Z" fill="${cc}" stroke="${shade(cc, -0.35)}" stroke-width="1.5"/><path d="M${cx - sw - 20} 240L${cx - sw - 30} 300M${cx + sw + 20} 240L${cx + sw + 30} 300" stroke="${shade(cc, -0.3)}" stroke-width="1.5"/>`;
+    const cc = '#9a2a3a';
+    s += `<path d="M${cx - sw + 6} ${y0 + 8}L${cx - sw - 34} 322L${cx + sw + 34} 322L${cx + sw - 6} ${y0 + 8}Z" fill="${cc}" stroke="${shade(cc, -0.4)}" stroke-width="1.2"/><path d="M${cx - sw - 14} 250L${cx - sw - 22} 320M${cx + sw + 14} 250L${cx + sw + 22} 320" stroke="${shade(cc, -0.35)}" stroke-width="1.2"/>`;
   }
-  if (acc === 'wveil') s += `<path d="M${cx - hw - 4} 60C${cx - hw - 50} 120 ${cx - sw - 50} 230 ${cx - sw - 46} 302L${cx + sw + 46} 302C${cx + sw + 50} 230 ${cx + hw + 50} 120 ${cx + hw + 4} 60Z" fill="#fff" opacity=".55" stroke="#f0e8f0"/>`;
+  if (acc === 'wveil') s += `<path d="M${cx - 30} 48C${cx - 80} 120 ${cx - sw - 46} 240 ${cx - sw - 44} 322L${cx + sw + 44} 322C${cx + sw + 46} 240 ${cx + 80} 120 ${cx + 30} 48Z" fill="#fff" opacity=".45" stroke="#efe6ea"/>`;
   // ---- 뒷머리
-  const longLen = 205 + t * 75;
-  const hairFill = `fill="url(#${id}hr)" stroke="${Hd}" stroke-width="1.6" stroke-linejoin="round"`;
   if (outfit === 'nun') {
-    s += `<path d="M${cx - hw - 16} 92C${cx - hw - 24} 18 ${cx + hw + 24} 18 ${cx + hw + 16} 92L${cx + sw + 12} ${y0 + 70}L${cx - sw - 12} ${y0 + 70}Z" fill="#26222e" stroke="#000" stroke-width="1.5"/>`;
+    s += `<path d="M${cx - hw - 16} 100C${cx - hw - 22} 26 ${cx + hw + 22} 26 ${cx + hw + 16} 100L${cx + sw + 4} ${y0 + 60}L${cx - sw - 4} ${y0 + 60}Z" fill="#26222b" stroke="#0e0c10" stroke-width="1.2"/>`;
+  } else if (st === 'pony') {
+    const pl = 196 + t * 50, x = cx + hw;
+    s += `<path d="M${x - 6} 50C${x + 44} 44 ${x + 44} 120 ${x + 32} ${pl * 0.7}C${x + 28} ${pl * 0.86} ${x + 40} ${pl} ${x + 26} ${pl + 4}C${x + 10} ${pl - 24} ${x + 18} ${pl * 0.7} ${x + 12} 112C${x + 10} 86 ${x + 2} 72 ${x - 12} 66Z" ${hairFill}/><path d="M${x + 6} 60Q${x + 32} 110 ${x + 22} ${pl * 0.8}" stroke="${Hl}" stroke-width="2" fill="none" opacity=".4"/>`;
+    s += `<path d="${backHairPath(cx, hw + 10, 22, 136, 0, 4)}" ${hairFill}/>`;
+  } else if (st === 'twin') {
+    const tl = 206 + t * 60;
+    for (const sd of [-1, 1]) {
+      const x = cx + sd * (hw + 8);
+      s += `<path d="M${x} 82C${x + sd * 34} 96 ${x + sd * 30} ${tl * 0.55} ${x + sd * 24} ${tl * 0.8}C${x + sd * 20} ${tl * 0.9} ${x + sd * 32} ${tl} ${x + sd * 22} ${tl + 6}C${x + sd * 4} ${tl * 0.85} ${x + sd * 8} ${tl * 0.6} ${x + sd * 2} 120C${x} 104 ${x - sd * 4} 96 ${x - sd * 10} 92Z" ${hairFill}/>`;
+      s += `<path d="M${x + sd * 10} 100Q${x + sd * 22} ${tl * 0.5} ${x + sd * 18} ${tl * 0.85}M${x + sd * 4} 110Q${x + sd * 14} ${tl * 0.6} ${x + sd * 12} ${tl * 0.9}" stroke="${Hd}" stroke-width="1" fill="none" opacity=".5"/>`;
+    }
+    s += `<path d="${backHairPath(cx, hw + 10, 22, 136, 0, 4)}" ${hairFill}/>`;
+  } else if (st === 'odango') {
+    s += `<circle cx="${cx + 6}" cy="38" r="21" ${hairFill}/><path d="M${cx - 8} 34Q${cx + 6} 20 ${cx + 20} 36Q${cx + 10} 52 ${cx - 2} 44" stroke="${Hd}" stroke-width="1.1" fill="none"/>`;
+    s += `<path d="${backHairPath(cx, hw + 9, 24, 124, 0, 2)}" ${hairFill}/>`;
+  } else if (st === 'bob' || st === 'braid') {
+    const len = st === 'bob' ? 168 + t * 8 : 150;
+    s += `<path d="${backHairPath(cx, hw + 11, 22, len, 0, 10)}" ${hairFill}/>${strands(cx, hw + 11, len, 0, Hd, Hl)}`;
   } else {
-    const st = a.hair;
-    if (st === 'pony') {
-      const pl = 175 + t * 80;
-      s += `<path d="M${cx + 22} 46C${cx + 80} 40 ${cx + 92} 100 ${cx + 82} ${pl * 0.7}C${cx + 78} ${pl * 0.85} ${cx + 92} ${pl} ${cx + 80} ${pl + 6}C${cx + 64} ${pl - 20} ${cx + 66} ${pl * 0.7} ${cx + 60} 120C${cx + 56} 90 ${cx + 40} 70 ${cx + 22} 64Z" ${hairFill}/>`;
-      s += `<path d="${backHairPath(cx, hw, 30, 150, 0, 2)}" ${hairFill}/>`;
-    } else if (st === 'twin') {
-      const tl = 170 + t * 90;
-      for (const sd of [-1, 1]) {
-        const x = cx + sd * (hw + 2);
-        s += `<path d="M${x} 58C${x + sd * 46} 66 ${x + sd * 40} ${tl * 0.55} ${x + sd * 30} ${tl * 0.8}C${x + sd * 24} ${tl * 0.92} ${x + sd * 36} ${tl} ${x + sd * 30} ${tl + 8}C${x + sd * 8} ${tl * 0.85} ${x + sd * 16} ${tl * 0.6} ${x + sd * 14} 110C${x + sd * 12} 92 ${x + sd * 4} 84 ${x - sd * 4} 80Z" ${hairFill}/>`;
-        s += `<path d="M${x + sd * 20} 80Q${x + sd * 30} ${tl * 0.5} ${x + sd * 24} ${tl * 0.85}" stroke="${Hd}" stroke-width="1.2" fill="none" opacity=".6"/>`;
-      }
-      s += `<path d="${backHairPath(cx, hw, 30, 150, 0, 2)}" ${hairFill}/>`;
-    } else if (st === 'bob') {
-      s += `<path d="${backHairPath(cx, hw, 30, 170 + t * 14, 0, 8)}" ${hairFill}/>`;
-    } else if (st === 'braid') {
-      s += `<path d="${backHairPath(cx, hw, 30, 165, 0, 4)}" ${hairFill}/>`;
-    } else {
-      s += `<path d="${backHairPath(cx, hw, 30, longLen, st === 'wavy' ? 7 : 0, st === 'wavy' ? 16 : 8)}" ${hairFill}/>`;
-      s += `<path d="M${cx - hw - 4} 120Q${cx - hw - 10} ${longLen * 0.7} ${cx - hw - 4} ${longLen - 10}M${cx + hw + 4} 120Q${cx + hw + 10} ${longLen * 0.7} ${cx + hw + 4} ${longLen - 10}" stroke="${Hd}" stroke-width="1.2" fill="none" opacity=".5"/>`;
-    }
-    if (st === 'odango') for (const sd of [-1, 1]) {
-      const x = cx + sd * 42;
-      s += `<circle cx="${x}" cy="40" r="19" ${hairFill}/><path d="M${x - 10} 36Q${x} 26 ${x + 9} 38Q${x + 2} 48 ${x - 6} 42" stroke="${Hd}" stroke-width="1.3" fill="none"/>`;
-    }
+    const curly = st === 'wavy', len = curly ? 220 + t * 56 : 230 + t * 58;
+    s += `<path d="${backHairPath(cx, hw + (curly ? 14 : 11), 20, len, curly ? 6 : 0, curly ? 34 : 16, curly)}" ${hairFill}/>${strands(cx, hw + 12, len, curly, Hd, Hl)}`;
   }
   // ---- 목, 몸, 옷
-  s += `<path d="M${cx - 11} ${chinY - 22}L${cx - 12} ${y0 + 10}L${cx + 12} ${y0 + 10}L${cx + 11} ${chinY - 22}Z" fill="${SK}" stroke="${SKd}" stroke-width="1"/>
-        <path d="M${cx - 11} ${chinY - 6}Q${cx} ${chinY + 8} ${cx + 11} ${chinY - 6}L${cx + 11} ${chinY + 2}Q${cx} ${chinY + 12} ${cx - 11} ${chinY + 2}Z" fill="${SKd}" opacity=".5"/>`;
+  s += `<path d="M${cx - 8.5} ${chinY - 14}L${cx - 9.5} ${y0 + 6}L${cx + 9.5} ${y0 + 6}L${cx + 8.5} ${chinY - 14}Z" fill="${SK}" stroke="${SKd}" stroke-width=".9"/>
+        <path d="M${cx - 9} ${chinY - 6}Q${cx} ${chinY + 6} ${cx + 9} ${chinY - 6}L${cx + 9} ${chinY + 2}Q${cx} ${chinY + 12} ${cx - 9} ${chinY + 2}Z" fill="${SKd}" opacity=".55"/>`;
   s += outfitSVG(outfit, a, cx, y0, sw, t, id, SK);
-  // ---- 얼굴
-  s += `<path d="M${cx - hw} 104C${cx - hw} 146 ${cx - hw * 0.5} ${chinY - 8} ${cx} ${chinY}C${cx + hw * 0.5} ${chinY - 8} ${cx + hw} 146 ${cx + hw} 104C${cx + hw} 48 ${cx - hw} 48 ${cx - hw} 104Z" fill="${SK}" stroke="${SKd}" stroke-width="1.4"/>`;
-  // 볼터치 + 빗금
-  const blushOp = mood === 'sick' ? 0.15 : (mood === 'joy' || mood === 'shy' ? 0.7 : 0.45);
-  for (const sd of [-1, 1]) {
-    const bx = cx + sd * 34, by = eyeY + 26;
-    s += `<ellipse cx="${bx}" cy="${by}" rx="11" ry="5.5" fill="#ff8fab" opacity="${blushOp}"/>`;
-    s += `<path d="M${bx - 6} ${by + 2}l3 -5M${bx - 1} ${by + 2}l3 -5M${bx + 4} ${by + 2}l3 -5" stroke="#e8607e" stroke-width="1" opacity="${blushOp + 0.1}"/>`;
-  }
-  if (mood === 'sick') s += `<path d="M${cx - hw + 10} 88L${cx - hw + 10} 112M${cx - hw + 18} 86L${cx - hw + 18} 116M${cx - hw + 26} 86L${cx - hw + 26} 112" stroke="#7a8ad8" stroke-width="1.5" opacity=".5"/><path d="M${cx - hw} 80H${cx + hw}V118H${cx - hw}Z" fill="#8090e0" opacity=".12"/>`;
+  // ---- 귀, 얼굴
+  for (const sd of [-1, 1]) s += `<ellipse cx="${cx + sd * hw}" cy="${eyeY + 6}" rx="4.5" ry="8" fill="${SK}" stroke="${SKd}" stroke-width=".9"/>`;
+  s += `<path d="M${cx - hw} 92C${cx - hw} 116 ${cx - hw + 4} 128 ${cx - 14} ${chinY - 8}Q${cx} ${chinY + 2} ${cx + 14} ${chinY - 8}C${cx + hw - 4} 128 ${cx + hw} 116 ${cx + hw} 92C${cx + hw} 48 ${cx - hw} 48 ${cx - hw} 92Z" fill="${SK}" stroke="${SKd}" stroke-width="1.1"/>`;
+  s += `<path d="M${cx + hw} 96C${cx + hw} 118 ${cx + hw - 4} 128 ${cx + 14} ${chinY - 8}Q${cx + hw - 12} 126 ${cx + hw - 7} 100Z" fill="${SKd}" opacity=".35"/>`;
+  // 앞머리 그림자 (이마)
+  s += `<g clip-path="url(#${id}fc)" transform="translate(1.5 4)" opacity=".28">${bangsSVG(a.bangs, cx, hw, eyeY, `fill="${SKdd}"`)}</g>`;
+  if (mood === 'sick') s += `<path d="M${cx - hw} 60H${cx + hw}V${eyeY + 2}H${cx - hw}Z" fill="#7d8fd0" opacity=".14" clip-path="url(#${id}fc)"/>`;
+  // 볼
+  const blushOp = mood === 'sick' ? 0.3 : (mood === 'joy' || mood === 'shy' ? 1 : 0.7);
+  for (const sd of [-1, 1]) s += `<ellipse cx="${cx + sd * 19}" cy="${eyeY + 17}" rx="10" ry="5.5" fill="url(#${id}bl)" opacity="${blushOp}"/>`;
   // 눈
-  for (const sd of [-1, 1]) s += eyeSVG(cx + sd * 28, eyeY, sd, es, a.eye, mood, E, lash, id, SK);
-  // 눈썹
-  for (const sd of [-1, 1]) {
-    const w = 34 * es, by = eyeY - 36 * es;
-    const inY = mood === 'angry' ? by + 7 : (mood === 'sad' || mood === 'tired' || mood === 'sick') ? by - 4 : by + 1;
-    const ix = cx + sd * 28 - sd * w * 0.3, ox = cx + sd * 28 + sd * w * 0.5;
-    s += `<path d="M${ix} ${inY}Q${cx + sd * 28} ${by - 4} ${ox} ${by + 3}" stroke="${Hd}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/>`;
-  }
+  for (const sd of [-1, 1]) s += eyeSVG(cx + sd * 16, eyeY, sd, t, a.eye, mood, E, lash, id, SK, SKdd, Hd);
   // 코, 입
-  s += `<path d="M${cx + 1} ${eyeY + 22}l-2 5" stroke="${SKd}" stroke-width="1.4" stroke-linecap="round"/>`;
-  const my = chinY - 24 + t * 2;
-  if (mood === 'joy') s += `<path d="M${cx - 9} ${my - 2}Q${cx} ${my - 1} ${cx + 9} ${my - 2}Q${cx + 6} ${my + 10} ${cx} ${my + 10}Q${cx - 6} ${my + 10} ${cx - 9} ${my - 2}Z" fill="#c8405e" stroke="#9a2a44" stroke-width="1"/><path d="M${cx - 4} ${my + 7}Q${cx} ${my + 4} ${cx + 4} ${my + 7}" fill="#ff8fa0"/>`;
-  else if (mood === 'smile' || mood === 'shy') s += `<path d="M${cx - 7} ${my}Q${cx} ${my + 6} ${cx + 7} ${my}" stroke="#b8405a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
-  else if (mood === 'angry') s += `<path d="M${cx - 7} ${my + 4}Q${cx} ${my - 2} ${cx + 7} ${my + 4}" stroke="#a03a50" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-  else if (mood === 'tired' || mood === 'sick') s += `<path d="M${cx - 8} ${my + 2}q2 -3 4 0t4 0t4 0t4 0" stroke="#a03a50" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
-  else if (mood === 'sad') s += `<path d="M${cx - 6} ${my + 3}Q${cx} ${my - 1} ${cx + 6} ${my + 3}" stroke="#a03a50" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
-  else s += `<path d="M${cx - 5} ${my + 1}Q${cx} ${my + 3} ${cx + 5} ${my + 1}" stroke="#b8405a" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
-  // ---- 옆머리 + 앞머리
-  if (outfit !== 'nun' || true) {
+  s += `<path d="M${cx + 1.5} ${eyeY + 9}Q${cx + 3.5} ${eyeY + 19} ${cx + 1.5} ${eyeY + 23}" stroke="${SKd}" stroke-width="1" fill="none" opacity=".8"/><path d="M${cx - 2.5} ${eyeY + 24}q2.5 1.6 5 0" stroke="${SKdd}" stroke-width=".9" fill="none" opacity=".55"/>`;
+  const my = chinY - 16, lip = '#b65a56';
+  if (mood === 'joy') s += `<path d="M${cx - 7} ${my}Q${cx} ${my + 1.5} ${cx + 7} ${my}Q${cx + 4} ${my + 8} ${cx} ${my + 8}Q${cx - 4} ${my + 8} ${cx - 7} ${my}Z" fill="#a8484a" stroke="${shade(lip, -0.3)}" stroke-width=".8"/><path d="M${cx - 5} ${my + 1}Q${cx} ${my + 2.5} ${cx + 5} ${my + 1}" stroke="#fff" stroke-width="1.4" fill="none"/>`;
+  else if (mood === 'smile' || mood === 'shy') s += `<path d="M${cx - 6.5} ${my}Q${cx} ${my + 3.4} ${cx + 6.5} ${my}" stroke="${lip}" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M${cx - 3.5} ${my + 3.6}Q${cx} ${my + 5.4} ${cx + 3.5} ${my + 3.6}" stroke="#d58f8a" stroke-width="1.1" fill="none" stroke-linecap="round" opacity=".8"/>`;
+  else if (mood === 'angry') s += `<path d="M${cx - 6} ${my + 2}Q${cx} ${my - 0.5} ${cx + 6} ${my + 2}" stroke="${lip}" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'sad' || mood === 'tired' || mood === 'sick') s += `<path d="M${cx - 5} ${my + 2}Q${cx} ${my} ${cx + 5} ${my + 2}" stroke="${lip}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
+  else s += `<path d="M${cx - 5} ${my + 1}Q${cx} ${my + 2} ${cx + 5} ${my + 1}" stroke="${lip}" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M${cx - 3} ${my + 4}Q${cx} ${my + 5} ${cx + 3} ${my + 4}" stroke="#d58f8a" stroke-width="1" fill="none" opacity=".7"/>`;
+  // ---- 앞 옆머리, 앞머리
+  if (outfit !== 'nun') {
+    const longFront = st === 'long' || st === 'wavy' || st === 'braid';
     for (const sd of [-1, 1]) {
-      const x0 = cx + sd * (hw + 5), lenS = (a.hair === 'bob' ? chinY - 4 : chinY + 14 + t * 10);
-      s += `<path d="M${x0} 86C${x0 + sd * 6} 130 ${x0 + sd * 2} ${lenS - 30} ${x0 - sd * 6} ${lenS}C${x0 - sd * 8} ${lenS - 34} ${x0 - sd * 12} 130 ${x0 - sd * 18} 96Z" ${hairFill}/>`;
+      if (st === 'braid' && sd < 0) continue;
+      const x0 = cx + sd * (hw + 3), len = longFront ? (st === 'wavy' ? 186 : 196) + t * 26 : chinY + 6;
+      const wv = st === 'wavy' ? 5 : 0, m = (len + 90) / 2;
+      s += `<path d="M${x0 - sd * 12} 82C${x0 + sd * 10} 100 ${x0 + sd * (12 + wv)} ${m} ${x0 + sd * (8 - wv)} ${len}L${x0 + sd * 2} ${len - 8}L${x0 - sd * 3} ${len + 2}C${x0 - sd * (8 - wv)} ${m + 10} ${x0 - sd * 6} 130 ${x0 - sd * 15} 100Z" ${hairFill}/>`;
+      s += `<path d="M${x0 - sd * 3} 98Q${x0 + sd * (4 + wv)} ${m} ${x0 + sd * 2} ${len - 10}" stroke="${Hd}" stroke-width=".8" fill="none" opacity=".45"/><path d="M${x0 + sd * 1} 104Q${x0 + sd * 6} ${m - 10} ${x0 + sd * 5} ${m + 10}" stroke="${Hl}" stroke-width="1.6" fill="none" opacity=".35" stroke-linecap="round"/>`;
     }
-    s += bangsSVG(a.bangs, cx, hw, eyeY, hairFill, Hd);
-    // 천사의 고리
-    s += `<path d="M${cx - hw + 10} 76Q${cx} 54 ${cx + hw - 10} 76Q${cx} 62 ${cx - hw + 10} 76Z" fill="${Hl}" opacity=".55"/><path d="M${cx - hw + 22} 70Q${cx - 10} 58 ${cx - 2} 60" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round"/>`;
+    if (st === 'odango' || st === 'pony') s += `<path d="M${cx - hw - 2} 90Q${cx - hw - 6} 120 ${cx - hw + 2} ${chinY - 10}M${cx + hw + 2} 90Q${cx + hw + 6} 120 ${cx + hw - 2} ${chinY - 10}" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
   }
-  if (outfit === 'nun') s += `<path d="M${cx - hw - 10} 104C${cx - hw - 12} 34 ${cx + hw + 12} 34 ${cx + hw + 10} 104L${cx + hw + 2} 104C${cx + hw + 2} 46 ${cx - hw - 2} 46 ${cx - hw - 2} 104Z" fill="#fff" stroke="#bbb" stroke-width="1"/>`;
-  if (a.hair === 'braid' && outfit !== 'nun') {
-    const bl = 210 + t * 50;
-    for (let i = 0; i < 7; i++) {
-      const by = 150 + (bl - 160) * i / 6, bx = cx - hw - 4 + i * 1.5;
-      s += `<ellipse cx="${bx}" cy="${by}" rx="${11 - i * 0.6}" ry="10" fill="${H}" stroke="${Hd}" stroke-width="1.3" transform="rotate(${i % 2 ? 20 : -20} ${bx} ${by})"/>`;
+  s += bangsSVG(a.bangs, cx, hw, eyeY, hairFill, Hd);
+  s += `<path d="M${cx - hw - 9} 100C${cx - hw - 14} 24 ${cx + hw + 14} 24 ${cx + hw + 9} 100L${cx + hw + 1} 92C${cx + hw} 70 ${cx} 64 ${cx} 64C${cx} 64 ${cx - hw} 70 ${cx - hw - 1} 92Z" fill="url(#${id}hr)"/><path d="M${cx - hw - 9} 100C${cx - hw - 14} 24 ${cx + hw + 14} 24 ${cx + hw + 9} 100" fill="none" stroke="${shade(H, -0.28)}" stroke-width=".8"/>`;
+  s += `<path d="M${cx - 2} 36Q${cx - 6} 50 ${cx - 14} 62M${cx + 6} 36Q${cx + 8} 50 ${cx + 16} 62M${cx - 18} 42Q${cx - 26} 52 ${cx - hw + 2} 70M${cx + 20} 42Q${cx + 28} 52 ${cx + hw - 2} 70" stroke="${Hd}" stroke-width=".8" fill="none" opacity=".45"/>`;
+  s += `<path d="M${cx - hw + 2} 64Q${cx - 12} 42 ${cx + 6} 46" stroke="${Hl}" stroke-width="3.2" fill="none" opacity=".55" stroke-linecap="round"/><path d="M${cx + 12} 46Q${cx + 26} 48 ${cx + hw - 1} 62" stroke="${Hl}" stroke-width="2.2" fill="none" opacity=".45" stroke-linecap="round"/><path d="M${cx - hw + 8} 60l4 -4M${cx + 18} 50l5 1" stroke="#fff" stroke-width="1.4" opacity=".55" stroke-linecap="round"/>`;
+  if (outfit === 'nun') s += `<path d="M${cx - hw - 15} 124C${cx - hw - 20} 28 ${cx + hw + 20} 28 ${cx + hw + 15} 124L${cx + hw + 6} 102C${cx + hw + 8} 40 ${cx - hw - 8} 40 ${cx - hw - 6} 102Z" fill="#26222b" stroke="#0e0c10"/><path d="M${cx - hw - 6} 102C${cx - hw - 8} 40 ${cx + hw + 8} 40 ${cx + hw + 6} 102L${cx + hw} 100C${cx + hw} 54 ${cx - hw} 54 ${cx - hw} 100Z" fill="#f4f1ec" stroke="#c9c2b8"/>`;
+  if (st === 'braid' && outfit !== 'nun') {
+    const bl = 226 + t * 40;
+    for (let i = 0; i < 8; i++) {
+      const by = 118 + (bl - 124) * i / 7, bx = cx - hw - 6 + i * 1.6;
+      s += `<ellipse cx="${bx}" cy="${by}" rx="${9.5 - i * 0.5}" ry="8.5" ${hairFill} transform="rotate(${i % 2 ? 24 : -24} ${bx} ${by})"/>`;
     }
-    s += bow(cx - hw + 6, bl + 4, 0.45, '#e8607e') + `<path d="M${cx - hw + 4} ${bl + 8}l-6 16l8 -4l4 6Z" fill="${H}" stroke="${Hd}"/>`;
+    s += bow(cx - hw + 7, bl + 4, 0.4, '#a8434f') + `<path d="M${cx - hw + 5} ${bl + 8}l-5 14l7 -4l4 6Z" ${hairFill}/>`;
   }
-  if (a.hair === 'twin' && outfit !== 'nun') for (const sd of [-1, 1]) s += bow(cx + sd * (hw + 4), 64, 0.5, acc === 'ribbon' ? shade(a.dc === '#ffffff' ? '#e8607e' : a.dc, -0.15) : '#e8607e');
-  if (a.hair === 'pony' && outfit !== 'nun') s += `<circle cx="${cx + 30}" cy="52" r="5" fill="#e8607e" stroke="#a03a50"/>`;
+  if (st === 'twin' && outfit !== 'nun') for (const sd of [-1, 1]) s += bow(cx + sd * (hw + 8), 86, 0.5, '#a8434f');
+  if (st === 'pony' && outfit !== 'nun') s += bow(cx + hw + 2, 56, 0.5, '#a8434f');
   // ---- 액세서리
-  s += accSVG(acc, a, cx, hw, eyeY, es);
-  // ---- 기분 연출
-  if (mood === 'tired' || mood === 'sick') s += `<path d="M${cx + hw + 2} 92q-6 10 0 14q6 -4 0 -14Z" fill="#a8d8f8" stroke="#6aa8d8"/>`;
-  if (mood === 'angry') s += `<path d="M${cx + hw - 6} 52l6 6m4 -10l-6 6m4 6l6 6m-12 -4l-6 6" stroke="#e03a3a" stroke-width="2.4" stroke-linecap="round"/>`;
-  if (mood === 'sad') s += `<path d="M${cx - 27} ${eyeY + 16}q-4 10 0 14q4 -4 0 -14Z" fill="#a8d8f8" stroke="#6aa8d8"/>`;
-  if (mood === 'joy' || o.sparkle) s += star(cx - hw - 14, 70, 9, '#fff6a8') + star(cx + hw + 16, 140, 7, '#fff6a8') + star(cx + hw + 6, 40, 5, '#fff');
-  s += `</g><rect x="1.5" y="1.5" width="237" height="297" rx="15" fill="none" stroke="#fff" stroke-width="3"/><rect x="6" y="6" width="228" height="288" rx="12" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="2 4" opacity=".9"/></svg>`;
+  s += accSVG(acc, a, cx, hw, eyeY);
+  // ---- 기분
+  if (mood === 'tired' || mood === 'sick') s += `<path d="M${cx + hw + 4} 84q-4 8 0 11q4 -3 0 -11Z" fill="#cfe6f4" stroke="#8fb4cc" stroke-width=".8"/>`;
+  if (mood === 'sad') s += `<path d="M${cx - 14} ${eyeY + 9}q-3 8 0 11q3 -3 0 -11Z" fill="#cfe6f4" stroke="#8fb4cc" stroke-width=".8"/>`;
+  s += '</g></g>';
+  if (bgKey && !lite) s += `<rect width="240" height="320" filter="url(#${id}pp)" opacity=".18"/>`;
+  s += '</g>';
+  if (bgKey) s += `<rect x="1.5" y="1.5" width="237" height="317" rx="9" fill="none" stroke="${tone[2]}" stroke-width="3"/><rect x="5.5" y="5.5" width="229" height="309" rx="7" fill="none" stroke="#fff8e6" stroke-width="1" opacity=".7"/>`;
+  if (o.at) return `<g transform="translate(${o.at[0]} ${o.at[1]}) scale(${o.at[2]})">${s}</g>`;
+  return `<svg viewBox="0 0 240 320" width="${size}" style="max-width:100%;height:auto;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+function eyeSVG(ex, ey, sd, t, shape, mood, E, lash, id, SK, SKdd, Hd) {
+  const w = 21 - t, h = (shape === 'round' ? 15 : 13) + (1 - t) * 1.8;
+  const dy = shape === 'cat' ? -3 : shape === 'droopy' ? 2.5 : -0.6;
+  const inner = ex - sd * w / 2, outer = ex + sd * w / 2;
+  // 눈썹
+  const by = ey - h - 5;
+  const inY = mood === 'angry' ? by + 4 : (mood === 'sad' || mood === 'tired' || mood === 'sick') ? by - 2.5 : by + 1;
+  let s = `<path d="M${inner - sd * 1} ${inY}Q${ex} ${by - 4} ${outer + sd * 3} ${by + 2 + dy * 0.4}" stroke="${Hd}" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".85"/>`;
+  if (mood === 'joy') {
+    return s + `<path d="M${inner} ${ey + 1}Q${ex} ${ey - h * 0.55} ${outer} ${ey + dy * 0.5}" stroke="${lash}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M${outer} ${ey + dy * 0.5}l${sd * 3} -2" stroke="${lash}" stroke-width="1.4" stroke-linecap="round"/>`;
+  }
+  const eyeD = `M${inner} ${ey + 1}C${inner + sd * w * 0.25} ${ey - h * 0.62} ${outer - sd * w * 0.25} ${ey - h * 0.7 + dy} ${outer} ${ey + dy}C${outer - sd * w * 0.2} ${ey + h * 0.5 + dy * 0.3} ${inner + sd * w * 0.3} ${ey + h * 0.5} ${inner} ${ey + 1}Z`;
+  const cid = `${id}e${sd > 0 ? 'r' : 'l'}`, r = h * 0.66, ix = ex + sd * 0.4, iy = ey - h * 0.04;
+  const half = mood === 'tired' || mood === 'sick';
+  s += `<clipPath id="${cid}"><path d="${eyeD}"/></clipPath><path d="${eyeD}" fill="#fbf8f3"/>
+  <g clip-path="url(#${cid})">
+   <circle cx="${ix}" cy="${iy}" r="${r}" fill="url(#${id}ir)" stroke="${shade(E, -0.6)}" stroke-width=".8"/>
+   <circle cx="${ix}" cy="${iy}" r="${r * 0.42}" fill="${shade(E, -0.72)}"/>
+   <rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.62}" fill="${shade(E, -0.7)}" opacity=".32"/>
+   ${half ? `<rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.95}" fill="${SK}"/>` : ''}
+  </g>`;
+  s += `<ellipse cx="${ix - r * 0.32}" cy="${iy - r * 0.3}" rx="${r * 0.3}" ry="${r * 0.24}" fill="#fff" opacity=".95"/><circle cx="${ix + r * 0.38}" cy="${iy + r * 0.34}" r="${r * 0.12}" fill="#fff" opacity=".8"/>`;
+  const topY = half ? ey - h * 0.18 : null;
+  const lid = half ? `M${inner} ${ey}Q${ex} ${topY} ${outer} ${ey + dy * 0.6}` : `M${inner} ${ey + 1}C${inner + sd * w * 0.25} ${ey - h * 0.62} ${outer - sd * w * 0.25} ${ey - h * 0.7 + dy} ${outer} ${ey + dy}`;
+  s += `<path d="${lid}" stroke="${lash}" stroke-width="1.9" fill="none" stroke-linecap="round"/>`;
+  s += `<path d="M${ex} ${(half ? topY : ey - h * 0.62 + dy * 0.4).toFixed(1)}Q${outer - sd * 3} ${ey - h * 0.55 + dy} ${outer + sd * 2.5} ${ey + dy - 1.5}" stroke="${lash}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
+  s += `<path d="M${outer + sd * 1.5} ${ey + dy - 1}l${sd * 4} -2.5M${outer - sd * 1} ${ey + dy - 3.5}l${sd * 3.5} -3.5" stroke="${lash}" stroke-width="1" stroke-linecap="round"/>`;
+  s += `<path d="M${outer - sd * 1} ${ey + dy + 1.5}Q${ex} ${ey + h * 0.55} ${inner + sd * w * 0.25} ${ey + h * 0.38}" stroke="${lash}" stroke-width=".8" fill="none" opacity=".55"/>`;
+  s += `<path d="M${inner + sd * 3} ${ey - h * 0.72}Q${ex} ${ey - h * 1.02} ${outer - sd * 1} ${ey - h * 0.6 + dy}" stroke="${SKdd}" stroke-width=".8" fill="none" opacity=".55"/>`;
   return s;
 }
-function eyeSVG(ex, ey, sd, es, shape, mood, E, lash, id, SK) {
-  const w = 34 * es, h = (shape === 'round' ? 44 : 40) * es;
-  const rot = shape === 'cat' ? 9 : shape === 'droopy' ? -8 : 0;
-  const tr = `transform="rotate(${sd < 0 ? rot : -rot} ${ex} ${ey})"`;
-  const inner = ex - sd * w / 2, outer = ex + sd * w / 2;
-  if (mood === 'joy') {
-    return `<g ${tr}><path d="M${ex - w / 2} ${ey + 3}Q${ex} ${ey - h * 0.5} ${ex + w / 2} ${ey + 3}" stroke="${lash}" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M${outer} ${ey + 2}l${sd * 5} -5" stroke="${lash}" stroke-width="2" stroke-linecap="round"/></g>`;
-  }
-  const cid = `${id}e${sd > 0 ? 'r' : 'l'}`;
-  let s = `<g ${tr}><clipPath id="${cid}"><ellipse cx="${ex}" cy="${ey}" rx="${w / 2}" ry="${h / 2}"/></clipPath>
-  <ellipse cx="${ex}" cy="${ey}" rx="${w / 2}" ry="${h / 2}" fill="#fff"/>
-  <g clip-path="url(#${cid})">
-   <ellipse cx="${ex}" cy="${ey + h * 0.05}" rx="${w * 0.42}" ry="${h * 0.47}" fill="url(#${id}ir)" stroke="${shade(E, -0.6)}" stroke-width="1.2"/>
-   <ellipse cx="${ex}" cy="${ey + h * 0.06}" rx="${w * 0.27}" ry="${h * 0.32}" fill="none" stroke="${shade(E, 0.3)}" stroke-width="1" opacity=".6"/>
-   <ellipse cx="${ex}" cy="${ey + h * 0.02}" rx="${w * 0.13}" ry="${h * 0.19}" fill="${shade(E, -0.75)}"/>
-   <path d="M${ex - w * 0.3} ${ey + h * 0.22}Q${ex} ${ey + h * 0.5} ${ex + w * 0.3} ${ey + h * 0.22}Q${ex} ${ey + h * 0.36} ${ex - w * 0.3} ${ey + h * 0.22}Z" fill="${shade(E, 0.7)}" opacity=".7"/>
-   <rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.62}" fill="${shade(E, -0.6)}" opacity=".28"/>
-   ${mood === 'tired' || mood === 'sick' ? `<rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.85}" fill="${SK}"/>` : ''}
-  </g>`;
-  // 하이라이트 (양쪽 눈 모두 같은 방향)
-  s += `<ellipse cx="${ex - w * 0.14}" cy="${ey - h * 0.1}" rx="${w * 0.15}" ry="${h * 0.16}" fill="#fff"/><circle cx="${ex + w * 0.16}" cy="${ey + h * 0.22}" r="${w * 0.07}" fill="#fff" opacity=".95"/><circle cx="${ex - w * 0.2}" cy="${ey + h * 0.2}" r="${w * 0.035}" fill="#fff" opacity=".8"/>`;
-  s += star(ex + w * 0.14, ey - h * 0.18, w * 0.12, '#fff', 0.95);
-  // 속눈썹
-  const lidY = mood === 'tired' || mood === 'sick' ? ey - h * 0.1 : ey - h * 0.28;
-  s += `<path d="M${inner} ${ey - h * 0.12}Q${ex} ${mood === 'tired' || mood === 'sick' ? ey - h * 0.3 : ey - h * 0.72} ${outer + sd * 4} ${lidY}" stroke="${lash}" stroke-width="${3.4 * es}" fill="none" stroke-linecap="round"/>`;
-  s += `<path d="M${outer} ${lidY + 2}L${outer + sd * 8} ${lidY - 7}L${outer + sd * 3} ${lidY + 7}Z" fill="${lash}"/>`;
-  s += `<path d="M${outer + sd * 3} ${lidY + 1}l${sd * 7} 1M${outer + sd * 1} ${lidY - 4}l${sd * 6} -6" stroke="${lash}" stroke-width="1.3" stroke-linecap="round"/>`;
-  s += `<path d="M${outer - sd * 2} ${ey + h * 0.26}Q${ex} ${ey + h * 0.56} ${inner} ${ey + h * 0.3}" stroke="${lash}" stroke-width="1" fill="none" opacity=".55"/>`;
-  s += `<path d="M${inner + sd * 3} ${ey - h * 0.66}Q${ex} ${ey - h * 0.86} ${outer} ${ey - h * 0.52}" stroke="${lash}" stroke-width="1" fill="none" opacity=".45"/>`;
-  return s + '</g>';
-}
-function bangsSVG(type, cx, hw, eyeY, hairFill, Hd) {
-  const P = {
-    hime: [[1, -26], [0.84, -13], [0.7, -20], [0.52, -12], [0.36, -20], [0.18, -12], [0, -20], [-0.18, -12], [-0.36, -20], [-0.52, -12], [-0.7, -20], [-0.84, -13], [-1, -26]],
-    side: [[1, -30], [0.82, -18], [0.64, -34], [0.4, -14], [0.2, -32], [-0.08, -10], [-0.3, -30], [-0.56, -6], [-0.76, -26], [-0.92, -4], [-1, -24]],
-    part: [[1, -28], [0.84, -6], [0.66, -24], [0.44, -10], [0.24, -30], [0.06, -46], [-0.06, -46], [-0.24, -30], [-0.44, -10], [-0.66, -24], [-0.84, -6], [-1, -28]]
+function bangsSVG(type, cx, hw, eyeY, fillAttr, Hd) {
+  const L = {
+    hime: [[cx - 18, 58, cx - 26, eyeY - 13, 22, -3], [cx - 6, 56, cx - 11, eyeY - 15, 22, -1], [cx + 6, 56, cx + 5, eyeY - 14, 22, 1], [cx + 17, 58, cx + 22, eyeY - 13, 22, 3], [cx - hw + 6, 62, cx - hw - 1, eyeY + 8, 16, -4], [cx + hw - 6, 62, cx + hw + 1, eyeY + 8, 16, 4]],
+    side: [[cx + 18, 54, cx - 28, eyeY - 8, 34, -10], [cx + 14, 56, cx - 10, eyeY - 17, 24, -6], [cx + 26, 58, cx + 6, eyeY - 21, 20, -3], [cx + 28, 60, cx + hw + 1, eyeY + 3, 16, 6], [cx - hw + 6, 64, cx - hw - 2, eyeY + 9, 14, -3]],
+    part: [[cx - 4, 54, cx - hw + 3, eyeY - 5, 26, -10], [cx + 4, 54, cx + hw - 3, eyeY - 5, 26, 10], [cx - hw + 4, 64, cx - hw - 3, eyeY + 13, 14, -4], [cx + hw - 4, 64, cx + hw + 3, eyeY + 13, 14, 4]]
   }[type] || [];
-  const fx = x => cx + x * (hw + 8), fy = y => eyeY + y - 15;
-  const pts = P.map(([x, y]) => [fx(x), fy(y)]);
-  const [rx, ry] = pts[0], [lx, ly] = pts[pts.length - 1];
-  let d = `M${rx} ${ry}C${rx + 10} 10 ${lx - 10} 10 ${lx} ${ly}`;
-  for (let i = pts.length - 2; i >= 0; i--) {
-    const [ax, ay] = pts[i + 1], [bx, by] = pts[i];
-    const mx = (ax + bx) / 2, my = Math.min(ay, by) + (by > ay ? -2 : 4);
-    d += `Q${(mx - (type === 'side' ? 3 : 0)).toFixed(1)} ${my.toFixed(1)} ${bx.toFixed(1)} ${by.toFixed(1)}`;
+  let s = '';
+  for (const [x0, y0, x1, y1, w, bend] of L) {
+    const mx = (x0 + x1) / 2 + bend, my = (y0 + y1) / 2;
+    s += `<path d="M${x0 - w / 2} ${y0}Q${(mx - w * 0.3).toFixed(1)} ${my.toFixed(1)} ${x1} ${y1}Q${(mx + w * 0.3).toFixed(1)} ${my.toFixed(1)} ${x0 + w / 2} ${y0}Z" ${fillAttr}/>`;
+    if (Hd) s += `<path d="M${x0} ${y0 + 4}Q${mx.toFixed(1)} ${my.toFixed(1)} ${x1 + (x0 - x1) * 0.12} ${y1 - 4}" stroke="${Hd}" stroke-width=".8" fill="none" opacity=".5"/>`;
   }
-  let s = `<path d="${d}Z" ${hairFill}/>`;
-  // 머리결
-  pts.forEach(([x, y], i) => { if (i % 2 === 1 && i < pts.length - 1) s += `<path d="M${(cx + (x - cx) * 0.4).toFixed(1)} 52Q${((x + cx) / 2).toFixed(1)} ${(y - 30).toFixed(1)} ${x.toFixed(1)} ${(y - 3).toFixed(1)}" stroke="${Hd}" stroke-width="1.1" fill="none" opacity=".55"/>`; });
   return s;
 }
 function outfitSVG(kind, a, cx, y0, sw, t, id, SK) {
-  const dc = a.dc, B = bodyPath(cx, y0, sw);
-  const st = (c, w = 1.5) => `stroke="${shade(c, -0.35)}" stroke-width="${w}"`;
-  const collar = (c, fill = '#fff') => `<path d="M${cx - 1} ${y0 + 5}C${cx - 10} ${y0 + 2} ${cx - 30} ${y0} ${cx - 28} ${y0 + 12}C${cx - 26} ${y0 + 25} ${cx - 8} ${y0 + 24} ${cx - 1} ${y0 + 10}Z" fill="${fill}" ${st(c, 1.2)}/><path d="M${cx + 1} ${y0 + 5}C${cx + 10} ${y0 + 2} ${cx + 30} ${y0} ${cx + 28} ${y0 + 12}C${cx + 26} ${y0 + 25} ${cx + 8} ${y0 + 24} ${cx + 1} ${y0 + 10}Z" fill="${fill}" ${st(c, 1.2)}/>`;
-  const folds = c => `<path d="M${cx - sw + 4} ${y0 + 50}Q${cx - sw + 2} ${y0 + 80} ${cx - sw - 4} 300M${cx + sw - 4} ${y0 + 50}Q${cx + sw - 2} ${y0 + 80} ${cx + sw + 4} 300M${cx - 14} ${y0 + 70}Q${cx - 16} ${y0 + 90} ${cx - 18} 300" stroke="${shade(c, -0.18)}" stroke-width="1.2" fill="none" opacity=".7"/>`;
-  const uNeck = (dep, c) => `<path d="M${cx - 26} ${y0 + 2}Q${cx} ${y0 + dep} ${cx + 26} ${y0 + 2}Z" fill="${SK}"/>` + Array.from({ length: 9 }, (_, i) => { const u = (i + 0.5) / 9, x = cx - 26 + 52 * u, y = y0 + 2 + (dep - 2) * 2 * u * (1 - u) * 1.0; return `<circle cx="${x.toFixed(1)}" cy="${(y + 2).toFixed(1)}" r="3" fill="#fff" stroke="${shade(c, -0.2)}" stroke-width=".8"/>`; }).join('');
-  const pearls = (y, n = 9, r = 1.8, c = '#fff') => Array.from({ length: n }, (_, i) => { const u = i / (n - 1), x = cx - 14 + 28 * u, yy = y + 10 * Math.sin(Math.PI * u); return `<circle cx="${x.toFixed(1)}" cy="${yy.toFixed(1)}" r="${r}" fill="${c}" stroke="#d8c8d0" stroke-width=".5"/>`; }).join('');
+  const dc = a.dc;
+  const T = `M${cx - 9} ${y0 - 8}C${cx - 24} ${y0 - 2} ${cx - sw + 6} ${y0 + 2} ${cx - sw} ${y0 + 18}C${cx - sw - 8} ${y0 + 40} ${cx - sw - 10} ${y0 + 90} ${cx - sw - 8} 324L${cx + sw + 8} 324C${cx + sw + 10} ${y0 + 90} ${cx + sw + 8} ${y0 + 40} ${cx + sw} ${y0 + 18}C${cx + sw - 6} ${y0 + 2} ${cx + 24} ${y0 - 2} ${cx + 9} ${y0 - 8}Z`;
+  const ln = c => shade(c, c === '#f2ece0' || c === '#f6f2ec' || c === '#ffffff' ? -0.25 : -0.38);
+  const body = c => `<path d="${T}" fill="${c}" stroke="${ln(c)}" stroke-width="1.1"/>`;
+  const shadeO = `<path d="${T}" fill="url(#${id}sh)"/>`;
+  const arms = c => [-1, 1].map(sd => `<path d="M${cx + sd * (sw - 8)} ${y0 + 40}C${cx + sd * (sw - 6)} ${y0 + 90} ${cx + sd * (sw - 4)} 270 ${cx + sd * (sw - 2)} 324" stroke="${ln(c)}" stroke-width="1" fill="none" opacity=".8"/>`).join('');
+  const puff = c => [-1, 1].map(sd => `<path d="M${cx + sd * (sw - 24)} ${y0 + 2}C${cx + sd * (sw + 6)} ${y0 - 8} ${cx + sd * (sw + 14)} ${y0 + 28} ${cx + sd * (sw + 3)} ${y0 + 44}C${cx + sd * (sw - 6)} ${y0 + 40} ${cx + sd * (sw - 14)} ${y0 + 30} ${cx + sd * (sw - 24)} ${y0 + 2}Z" fill="${shade(c, 0.12)}" stroke="${ln(c)}" stroke-width="1"/><path d="M${cx + sd * (sw - 8)} ${y0 + 6}Q${cx + sd * (sw + 4)} ${y0 + 18} ${cx + sd * (sw + 2)} ${y0 + 38}M${cx + sd * (sw - 14)} ${y0 + 10}Q${cx + sd * (sw - 4)} ${y0 + 24} ${cx + sd * (sw - 4)} ${y0 + 38}" stroke="${ln(c)}" stroke-width=".8" fill="none" opacity=".6"/>`).join('');
+  const folds = c => `<path d="M${cx - 18} ${y0 + 96}Q${cx - 20} ${y0 + 120} ${cx - 24} 324M${cx + 10} ${y0 + 100}Q${cx + 12} ${y0 + 124} ${cx + 14} 324M${cx - 4} ${y0 + 110}Q${cx - 4} ${y0 + 130} ${cx - 6} 324" stroke="${ln(c)}" stroke-width=".9" fill="none" opacity=".55"/>`;
+  const waist = (c, y = y0 + 82) => `<path d="M${cx - sw + 4} ${y}Q${cx} ${y + 6} ${cx + sw - 4} ${y}" stroke="${ln(c)}" stroke-width="1.1" fill="none"/>`;
+  const collar = (c, fill = '#f7f3ea') => [-1, 1].map(sd => `<path d="M${cx} ${y0 - 4}C${cx + sd * 8} ${y0 - 7} ${cx + sd * 26} ${y0 - 7} ${cx + sd * 27} ${y0 + 5}C${cx + sd * 25} ${y0 + 16} ${cx + sd * 8} ${y0 + 15} ${cx} ${y0 + 4}Z" fill="${fill}" stroke="${ln(c)}" stroke-width=".9"/>`).join('');
+  const square = (dep, lace = '#f7f3ea') => `<path d="M${cx - 25} ${y0}Q${cx - 25} ${y0 + dep} ${cx - 19} ${y0 + dep}L${cx + 19} ${y0 + dep}Q${cx + 25} ${y0 + dep} ${cx + 25} ${y0}C${cx + 18} ${y0 - 6} ${cx + 10} ${y0 - 8} ${cx} ${y0 - 8}C${cx - 10} ${y0 - 8} ${cx - 18} ${y0 - 6} ${cx - 25} ${y0}Z" fill="${SK}"/><path d="M${cx - 15} ${y0 + 3}q6 3 11 1M${cx + 15} ${y0 + 3}q-6 3 -11 1" stroke="${shade(SK, -0.2)}" stroke-width=".8" fill="none"/>` + Array.from({ length: 9 }, (_, i) => `<circle cx="${cx - 20 + i * 5}" cy="${y0 + dep}" r="2.6" fill="${lace}" stroke="#d6cbb8" stroke-width=".5"/>`).join('');
+  const vneck = dep => `<path d="M${cx - 15} ${y0 - 7}L${cx} ${y0 + dep}L${cx + 15} ${y0 - 7}Z" fill="${SK}"/>`;
+  const high = c => `<path d="M${cx - 11} ${y0 - 16}L${cx - 13} ${y0 + 2}Q${cx} ${y0 + 6} ${cx + 13} ${y0 + 2}L${cx + 11} ${y0 - 16}Q${cx} ${y0 - 12} ${cx - 11} ${y0 - 16}Z" fill="${c}" stroke="${ln(c)}" stroke-width="1"/>`;
+  const W = '#f6f2ec';
   switch (kind) {
-    case 'silk': return `<path d="${B}" fill="${SK}" stroke="${shade(SK, -0.14)}"/><path d="M${cx - sw - 6} ${y0 + 26}Q${cx} ${y0 + 46} ${cx + sw + 6} ${y0 + 26}L${cx + sw + 16} 302L${cx - sw - 16} 302Z" fill="${dc}" ${st(dc)}/>` + Array.from({ length: 11 }, (_, i) => { const u = i / 10, x = cx - sw - 6 + (2 * sw + 12) * u, y = y0 + 26 + 20 * 4 * u * (1 - u) * 0.95; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="#fff" opacity=".9"/>`; }).join('') + pearls(y0 + 2) + folds(dc);
+    case 'silk': return body(dc) + vneck(26) + arms(dc) + `<path d="M${cx - 15} ${y0 - 7}L${cx} ${y0 + 26}L${cx + 15} ${y0 - 7}" stroke="#f3ead6" stroke-width="2.4" fill="none"/><path d="M${cx - sw + 2} ${y0 + 64}Q${cx} ${y0 + 72} ${cx + sw - 2} ${y0 + 64}L${cx + sw - 2} ${y0 + 74}Q${cx} ${y0 + 82} ${cx - sw + 2} ${y0 + 74}Z" fill="${shade(dc, -0.22)}"/><circle cx="${cx}" cy="${y0 + 8}" r="2.6" fill="#e8d7a8" stroke="#a88a40" stroke-width=".7"/>` + folds(dc) + shadeO;
     case 'ball': case 'wedding': {
-      const c = kind === 'wedding' ? '#ffffff' : dc;
-      return `<path d="${B}" fill="${c}" ${st(c === '#ffffff' ? '#d8d0e0' : c)}/>${uNeck(30, c === '#ffffff' ? '#d8d0e0' : c)}
-      ${kind === 'ball' ? `<ellipse cx="${cx - sw + 2}" cy="${y0 + 12}" rx="15" ry="10" fill="${shade(c, 0.25)}" ${st(c === '#ffffff' ? '#d8d0e0' : c, 1.2)}/><ellipse cx="${cx + sw - 2}" cy="${y0 + 12}" rx="15" ry="10" fill="${shade(c, 0.25)}" ${st(c === '#ffffff' ? '#d8d0e0' : c, 1.2)}/>` : ''}
-      <path d="M${cx - 30} ${y0 + 40}Q${cx} ${y0 + 56} ${cx + 30} ${y0 + 40}" stroke="${kind === 'wedding' ? '#e8d8f0' : '#e8c060'}" stroke-width="3" fill="none"/>
-      ${kind === 'wedding' ? pearls(y0 - 4, 11, 2) : `<circle cx="${cx}" cy="${y0 + 6}" r="4" fill="#e03a5a" stroke="#c9a040" stroke-width="1.5"/>`}${folds(c === '#ffffff' ? '#e0d8e8' : c)}`;
+      const c = kind === 'wedding' ? W : dc;
+      return body(c) + puff(c) + arms(c) + square(17) + `<path d="M${cx - 25} ${y0}Q${cx - 25} ${y0 + 17} ${cx - 19} ${y0 + 17}L${cx + 19} ${y0 + 17}Q${cx + 25} ${y0 + 17} ${cx + 25} ${y0}" stroke="${kind === 'wedding' ? '#e2d6c6' : '#c9a050'}" stroke-width="1.6" fill="none"/>` + waist(c, y0 + 66) +
+        (kind === 'wedding' ? Array.from({ length: 9 }, (_, i) => { const u = i / 8; return `<circle cx="${cx - 12 + 24 * u}" cy="${(chinY0(y0) + 4 + 7 * Math.sin(Math.PI * u)).toFixed(1)}" r="1.6" fill="#fff" stroke="#d8ccc0" stroke-width=".5"/>`; }).join('') : `<path d="M${cx} ${y0 + 22}l5 6l-5 7l-5 -7Z" fill="#a8434f" stroke="#c9a050" stroke-width="1"/>`) + folds(c) + shadeO;
     }
-    case 'queen': return `<path d="${B}" fill="#fff6e6" ${st('#d8c8a0')}/>${uNeck(28, '#e8c060')}<path d="M${cx - sw - 8} ${y0 + 10}Q${cx - sw + 10} ${y0 + 34} ${cx - 26} ${y0 + 8}M${cx + sw + 8} ${y0 + 10}Q${cx + sw - 10} ${y0 + 34} ${cx + 26} ${y0 + 8}" stroke="#fff" stroke-width="14" fill="none"/>` + [-1, 1].map(sd => [0, 1, 2].map(i => `<path d="M${cx + sd * (32 + i * 10)} ${y0 + 10 + i * 4}l0 5" stroke="#222" stroke-width="2.4"/>`).join('')).join('') + `<path d="M${cx - 20} ${y0 + 50}L${cx} ${y0 + 60}L${cx + 20} ${y0 + 50}" stroke="#e0b040" stroke-width="3" fill="none"/><circle cx="${cx}" cy="${y0 + 6}" r="5" fill="#3a6ad0" stroke="#e0b040" stroke-width="2"/>`;
-    case 'armor': return `<path d="${B}" fill="#2e3a5c" ${st('#2e3a5c')}/>
-      <path d="M${cx - sw + 8} ${y0 + 18}Q${cx} ${y0 + 8} ${cx + sw - 8} ${y0 + 18}L${cx + sw - 14} ${y0 + 92}Q${cx} ${y0 + 104} ${cx - sw + 14} ${y0 + 92}Z" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/>
-      <path d="M${cx} ${y0 + 14}L${cx} ${y0 + 98}" stroke="#8a92a8" stroke-width="1.2"/>
-      <ellipse cx="${cx - sw + 2}" cy="${y0 + 18}" rx="21" ry="13" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/><ellipse cx="${cx + sw - 2}" cy="${y0 + 18}" rx="21" ry="13" fill="url(#${id}mt)" stroke="#5a6278" stroke-width="1.6"/>
-      <path d="M${cx - sw - 14} ${y0 + 22}Q${cx - sw + 2} ${y0 + 30} ${cx - sw + 18} ${y0 + 22}M${cx + sw + 14} ${y0 + 22}Q${cx + sw - 2} ${y0 + 30} ${cx + sw - 18} ${y0 + 22}" stroke="#5a6278" fill="none"/>
-      <path d="M${cx - 14} ${y0 + 2}L${cx + 14} ${y0 + 2}L${cx + 10} ${y0 + 12}L${cx - 10} ${y0 + 12}Z" fill="#c8cede" stroke="#5a6278"/>
-      <path d="M${cx} ${y0 + 34}l8 8l-8 12l-8 -12Z" fill="#e8c048" stroke="#9a7420"/>`;
-    case 'robe': return `<path d="${B}" fill="#4a3a7a" ${st('#4a3a7a')}/><path d="M${cx - 18} ${y0 - 14}L${cx - 30} ${y0 + 18}L${cx - 4} ${y0 + 10}ZM${cx + 18} ${y0 - 14}L${cx + 30} ${y0 + 18}L${cx + 4} ${y0 + 10}Z" fill="#5a4a90" stroke="#2a1a4a"/><path d="M${cx} ${y0 + 12}L${cx} 302" stroke="#e0b848" stroke-width="3"/><path d="M${cx - 26} ${y0 + 18}L${cx - sw - 12} 300M${cx + 26} ${y0 + 18}L${cx + sw + 12} 300" stroke="#e0b848" stroke-width="2"/>${star(cx, y0 + 16, 8, '#ffe070')}${folds('#4a3a7a')}`;
-    case 'nun': return `<path d="${B}" fill="#26222e" ${st('#26222e')}/><path d="M${cx - 34} ${y0 + 4}Q${cx} ${y0 + 44} ${cx + 34} ${y0 + 4}Q${cx} ${y0 + 14} ${cx - 34} ${y0 + 4}Z" fill="#fff" stroke="#bbb"/><path d="M${cx} ${y0 + 34}v24M${cx - 8} ${y0 + 42}h16" stroke="#e0b848" stroke-width="3.4" stroke-linecap="round"/>`;
-    case 'maid': return `<path d="${B}" fill="#2c2a3e" ${st('#2c2a3e')}/><path d="M${cx - 22} ${y0 + 30}L${cx + 22} ${y0 + 30}L${cx + 30} 302L${cx - 30} 302Z" fill="#fff" stroke="#ccc"/>` + Array.from({ length: 6 }, (_, i) => `<circle cx="${cx - 20 + i * 8}" cy="${y0 + 30}" r="4" fill="#fff" stroke="#ccc" stroke-width=".8"/>`).join('') + collar('#888') + bow(cx, y0 + 14, 0.38, '#e04a6a');
-    case 'dancer': return `<path d="${B}" fill="${dc}" ${st(dc)}/><path d="M${cx - 22} ${y0 + 2}L${cx} ${y0 + 36}L${cx + 22} ${y0 + 2}Z" fill="${SK}"/><path d="M${cx - sw - 10} ${y0 + 40}Q${cx} ${y0 + 80} ${cx + sw + 10} ${y0 + 40}" stroke="#fff" stroke-width="12" fill="none" opacity=".45"/>` + Array.from({ length: 10 }, (_, i) => `<circle cx="${cx - 40 + i * 9}" cy="${y0 + 70 + (i % 3) * 8}" r="1.6" fill="#fff8c0"/>`).join('') + folds(dc);
-    case 'demon': return `<path d="${B}" fill="#1e1424" ${st('#5a1030')}/><path d="M${cx - 16} ${y0 - 18}L${cx - 36} ${y0 + 14}L${cx - 6} ${y0 + 8}ZM${cx + 16} ${y0 - 18}L${cx + 36} ${y0 + 14}L${cx + 6} ${y0 + 8}Z" fill="#3a1030" stroke="#c0204a"/><path d="M${cx - sw} ${y0 + 30}Q${cx} ${y0 + 60} ${cx + sw} ${y0 + 30}" stroke="#c0204a" stroke-width="2.4" fill="none"/><circle cx="${cx}" cy="${y0 + 18}" r="5" fill="#ff3050" stroke="#a01030" stroke-width="1.5"/>`;
-    case 'chef': return `<path d="${B}" fill="#ffffff" ${st('#c8c8d0')}/>` + [-1, 1].map(sd => [0, 1, 2].map(i => `<circle cx="${cx + sd * 12}" cy="${y0 + 34 + i * 18}" r="3" fill="#ddd" stroke="#999"/>`).join('')).join('') + `<path d="M${cx - 16} ${y0 + 2}L${cx} ${y0 + 22}L${cx + 16} ${y0 + 2}Z" fill="#e04848" stroke="#a02828"/>`;
-    default: { // casual — 나이에 따라 원피스
-      return `<path d="${B}" fill="${dc}" ${st(dc === '#ffffff' ? '#d0c0d0' : dc)}/>${collar(dc === '#ffffff' ? '#d0c0d0' : dc)}${bow(cx, y0 + 16, 0.42, dc === '#ffffff' || dc === '#fff0a8' ? '#e8607e' : shade(dc, -0.3))}${folds(dc === '#ffffff' ? '#e0d0e0' : dc)}`;
-    }
+    case 'queen': return body('#f1e8d6') + arms('#f1e8d6') + square(15) + [-1, 1].map(sd => `<path d="M${cx + sd * 24} ${y0 - 2}C${cx + sd * (sw - 4)} ${y0 - 2} ${cx + sd * (sw + 8)} ${y0 + 12} ${cx + sd * (sw + 8)} ${y0 + 28}L${cx + sd * (sw - 8)} ${y0 + 30}C${cx + sd * (sw - 12)} ${y0 + 16} ${cx + sd * 34} ${y0 + 12} ${cx + sd * 24} ${y0 + 12}Z" fill="#fbf8f2" stroke="#cfc6b6"/>` + [0, 1, 2].map(i => `<path d="M${cx + sd * (30 + i * 8)} ${y0 + 4 + i * 5}l0 4" stroke="#222" stroke-width="2"/>`).join('')).join('') + `<path d="M${cx - 20} ${y0 + 18}Q${cx} ${y0 + 40} ${cx + 20} ${y0 + 18}" stroke="#c9a050" stroke-width="2.2" fill="none"/><circle cx="${cx}" cy="${y0 + 30}" r="4" fill="#3a5aa8" stroke="#c9a050" stroke-width="1.6"/>` + folds('#f1e8d6') + shadeO;
+    case 'armor': return body('#2e3a58') + arms('#2e3a58') + high('#c9cfdc') +
+      `<path d="M${cx - sw + 12} ${y0 + 14}Q${cx} ${y0 + 4} ${cx + sw - 12} ${y0 + 14}L${cx + sw - 16} ${y0 + 92}Q${cx} ${y0 + 104} ${cx - sw + 16} ${y0 + 92}Z" fill="url(#${id}mt)" stroke="#55607a" stroke-width="1.3"/><path d="M${cx} ${y0 + 10}V${y0 + 98}M${cx - sw + 18} ${y0 + 60}Q${cx} ${y0 + 68} ${cx + sw - 18} ${y0 + 60}" stroke="#7d879e" stroke-width="1" fill="none"/>` +
+      [-1, 1].map(sd => `<path d="M${cx + sd * (sw - 26)} ${y0 + 4}C${cx + sd * (sw + 4)} ${y0 - 4} ${cx + sd * (sw + 14)} ${y0 + 20} ${cx + sd * (sw + 8)} ${y0 + 34}C${cx + sd * sw} ${y0 + 30} ${cx + sd * (sw - 14)} ${y0 + 26} ${cx + sd * (sw - 26)} ${y0 + 4}Z" fill="url(#${id}mt)" stroke="#55607a" stroke-width="1.3"/><path d="M${cx + sd * (sw - 20)} ${y0 + 12}Q${cx + sd * (sw + 2)} ${y0 + 10} ${cx + sd * (sw + 8)} ${y0 + 26}" stroke="#7d879e" fill="none"/>`).join('') +
+      `<path d="M${cx} ${y0 + 34}l6 7l-6 10l-6 -10Z" fill="#d6ae52" stroke="#8a6a20"/>` + shadeO;
+    case 'robe': return body('#3e3364') + arms('#3e3364') + high('#4a3f78') + `<path d="M${cx} ${y0 + 4}V324M${cx - 24} ${y0 + 14}L${cx - sw - 6} 324M${cx + 24} ${y0 + 14}L${cx + sw + 6} 324" stroke="#cfa64e" stroke-width="1.8"/>${star(cx, y0 + 16, 6, '#e8cf7a')}` + folds('#3e3364') + shadeO;
+    case 'nun': return body('#232028') + arms('#232028') + `<path d="M${cx - 30} ${y0 - 2}Q${cx} ${y0 + 34} ${cx + 30} ${y0 - 2}Q${cx} ${y0 + 8} ${cx - 30} ${y0 - 2}Z" fill="#f4f1ec" stroke="#bdb5aa"/><path d="M${cx} ${y0 + 28}v20M${cx - 6} ${y0 + 34}h12" stroke="#cfa64e" stroke-width="2.8" stroke-linecap="round"/>` + shadeO;
+    case 'maid': return body('#2c3048') + puff('#2c3048') + arms('#2c3048') + `<path d="M${cx - 22} ${y0 + 26}L${cx + 22} ${y0 + 26}L${cx + 28} 324L${cx - 28} 324Z" fill="${W}" stroke="#cfc6b6"/>` + Array.from({ length: 6 }, (_, i) => `<circle cx="${cx - 20 + i * 8}" cy="${y0 + 26}" r="3.5" fill="${W}" stroke="#cfc6b6" stroke-width=".7"/>`).join('') + collar('#2c3048') + bow(cx, y0 + 10, 0.36, '#a8434f') + shadeO;
+    case 'dancer': return body(dc) + arms(dc) + vneck(22) + `<path d="M${cx - sw - 12} ${y0 + 40}Q${cx} ${y0 + 84} ${cx + sw + 12} ${y0 + 40}" stroke="#fffaf0" stroke-width="12" fill="none" opacity=".35"/>` + Array.from({ length: 10 }, (_, i) => `<circle cx="${cx - 40 + i * 9}" cy="${y0 + 74 + (i % 3) * 7}" r="1.3" fill="#fff6c8"/>`).join('') + waist(dc, y0 + 62) + folds(dc) + shadeO;
+    case 'demon': return body('#1d1420') + arms('#1d1420') + `<path d="M${cx - 12} ${y0 - 20}L${cx - 32} ${y0 + 10}L${cx - 4} ${y0 + 6}ZM${cx + 12} ${y0 - 20}L${cx + 32} ${y0 + 10}L${cx + 4} ${y0 + 6}Z" fill="#3a1028" stroke="#a8203e"/><path d="M${cx - sw + 4} ${y0 + 30}Q${cx} ${y0 + 56} ${cx + sw - 4} ${y0 + 30}" stroke="#a8203e" stroke-width="2" fill="none"/><circle cx="${cx}" cy="${y0 + 16}" r="4" fill="#d02a46" stroke="#7a1028" stroke-width="1.2"/>` + shadeO;
+    case 'chef': return body(W) + arms(W) + [-1, 1].map(sd => [0, 1, 2].map(i => `<circle cx="${cx + sd * 11}" cy="${y0 + 30 + i * 18}" r="2.4" fill="#e6e0d6" stroke="#9a9286"/>`).join('')).join('') + `<path d="M${cx - 14} ${y0 - 4}L${cx} ${y0 + 18}L${cx + 14} ${y0 - 4}Z" fill="#b8403e" stroke="#7a2826"/>` + shadeO;
+    default: return body(dc) + puff(dc) + arms(dc) + collar(dc) + bow(cx, y0 + 9, 0.38, dc === '#a8434f' ? '#f2ece0' : '#a8434f') + waist(dc) + folds(dc) + shadeO;
   }
 }
-function accSVG(acc, a, cx, hw, eyeY, es) {
-  const rib = a.dc === '#ffffff' || a.dc === '#fff0a8' ? '#e8607e' : shade(a.dc, -0.2);
+function chinY0(y0) { return y0 - 6; }
+function accSVG(acc, a, cx, hw, eyeY) {
+  const rib = a.dc === '#a8434f' ? '#4f9a9a' : '#a8434f';
   switch (acc) {
-    case 'ribbon': return a.hair === 'twin' ? '' : bow(cx + hw - 8, 50, 0.85, rib);
-    case 'flower': return `<g transform="translate(${cx - hw + 2} 70)">` + [0, 72, 144, 216, 288].map(r => `<ellipse cx="0" cy="-7" rx="5" ry="7" fill="#ffd0e0" stroke="#e890b0" transform="rotate(${r})"/>`).join('') + `<circle r="4" fill="#ffe070" stroke="#d0a030"/></g>`;
-    case 'band': return `<path d="M${cx - hw - 4} 82Q${cx} 26 ${cx + hw + 4} 82" stroke="${rib}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
-    case 'tiara': return `<path d="M${cx - 34} 60Q${cx} 40 ${cx + 34} 60" stroke="#e8eaf4" stroke-width="3.5" fill="none"/><path d="M${cx - 12} 50L${cx} 30L${cx + 12} 50Z" fill="#eef0f8" stroke="#a8acc0"/><circle cx="${cx}" cy="44" r="4" fill="#7ac0f0" stroke="#fff"/><circle cx="${cx - 22}" cy="52" r="2.5" fill="#f08ab0"/><circle cx="${cx + 22}" cy="52" r="2.5" fill="#f08ab0"/>`;
-    case 'crown': return `<path d="M${cx - 30} 52L${cx - 34} 18L${cx - 18} 34L${cx} 10L${cx + 18} 34L${cx + 34} 18L${cx + 30} 52Z" fill="#f2c440" stroke="#a87810" stroke-width="1.8"/><path d="M${cx - 30} 46H${cx + 30}" stroke="#a87810" stroke-width="1.5"/><circle cx="${cx}" cy="38" r="5" fill="#e0304a" stroke="#fff"/><circle cx="${cx - 18}" cy="42" r="3" fill="#3a7ae0"/><circle cx="${cx + 18}" cy="42" r="3" fill="#3a7ae0"/>${star(cx, 10, 5, '#fff')}`;
-    case 'hat': return `<path d="M${cx - 50} 62L${cx - 14} -6Q${cx + 30} -18 ${cx + 52} 6Q${cx + 26} 4 ${cx + 22} 20L${cx + 50} 62Z" fill="#3a2a6a" stroke="#1a1040" stroke-width="1.6"/><ellipse cx="${cx}" cy="62" rx="92" ry="15" fill="#3a2a6a" stroke="#1a1040" stroke-width="1.6"/><path d="M${cx - 46} 54Q${cx} 64 ${cx + 46} 54" stroke="#e0b848" stroke-width="6" fill="none"/>${star(cx + 10, 30, 8, '#ffe070')}`;
-    case 'glasses': { const r = 14 * es; return `<g fill="none" stroke="#6a4a5a" stroke-width="1.8"><circle cx="${cx - 27}" cy="${eyeY + 2}" r="${r}"/><circle cx="${cx + 27}" cy="${eyeY + 2}" r="${r}"/><path d="M${cx - 27 + r} ${eyeY}Q${cx} ${eyeY - 5} ${cx + 27 - r} ${eyeY}"/></g><path d="M${cx - 34} ${eyeY - 6}l6 -4M${cx + 20} ${eyeY - 6}l6 -4" stroke="#fff" stroke-width="2" opacity=".8"/>`; }
-    case 'beret': return `<ellipse cx="${cx - 8}" cy="44" rx="56" ry="20" fill="#b03a4a" stroke="#7a2030" stroke-width="1.6" transform="rotate(-10 ${cx - 8} 44)"/><circle cx="${cx - 10}" cy="24" r="4" fill="#7a2030"/>`;
-    case 'chefhat': return `<path d="M${cx - 34} 54L${cx - 30} 30Q${cx - 50} 0 ${cx - 16} 6Q${cx} -12 ${cx + 18} 6Q${cx + 50} 0 ${cx + 30} 30L${cx + 34} 54Z" fill="#fff" stroke="#bbb" stroke-width="1.5"/>`;
-    case 'maidcap': return `<path d="M${cx - 40} 60Q${cx} 34 ${cx + 40} 60` + '" stroke="#fff" stroke-width="10" fill="none"/>' + Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 36 + i * 12}" cy="${52 - Math.sin(i / 6 * Math.PI) * 12}" r="5" fill="#fff" stroke="#ccc" stroke-width=".8"/>`).join('');
-    case 'horns': return `<path d="M${cx - 30} 52Q${cx - 50} 30 ${cx - 40} 6Q${cx - 34} 30 ${cx - 18} 46Z" fill="#2a1a2a" stroke="#c0204a" stroke-width="1.4"/><path d="M${cx + 30} 52Q${cx + 50} 30 ${cx + 40} 6Q${cx + 34} 30 ${cx + 18} 46Z" fill="#2a1a2a" stroke="#c0204a" stroke-width="1.4"/>`;
-    case 'wveil': return Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 36 + i * 12}" cy="${56 - Math.sin(i / 6 * Math.PI) * 14}" r="5.5" fill="${i % 2 ? '#fff' : '#ffd0e0'}" stroke="#e8b0c8" stroke-width=".8"/>`).join('');
-    case 'kerchief': return `<path d="M${cx - hw - 6} 76Q${cx} 20 ${cx + hw + 6} 76L${cx + hw - 6} 62Q${cx} 30 ${cx - hw + 6} 62Z" fill="#e87a6a" stroke="#a04a3a"/>`;
+    case 'ribbon': return a.hair === 'twin' || a.hair === 'pony' ? '' : bow(cx + hw + 4, 60, 0.62, rib);
+    case 'flower': return `<g transform="translate(${cx - hw - 2} 70)">` + [0, 72, 144, 216, 288].map(r => `<ellipse cx="0" cy="-5.5" rx="4" ry="5.5" fill="#efc2c6" stroke="#b9787e" stroke-width=".7" transform="rotate(${r})"/>`).join('') + `<circle r="3" fill="#e8c36a" stroke="#a8843a" stroke-width=".7"/>${leaf(9, 8, 5, 50, '#7a9a6a')}</g>`;
+    case 'band': return `<path d="M${cx - hw - 8} 92Q${cx - hw - 6} 30 ${cx} 30Q${cx + hw + 6} 30 ${cx + hw + 8} 92" stroke="${rib}" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M${cx - hw - 6} 84Q${cx - hw - 4} 34 ${cx} 33" stroke="#fff" stroke-width="1" fill="none" opacity=".4"/>`;
+    case 'tiara': return `<path d="M${cx - 28} 52Q${cx} 38 ${cx + 28} 52" stroke="#e6e8f0" stroke-width="3" fill="none"/><path d="M${cx - 9} 44L${cx} 28L${cx + 9} 44Z" fill="#eef0f6" stroke="#9ea2b6" stroke-width=".8"/><circle cx="${cx}" cy="38" r="3" fill="#7ab0d8" stroke="#fff" stroke-width=".8"/><circle cx="${cx - 18}" cy="46" r="2" fill="#d88aa0"/><circle cx="${cx + 18}" cy="46" r="2" fill="#d88aa0"/>`;
+    case 'crown': return `<path d="M${cx - 26} 46L${cx - 30} 16L${cx - 15} 30L${cx} 8L${cx + 15} 30L${cx + 30} 16L${cx + 26} 46Z" fill="#e2b445" stroke="#8a6414" stroke-width="1.4"/><path d="M${cx - 26} 40H${cx + 26}" stroke="#8a6414" stroke-width="1.2"/><circle cx="${cx}" cy="33" r="4" fill="#b8283e" stroke="#fff3" /><circle cx="${cx - 16}" cy="37" r="2.5" fill="#3a6ab8"/><circle cx="${cx + 16}" cy="37" r="2.5" fill="#3a6ab8"/>`;
+    case 'hat': return `<path d="M${cx - 40} 52L${cx - 12} -4Q${cx + 26} -14 ${cx + 46} 8Q${cx + 22} 6 ${cx + 18} 22L${cx + 40} 52Z" fill="#33285a" stroke="#160f30" stroke-width="1.3"/><ellipse cx="${cx}" cy="52" rx="74" ry="12" fill="#33285a" stroke="#160f30" stroke-width="1.3"/><path d="M${cx - 37} 45Q${cx} 54 ${cx + 37} 45" stroke="#cfa64e" stroke-width="5" fill="none"/>${star(cx + 8, 26, 6, '#e8cf7a')}`;
+    case 'glasses': return `<g fill="none" stroke="#5a4038" stroke-width="1.3"><ellipse cx="${cx - 16}" cy="${eyeY + 1}" rx="12.5" ry="10"/><ellipse cx="${cx + 16}" cy="${eyeY + 1}" rx="12.5" ry="10"/><path d="M${cx - 4} ${eyeY}Q${cx} ${eyeY - 3} ${cx + 4} ${eyeY}"/></g><path d="M${cx - 21} ${eyeY - 4}l4 -3M${cx + 9} ${eyeY - 4}l4 -3" stroke="#fff" stroke-width="1.2" opacity=".7"/>`;
+    case 'beret': return `<ellipse cx="${cx - 6}" cy="38" rx="46" ry="16" fill="#8e3340" stroke="#5a1a24" stroke-width="1.3" transform="rotate(-10 ${cx - 6} 38)"/><circle cx="${cx - 8}" cy="22" r="3" fill="#5a1a24"/>`;
+    case 'chefhat': return `<path d="M${cx - 28} 50L${cx - 25} 28Q${cx - 42} 2 ${cx - 13} 6Q${cx} -10 ${cx + 15} 6Q${cx + 42} 2 ${cx + 25} 28L${cx + 28} 50Z" fill="#fbf8f2" stroke="#bdb5aa" stroke-width="1.2"/>`;
+    case 'maidcap': return Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 30 + i * 10}" cy="${(50 - Math.sin(i / 6 * Math.PI) * 10).toFixed(1)}" r="4.5" fill="#f8f5ee" stroke="#c9c0b2" stroke-width=".7"/>`).join('');
+    case 'horns': return `<path d="M${cx - 22} 46Q${cx - 42} 26 ${cx - 32} 2Q${cx - 28} 26 ${cx - 12} 40Z" fill="#2a1a28" stroke="#a8203e" stroke-width="1.2"/><path d="M${cx + 22} 46Q${cx + 42} 26 ${cx + 32} 2Q${cx + 28} 26 ${cx + 12} 40Z" fill="#2a1a28" stroke="#a8203e" stroke-width="1.2"/>`;
+    case 'wveil': return Array.from({ length: 7 }, (_, i) => `<circle cx="${cx - 30 + i * 10}" cy="${(52 - Math.sin(i / 6 * Math.PI) * 12).toFixed(1)}" r="4.2" fill="${i % 2 ? '#fbf8f2' : '#efc8cc'}" stroke="#d6b8bc" stroke-width=".7"/>`).join('');
+    case 'kerchief': return `<path d="M${cx - hw - 8} 76Q${cx} 18 ${cx + hw + 8} 76L${cx + hw - 4} 62Q${cx} 30 ${cx - hw + 4} 62Z" fill="#b86a52" stroke="#7a3e2c"/>`;
     default: return '';
   }
+}
+// 타이틀 일러스트: 원작 포스터처럼 아치 액자 안에 세 딸
+function titleArt() {
+  const g = [
+    { a: { hair: 'wavy', bangs: 'hime', hc: 0, ec: 0, sk: 1, eye: 'round', acc: 'none', dc: '#d98fa0' }, at: [34, 196, 1.08], age: 16, mood: 'smile', outfit: 'casual' },
+    { a: { hair: 'wavy', bangs: 'part', hc: 4, ec: 4, sk: 0, eye: 'cat', acc: 'band', dc: '#f2ece0' }, at: [347, 186, 1.08], age: 17, mood: 'joy', outfit: 'ball' },
+    { a: { hair: 'long', bangs: 'part', hc: 1, ec: 6, sk: 1, eye: 'round', acc: 'none', dc: '#c8a050' }, at: [176, 214, 1.2], age: 18, mood: 'smile', outfit: 'casual' }
+  ];
+  return `<svg viewBox="0 0 640 640" style="width:100%;height:auto;display:block" xmlns="http://www.w3.org/2000/svg"><defs>
+   <linearGradient id="tA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fc1bb"/><stop offset="1" stop-color="#4a8486"/></linearGradient>
+   <linearGradient id="tG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3c6dc"/><stop offset=".5" stop-color="#c4709c"/><stop offset="1" stop-color="#e8a8c8"/></linearGradient>
+   <linearGradient id="tR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1d49a"/><stop offset="1" stop-color="#c9963e"/></linearGradient>
+   <pattern id="tD" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M15 4C18 9 18 13 15 17C12 13 12 9 15 4ZM5 20C9 19 12 21 15 25C11 26 8 24 5 20ZM25 20C21 19 18 21 15 25C19 26 22 24 25 20Z" fill="#fff"/></pattern>
+   <clipPath id="tC"><path d="M60 640V250Q60 70 320 60Q580 70 580 250V640Z"/></clipPath>
+  </defs>
+  <path d="M60 640V250Q60 70 320 60Q580 70 580 250V640Z" fill="url(#tA)"/><path d="M60 640V250Q60 70 320 60Q580 70 580 250V640Z" fill="url(#tD)" opacity=".18"/>
+  <path d="M52 640V250Q52 62 320 52Q588 62 588 250V640" fill="none" stroke="#c99a48" stroke-width="5"/><path d="M68 640V252Q68 80 320 70Q572 80 572 252V640" fill="none" stroke="#e7c983" stroke-width="1.5"/>
+  ${[[52, 240, 1.8, 0], [588, 240, 1.8, 1], [52, 470, 1.5, 0], [588, 470, 1.5, 1]].map(([x, y, s, f]) => scrollOrn(x, y, s, '#c99a48', f)).join('')}
+  ${[[30, 130, 9, 30], [600, 150, 8, -30], [14, 360, 8, 60], [626, 380, 9, -20], [36, 560, 8, 10], [606, 590, 8, 80], [120, 40, 7, 40], [520, 36, 7, -50]].map(([x, y, r, rot]) => leaf(x, y, r, rot, '#e6ae94')).join('')}
+  <g transform="translate(320 150)"><path d="M-92 -40A96 96 0 0 0 92 -40A118 118 0 0 1 -92 -40Z" fill="url(#tG)" stroke="#8a3a64" stroke-width="2"/><path d="M-70 4L-40 -6L-20 26L0 -2L20 26L40 -6L70 4M-40 -6L-46 30M-20 26L-14 50M20 26L14 50M40 -6L46 30M0 -2L0 54" stroke="#fff" stroke-width="1.3" opacity=".55" fill="none"/><path d="M-60 -10Q-30 6 -8 0" stroke="#fff" stroke-width="3" opacity=".5" fill="none"/></g>
+  <g clip-path="url(#tC)">${g.map(c => portrait(c.a, { age: c.age, outfit: c.outfit, mood: c.mood, bg: false, at: c.at, size: 400 })).join('')}</g>
+  <g transform="translate(320 46)"><path d="M-170 -4L-200 8L-186 22L-206 36L-150 30Z" fill="#c9963e" stroke="#8a6020" stroke-width="1.5"/><path d="M170 -4L200 8L186 22L206 36L150 30Z" fill="#c9963e" stroke="#8a6020" stroke-width="1.5"/>
+   <path d="M-160 -18Q0 -42 160 -18L160 22Q0 -2 -160 22Z" fill="url(#tR)" stroke="#8a6020" stroke-width="2"/>
+   <text x="0" y="10" text-anchor="middle" font-family="'Cinzel','Gowun Batang',serif" font-size="27" font-weight="700" fill="#6a2e22" letter-spacing="3">PRINCESS MAKER</text></g>
+  </svg>`;
 }
 
 // ================= 게임 데이터 =================
@@ -816,11 +850,10 @@ function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) { } 
 // ================= 화면: 타이틀 =================
 function renderTitle() {
   const sv = loadSave();
-  const demo = { hair: pick(['long', 'twin', 'wavy', 'odango']), bangs: pick(['hime', 'part']), hc: RI(0, 7), ec: RI(0, 7), sk: 0, eye: 'round', acc: 'tiara', dc: pick(DRESS_COLORS) };
   app.innerHTML = `<div class="title-wrap">
-   <div class="float">${portrait(demo, { age: 17, outfit: 'ball', acc: 'tiara', mood: 'smile', size: 420, bg: 'pink', sparkle: true })}</div>
+   <div>${titleArt()}</div>
    <div>
-    <h1 class="logo"><small>✦ PRINCESS MAKER ✦</small>프린세스<br>메이커</h1>
+    <div class="orn">❦ PRINCESS MAKER ❦</div><h1 class="logo">프린세스 메이커</h1><div class="muted serif" style="letter-spacing:2px;margin-top:6px">— 용사와 딸의 8년 —</div>
     <p class="muted" style="font-size:15px;line-height:1.7;margin-top:14px">마왕을 물리친 용사, 그대는 전쟁고아 소녀를 딸로 맞이했습니다.<br>열 살 소녀가 열여덟 살이 되는 8년 동안,<br>그녀를 어떤 어른으로 키우시겠습니까?</p>
     <div class="title-menu">
      ${sv ? `<button class="btn" id="bCont">📖 이어하기 — ${esc(sv.name)} (${10 + Math.floor(sv.turn / 12)}세)</button>` : ''}
@@ -924,7 +957,7 @@ function renderMain() {
     if (i === 0 && S.sick) return `<button class="slot set lock" disabled><div class="when">${when}</div><div class="ic">🤒</div><div class="nm2">병상 요양</div><div class="muted" style="font-size:11px">치료비 80G</div></button>`;
     const fest = m === 10 && i === 2;
     const ac = S.sched[i];
-    if (!ac) return `<button class="slot ${fest ? 'lock' : ''}" data-slot="${i}"><div class="when">${when}</div><div class="ic">${fest ? '🎪' : '➕'}</div><div class="nm2">${fest ? '수확제 종목 선택' : '스케줄 정하기'}</div></button>`;
+    if (!ac) return `<button class="slot ${fest ? 'lock' : ''}" data-slot="${i}"><div class="when">${when}</div><div class="ic">${fest ? '🎪' : '<span style="color:#b8893a;font-family:serif">✦</span>'}</div><div class="nm2">${fest ? '수확제 종목 선택' : '스케줄 정하기'}</div></button>`;
     const info = actInfo(ac);
     return `<button class="slot set ${fest ? 'lock' : ''}" data-slot="${i}"><div class="when">${when}</div><div class="ic">${info.ic}</div><div class="nm2">${info.n}</div><div class="muted" style="font-size:11px">${info.sub}</div></button>`;
   };
@@ -942,7 +975,7 @@ function renderMain() {
    <div class="row"><span class="gold">💰 ${S.gold.toLocaleString()} G</span><button class="btn sub sm" id="bMenu">☰ 메뉴</button></div></div>
   <div class="main">
    <div class="card pcard">
-     ${portrait(S.app, { age: a, outfit: S.outfit, mood: moodOf(), size: 300, bg: S.bad ? 'dark' : 'pink' })}
+     ${portrait(S.app, { age: a, outfit: S.outfit, mood: moodOf(), size: 300, bg: S.bad ? 'dark' : 'teal' })}
      <div class="nm">${esc(S.name)} <span class="muted" style="font-size:15px">${a}세</span></div>
      <div class="muted" style="font-size:12px">${ZODIAC[S.zod][0]} · ${S.blood}형 · ${S.height}cm · ${S.weight}kg ${S.bad ? '· <b style="color:#d9536b">반항기</b>' : ''}</div>
      <div class="bubble">${esc(sayLine())}</div>
@@ -1048,7 +1081,7 @@ function showPhase(r) {
       `<div class="days">${r.days.map((d, i) => `<div class="day" data-i="${i}">${i + 1}</div>`).join('')}</div>`;
     const chips = Object.entries(r.diff).filter(([, v]) => v).map(([k, v]) => `<span class="chip ${(k === 'stress' || k === 'kar') ? (v > 0 ? 'dn' : 'up') : (v > 0 ? 'up' : 'dn')}">${SN[k]} ${v > 0 ? '+' : ''}${v}</span>`).join('');
     modal(`<div class="muted" style="font-size:13px">${['상순', '중순', '하순'][r.slot]}</div><h3>${r.icon} ${esc(r.title)}</h3>
-      <div class="phase-wrap"><div>${portrait(S.app, { age: ageOf(), outfit: S.outfit, mood, size: 150, bg: mood === 'joy' ? 'gold' : 'pink' })}</div>
+      <div class="phase-wrap"><div>${portrait(S.app, { age: ageOf(), outfit: S.outfit, mood, size: 150, bg: mood === 'joy' ? 'gold' : 'teal' })}</div>
       <div>${daysHTML}<div id="phRes" style="opacity:0;transition:.3s">${r.lines.map(l => `<div style="margin:4px 0">${esc(l)}</div>`).join('')}
       <div style="margin-top:6px">${r.gold ? `<span class="chip g">${r.gold > 0 ? '+' : ''}${r.gold}G</span>` : ''}${chips}</div></div></div></div>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn sub sm" id="phSkip">⏩ 빨리</button><button class="btn" id="phNext" disabled>다음 ▶</button></div>`, true);
@@ -1061,11 +1094,11 @@ function showPhase(r) {
       for (let i = 0; i < n && !done; i++) {
         if (skipAnim) break; await sleep(step);
         if (r.adv) { const el = document.querySelector(`.advl[data-i="${i}"]`); if (el) el.style.opacity = 1; }
-        else { const el = document.querySelector(`.day[data-i="${i}"]`); if (el) { el.classList.add(r.days[i] ? 'ok' : 'ng'); el.textContent = r.days[i] ? '♥' : '×'; } }
+        else { const el = document.querySelector(`.day[data-i="${i}"]`); if (el) { el.classList.add(r.days[i] ? 'ok' : 'ng'); el.textContent = r.days[i] ? '✓' : '×'; } }
       }
       if (!skipAnim) await sleep(200);
       finish();
-      document.querySelectorAll('.day').forEach((el, i) => el.textContent = r.days[i] ? '♥' : '×');
+      document.querySelectorAll('.day').forEach((el, i) => el.textContent = r.days[i] ? '✓' : '×');
     })();
   });
 }
@@ -1140,7 +1173,7 @@ function wardModal() {
   document.querySelectorAll('[data-ac]').forEach(b => b.onclick = () => { S.app.acc = b.dataset.ac; save(); wardModal(); });
 }
 function cubeSVG(size) {
-  return `<svg viewBox="0 0 240 300" width="${size}" style="max-width:100%;display:block;margin:0 auto"><rect width="240" height="300" rx="16" fill="#e8e4f4"/><rect width="240" height="300" rx="16" fill="url(#none)"/>
+  return `<svg viewBox="0 0 240 300" width="${size}" style="max-width:100%;display:block;margin:0 auto"><rect width="240" height="300" rx="10" fill="#cfe0dc"/><rect width="240" height="300" rx="16" fill="url(#none)"/>
    <path d="M40 300L60 200Q120 180 180 200L200 300Z" fill="#2a2638"/><path d="M104 196L120 250L136 196Z" fill="#fff"/><path d="M112 204l8 6l8 -6l-8 -4Z" fill="#c0304a"/>
    <path d="M108 170L108 200L132 200L132 170Z" fill="#f2dcc8"/>
    <path d="M76 110C76 60 164 60 164 110C164 150 148 178 120 182C92 178 76 150 76 110Z" fill="#f6e2d0" stroke="#c8a890"/>

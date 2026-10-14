@@ -89,6 +89,7 @@ async function initScoreStore() {
         detail TEXT,
         created_at TEXT NOT NULL
       )`);
+      await pool.query("DELETE FROM princess_scores WHERE player = 'bot' AND daughter = 'bot'"); // balance-sim test rows
       pg = { pool };
       console.log("Score DB: connected to Postgres (DATABASE_URL) — records persist across redeploys.");
       return;
@@ -401,6 +402,7 @@ function handlePrincess(req, res, u) {
       if (err) { send(res, 400, { error: "bad json" }); return; }
       if (d.key !== PRINCESS_KEY) { send(res, 403, { error: "forbidden" }); return; }
       if (!String(d.player || "").trim() || !Number.isFinite(Number(d.score))) { send(res, 400, { error: "invalid" }); return; }
+      if (d.player === "bot" && d.daughter === "bot") { send(res, 400, { error: "test record" }); return; }
       savePrincess(d).then((rank) => send(res, 200, { ok: true, rank })).catch(fail);
     });
     return;
