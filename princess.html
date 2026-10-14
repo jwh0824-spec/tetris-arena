@@ -168,7 +168,7 @@ const BG_TONES = {
   teal: ['#dfe7e6', '#b8893a'], rose: ['#f1e4e3', '#b8893a'], gold: ['#f3ead6', '#a87a2a'],
   dark: ['#3b3442', '#b08a50'], green: ['#e3ebdf', '#b8893a'], lav: ['#e8e4ef', '#b8893a']
 };
-const LINE = '#231a1e';
+const LINE = '#3a2a2e';
 function star(x, y, r, fill = '#fff', op = 1) {
   const q = r * 0.22;
   return `<path d="M${x} ${y - r}L${x + q} ${y - q}L${x + r} ${y}L${x + q} ${y + q}L${x} ${y + r}L${x - q} ${y + q}L${x - r} ${y}L${x - q} ${y - q}Z" fill="${fill}" opacity="${op}"/>`;
@@ -238,14 +238,14 @@ function portrait(a, o = {}) {
   const SK = SKINS[a.sk] || SKINS[0], SKd = shade(SK, -0.12);
   const outfit = o.outfit || 'casual', mood = o.mood || 'smile', acc = o.acc || a.acc;
   const size = o.size || 300;
-  const cx = 120, hw = 33 - t, eyeY = 106 + t * 2, chinY = 146 + t * 8;
+  const cx = 120, hw = 35 - t * 1.5, eyeY = 112 + t, chinY = 147 + t * 7;
   const y0 = chinY + 21, sw = 42 + t * 8;
   const bgKey = o.bg === false ? null : (BG_MAP[o.bg] || o.bg || 'teal'), tone = BG_TONES[bgKey] || BG_TONES.teal;
   const hairFill = `fill="${H}" stroke="${LINE}" stroke-width="1.3" stroke-linejoin="round"`;
   const st = a.hair;
-  const faceD = `M${cx - hw} 90C${cx - hw} 112 ${cx - hw + 3} 124 ${cx - hw * 0.45} ${chinY - 12}Q${cx - 6} ${chinY} ${cx} ${chinY}Q${cx + 6} ${chinY} ${cx + hw * 0.45} ${chinY - 12}C${cx + hw - 3} 124 ${cx + hw} 112 ${cx + hw} 90C${cx + hw} 50 ${cx - hw} 50 ${cx - hw} 90Z`;
+  const faceD = `M${cx - hw} 92C${cx - hw} 120 ${cx - hw * 0.62} ${chinY - 5} ${cx} ${chinY}C${cx + hw * 0.62} ${chinY - 5} ${cx + hw} 120 ${cx + hw} 92C${cx + hw} 50 ${cx - hw} 50 ${cx - hw} 92Z`;
   let s = `<defs>
-   <linearGradient id="${id}ir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(E, -0.55)}"/><stop offset=".5" stop-color="${E}"/><stop offset="1" stop-color="${shade(E, 0.45)}"/></linearGradient>
+   <linearGradient id="${id}ir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(E, -0.5)}"/><stop offset=".45" stop-color="${E}"/><stop offset="1" stop-color="${shade(E, 0.55)}"/></linearGradient>
    <linearGradient id="${id}mt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2f4f8"/><stop offset=".5" stop-color="#b4bccc"/><stop offset="1" stop-color="#e2e6ee"/></linearGradient>
    <clipPath id="${id}fc"><path d="${faceD}"/></clipPath>
    <clipPath id="${id}fr"><rect x="0" y="0" width="240" height="320" rx="10"/></clipPath>
@@ -292,35 +292,35 @@ function portrait(a, o = {}) {
   // ---- 얼굴
   for (const sd of [-1, 1]) s += `<path d="M${cx + sd * (hw - 1)} ${eyeY - 2}q${sd * 7} -2 ${sd * 6} 8q-1 8 ${-sd * 6} 9Z" fill="${SK}" stroke="${LINE}" stroke-width="1.1"/>`;
   s += `<path d="${faceD}" fill="${SK}" stroke="${LINE}" stroke-width="1.3"/>`;
-  s += `<g clip-path="url(#${id}fc)" transform="translate(1 3)" opacity=".18">${bangsSVG(a.bangs, cx, hw, eyeY, `fill="${shade(SK, -0.5)}"`)}</g>`;
+  s += `<g clip-path="url(#${id}fc)" transform="translate(1 3)" opacity=".18">${bangsSVG(a.bangs, cx, hw, eyeY - 7, `fill="${shade(SK, -0.5)}"`)}</g>`;
   if (mood === 'sick') s += `<path d="M${cx - hw} 60H${cx + hw}V${eyeY}H${cx - hw}Z" fill="#8a9ad8" opacity=".14" clip-path="url(#${id}fc)"/>`;
   const blushOp = mood === 'sick' ? 0.2 : (mood === 'joy' || mood === 'shy' ? 0.75 : 0.45);
-  for (const sd of [-1, 1]) s += `<ellipse cx="${cx + sd * 20}" cy="${eyeY + 15}" rx="8.5" ry="4" fill="#f59aa2" opacity="${blushOp}"/>`;
-  for (const sd of [-1, 1]) s += eyeSVG(cx + sd * 16.5, eyeY, sd, t, a.eye, mood, E, id, SK, H);
-  // 코, 입
-  s += `<path d="M${cx + 1.2} ${eyeY + 19}l-1.6 3" stroke="${LINE}" stroke-width="1" stroke-linecap="round" opacity=".75"/>`;
-  const my = chinY - 14;
-  if (mood === 'joy') s += `<path d="M${cx - 7} ${my - 1}Q${cx} ${my} ${cx + 7} ${my - 1}Q${cx + 4} ${my + 8} ${cx} ${my + 8}Q${cx - 4} ${my + 8} ${cx - 7} ${my - 1}Z" fill="#b8404a" stroke="${LINE}" stroke-width="1.1"/><path d="M${cx - 4} ${my + 5.5}Q${cx} ${my + 3.5} ${cx + 4} ${my + 5.5}Q${cx} ${my + 8} ${cx - 4} ${my + 5.5}Z" fill="#f08890"/>`;
-  else if (mood === 'angry') s += `<path d="M${cx - 5.5} ${my + 1.5}Q${cx} ${my - 1} ${cx + 5.5} ${my + 1.5}" stroke="${LINE}" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M${cx - 4} ${my + 2}Q${cx} ${my + 4.5} ${cx + 4} ${my + 2}Z" fill="#d86068"/>`;
-  else if (mood === 'sad' || mood === 'tired' || mood === 'sick') s += `<path d="M${cx - 5} ${my + 1.5}Q${cx} ${my - 0.5} ${cx + 5} ${my + 1.5}" stroke="#a83a44" stroke-width="1.4" fill="none" stroke-linecap="round"/>`;
-  else {
-    const up = mood === 'smile' || mood === 'shy' ? 1.6 : 0;
-    s += `<path d="M${cx - 6} ${my - up * 0.4}Q${cx - 3} ${my - 2.4} ${cx} ${my - 1}Q${cx + 3} ${my - 2.4} ${cx + 6} ${my - up * 0.4}Q${cx} ${my + 1.4 + up} ${cx - 6} ${my - up * 0.4}Z" fill="#c43c4a"/>`;
-    s += `<path d="M${cx - 5} ${my + 0.4}Q${cx} ${my + 6 + up * 0.5} ${cx + 5} ${my + 0.4}Q${cx} ${my + 2 + up} ${cx - 5} ${my + 0.4}Z" fill="#e05866"/><ellipse cx="${cx + 1.5}" cy="${my + 2.8 + up * 0.4}" rx="1.6" ry=".8" fill="#fff" opacity=".8"/>`;
+  for (const sd of [-1, 1]) {
+    const bx = cx + sd * 21, byy = eyeY + 18;
+    s += `<ellipse cx="${bx}" cy="${byy}" rx="9.5" ry="5" fill="#ff9aa8" opacity="${blushOp}"/><path d="M${bx - 5} ${byy + 1.5}l2.4 -3.4M${bx - 1} ${byy + 1.5}l2.4 -3.4M${bx + 3} ${byy + 1.5}l2.4 -3.4" stroke="#ec7486" stroke-width=".9" stroke-linecap="round" opacity="${blushOp}"/>`;
   }
+  for (const sd of [-1, 1]) s += eyeSVG(cx + sd * 17.5, eyeY, sd, t, a.eye, mood, E, id, SK, H);
+  // 코, 입 (작고 귀엽게)
+  s += `<path d="M${cx + 0.6} ${eyeY + 22}q1.2 1.2 0 2.4" stroke="${shade(SK, -0.35)}" stroke-width="1" fill="none" stroke-linecap="round"/>`;
+  const my = chinY - 13, ml = '#b6485a';
+  if (mood === 'joy') s += `<path d="M${cx - 5.5} ${my - 1}Q${cx} ${my} ${cx + 5.5} ${my - 1}Q${cx + 4} ${my + 7} ${cx} ${my + 7}Q${cx - 4} ${my + 7} ${cx - 5.5} ${my - 1}Z" fill="#c4505e" stroke="${ml}" stroke-width="1"/><path d="M${cx - 3} ${my + 5}Q${cx} ${my + 3} ${cx + 3} ${my + 5}Q${cx} ${my + 7} ${cx - 3} ${my + 5}Z" fill="#f59aa6"/>`;
+  else if (mood === 'angry') s += `<path d="M${cx - 4} ${my + 2}Q${cx} ${my - 0.5} ${cx + 4} ${my + 2}" stroke="${ml}" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'sad' || mood === 'tired' || mood === 'sick') s += `<path d="M${cx - 3.5} ${my + 1.5}Q${cx} ${my} ${cx + 3.5} ${my + 1.5}" stroke="${ml}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
+  else if (mood === 'smile' || mood === 'shy') s += `<path d="M${cx - 4.5} ${my}Q${cx} ${my + 4} ${cx + 4.5} ${my}" stroke="${ml}" stroke-width="1.3" fill="#e87a88" stroke-linecap="round"/>`;
+  else s += `<path d="M${cx - 3} ${my + 1}Q${cx} ${my + 2.2} ${cx + 3} ${my + 1}" stroke="${ml}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
   // ---- 앞 옆머리, 앞머리
   if (outfit !== 'nun') {
     const longFront = st === 'long' || st === 'wavy' || st === 'braid';
     for (const sd of [-1, 1]) {
       if (st === 'braid' && sd < 0) continue;
-      const x0 = cx + sd * (hw + 3), len = longFront ? (st === 'wavy' ? 200 : 210) + t * 30 : chinY + 8;
+      const x0 = cx + sd * (hw + 6), len = longFront ? (st === 'wavy' ? 200 : 210) + t * 30 : chinY + 8;
       const wv = st === 'wavy' ? 6 : 2, m = (len + 90) / 2;
-      s += `<path d="M${x0 - sd * 13} 80C${x0 + sd * 10} 98 ${x0 + sd * (14 + wv)} ${m} ${x0 + sd * (10 - wv)} ${len}L${x0 + sd * 3} ${len - 10}L${x0 - sd * 2} ${len + 4}C${x0 - sd * (8 - wv)} ${m + 10} ${x0 - sd * 6} 128 ${x0 - sd * 16} 98Z" ${hairFill}/>`;
+      s += `<path d="M${x0 - sd * 13} 78C${x0 + sd * 10} 98 ${x0 + sd * (14 + wv)} ${m} ${x0 + sd * (10 - wv)} ${len}L${x0 + sd * 3} ${len - 10}L${x0 - sd * 2} ${len + 4}C${x0 - sd * (8 - wv)} ${m + 10} ${x0 - sd * 5} 128 ${x0 - sd * 11} 100Z" ${hairFill}/>`;
       s += `<path d="M${x0 - sd * 3} 98Q${x0 + sd * (5 + wv)} ${m} ${x0 + sd * 3} ${len - 12}" stroke="${Hs}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
     }
     if (st === 'odango' || st === 'pony') s += `<path d="M${cx - hw - 1} 88Q${cx - hw - 6} 118 ${cx - hw + 3} ${chinY - 10}M${cx + hw + 1} 88Q${cx + hw + 6} 118 ${cx + hw - 3} ${chinY - 10}" stroke="${LINE}" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
   }
-  s += bangsSVG(a.bangs, cx, hw, eyeY, hairFill, Hs);
+  s += bangsSVG(a.bangs, cx, hw, eyeY - 7, hairFill, Hs);
   s += `<path d="M${cx - hw - 9} 100C${cx - hw - 14} 24 ${cx + hw + 14} 24 ${cx + hw + 9} 100L${cx + hw + 1} 92C${cx + hw} 70 ${cx} 64 ${cx} 64C${cx} 64 ${cx - hw} 70 ${cx - hw - 1} 92Z" fill="${H}"/><path d="M${cx - hw - 9} 100C${cx - hw - 14} 24 ${cx + hw + 14} 24 ${cx + hw + 9} 100" fill="none" stroke="${LINE}" stroke-width="1.3"/>`;
   s += `<path d="M${cx - 2} 48Q${cx - 6} 56 ${cx - 14} 64M${cx + 6} 48Q${cx + 8} 56 ${cx + 16} 64M${cx - 18} 50Q${cx - 26} 58 ${cx - hw + 2} 72M${cx + 20} 50Q${cx + 28} 58 ${cx + hw - 2} 72" stroke="${Hs}" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
   s += `<path d="M${cx - hw + 2} 58Q${cx - 14} 44 ${cx - 2} 44M${cx + 8} 44Q${cx + 22} 46 ${cx + hw - 4} 56" stroke="${Hl}" stroke-width="2.4" fill="none" opacity=".6" stroke-linecap="round"/>`;
@@ -344,32 +344,34 @@ function portrait(a, o = {}) {
   return `<svg viewBox="0 0 240 320" width="${size}" style="max-width:100%;height:auto;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
 function eyeSVG(ex, ey, sd, t, shape, mood, E, id, SK, H) {
-  const w = 23 - t, h = (shape === 'round' ? 18 : 16) + (1 - t) * 1.2;
-  const dy = shape === 'cat' ? -3 : shape === 'droopy' ? 2.2 : -0.8;
+  // 순정 웹툰풍: 크고 동그란 눈, 큰 홍채, 반짝이 하이라이트
+  const w = 27 - t * 1.5, h = (shape === 'round' ? 28 : shape === 'cat' ? 24 : 26) - t * 2;
+  const dy = shape === 'cat' ? -3.5 : shape === 'droopy' ? 2.5 : -1;
   const inner = ex - sd * w / 2, outer = ex + sd * w / 2;
-  const by = ey - h * 0.95 - 4;
-  const inY = mood === 'angry' ? by + 4 : (mood === 'sad' || mood === 'tired' || mood === 'sick') ? by - 2.5 : by + 1;
-  let s = `<path d="M${inner - sd * 1} ${inY}Q${ex} ${by - 3.5} ${outer + sd * 4} ${by + 2 + dy * 0.3}" stroke="${lum(H) < 0.32 ? LINE : shade(H, -0.45)}" stroke-width="1.7" fill="none" stroke-linecap="round"/>`;
-  if (mood === 'joy') return s + `<path d="M${inner} ${ey + 2}Q${ex} ${ey - h * 0.55} ${outer + sd * 2} ${ey + dy * 0.4}" stroke="${LINE}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
-  const top = `M${inner} ${ey + 2}C${inner + sd * w * 0.2} ${ey - h * 0.72} ${outer - sd * w * 0.25} ${ey - h * 0.8 + dy} ${outer} ${ey + dy - 1}`;
-  const eyeD = `${top}C${outer - sd * w * 0.15} ${ey + h * 0.48} ${inner + sd * w * 0.3} ${ey + h * 0.52} ${inner} ${ey + 2}Z`;
-  const cid = `${id}e${sd > 0 ? 'r' : 'l'}`, r = h * 0.56, ix = ex + sd * 0.6, iy = ey + 0.8;
+  const lashC = '#2a1a20', browC = lum(H) < 0.32 ? '#3a2a2e' : shade(H, -0.4);
+  const by = ey - h * 0.62 - 6;
+  const inY = mood === 'angry' ? by + 4 : (mood === 'sad' || mood === 'tired' || mood === 'sick') ? by - 3 : by + 1;
+  let s = `<path d="M${inner - sd * 1} ${inY}Q${ex} ${by - 3} ${outer + sd * 2} ${by + 1.5 + dy * 0.3}" stroke="${browC}" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  if (mood === 'joy') return s + `<path d="M${inner} ${ey + 3}Q${ex} ${ey - h * 0.45} ${outer} ${ey + 3 + dy * 0.3}" stroke="${lashC}" stroke-width="2.8" fill="none" stroke-linecap="round"/><path d="M${outer} ${ey + 3}l${sd * 4} -1.5M${outer - sd * 1} ${ey}l${sd * 4} -3" stroke="${lashC}" stroke-width="1.3" stroke-linecap="round"/>`;
+  const top = `M${inner} ${ey + 3}C${inner + sd * w * 0.08} ${ey - h * 0.62} ${outer - sd * w * 0.32} ${ey - h * 0.68 + dy} ${outer} ${ey + dy - 3}`;
+  const eyeD = `${top}C${outer - sd * w * 0.02} ${ey + h * 0.42} ${inner + sd * w * 0.32} ${ey + h * 0.56} ${inner} ${ey + 3}Z`;
+  const cid = `${id}e${sd > 0 ? 'r' : 'l'}`, rx = w * 0.37, ry = h * 0.47, ix = ex + sd * 0.8, iy = ey + 1.5;
   const half = mood === 'tired' || mood === 'sick';
   s += `<clipPath id="${cid}"><path d="${eyeD}"/></clipPath><path d="${eyeD}" fill="#fff"/>
   <g clip-path="url(#${cid})">
-   <circle cx="${ix}" cy="${iy}" r="${r}" fill="url(#${id}ir)" stroke="${LINE}" stroke-width="1"/>
-   <circle cx="${ix}" cy="${iy + 0.4}" r="${r * 0.36}" fill="${shade(E, -0.8)}"/>
-   <path d="M${ix - r * 0.75} ${iy + r * 0.45}Q${ix} ${iy + r * 0.95} ${ix + r * 0.75} ${iy + r * 0.45}" stroke="${shade(E, 0.5)}" stroke-width="1.6" fill="none" opacity=".8"/>
-   <rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.62}" fill="#000" opacity=".22"/>
-   ${half ? `<rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.95}" fill="${SK}"/>` : ''}
+   <ellipse cx="${ix}" cy="${iy}" rx="${rx}" ry="${ry}" fill="url(#${id}ir)" stroke="${shade(E, -0.65)}" stroke-width="1"/>
+   <ellipse cx="${ix}" cy="${iy + ry * 0.05}" rx="${rx * 0.46}" ry="${ry * 0.46}" fill="${shade(E, -0.72)}"/>
+   <path d="M${ix - rx * 0.8} ${iy + ry * 0.35}Q${ix} ${iy + ry * 1.05} ${ix + rx * 0.8} ${iy + ry * 0.35}Q${ix} ${iy + ry * 0.7} ${ix - rx * 0.8} ${iy + ry * 0.35}Z" fill="${shade(E, 0.65)}" opacity=".75"/>
+   <ellipse cx="${ix}" cy="${iy - ry * 0.95}" rx="${rx * 1.4}" ry="${ry * 0.6}" fill="${shade(E, -0.7)}" opacity=".45"/>
+   ${half ? `<rect x="${ex - w}" y="${ey - h}" width="${w * 2}" height="${h * 0.85}" fill="${SK}"/>` : ''}
   </g>`;
-  s += `<circle cx="${ix - sd * 0 - r * 0.36}" cy="${iy - r * 0.36}" r="${r * 0.3}" fill="#fff"/><circle cx="${ix + r * 0.42}" cy="${iy + r * 0.32}" r="${r * 0.13}" fill="#fff"/>`;
-  const lidTop = half ? `M${inner} ${ey + 1}Q${ex} ${ey - h * 0.2} ${outer} ${ey + dy * 0.6}` : top;
-  s += `<path d="${lidTop}" stroke="${LINE}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
-  s += `<path d="M${ex - sd * 1} ${(half ? ey - h * 0.15 : ey - h * 0.72 + dy * 0.4).toFixed(1)}Q${outer - sd * 3} ${ey - h * 0.62 + dy} ${outer + sd * 4} ${ey + dy - 4}" stroke="${LINE}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
-  s += `<path d="M${outer + sd * 2} ${ey + dy - 2}l${sd * 3.5} 1.5" stroke="${LINE}" stroke-width="1.4" stroke-linecap="round"/>`;
-  s += `<path d="M${outer - sd * 1} ${ey + dy + 1}Q${ex + sd * 3} ${ey + h * 0.46} ${ex - sd * 2} ${ey + h * 0.44}" stroke="${LINE}" stroke-width="1.1" fill="none" opacity=".75" stroke-linecap="round"/>`;
-  if (!half) s += `<path d="M${inner + sd * 4} ${ey - h * 0.82}Q${ex} ${ey - h * 1.05} ${outer - sd * 2} ${ey - h * 0.7 + dy}" stroke="${LINE}" stroke-width=".9" fill="none" opacity=".5"/>`;
+  if (!half) s += `<ellipse cx="${ix - rx * 0.38}" cy="${iy - ry * 0.36}" rx="${rx * 0.4}" ry="${ry * 0.3}" fill="#fff"/><circle cx="${ix + rx * 0.46}" cy="${iy + ry * 0.38}" r="${rx * 0.17}" fill="#fff"/>` + star(ix + rx * 0.42, iy - ry * 0.45, rx * 0.22, '#fff', 0.95) + `<circle cx="${ix - rx * 0.5}" cy="${iy + ry * 0.45}" r="${rx * 0.08}" fill="#fff" opacity=".85"/>`;
+  const lid = half ? `M${inner} ${ey + 2}Q${ex} ${ey - h * 0.15} ${outer} ${ey + dy * 0.5}` : top;
+  s += `<path d="${lid}" stroke="${lashC}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if (!half) s += `<path d="M${ex - sd * 2} ${ey - h * 0.62 + dy * 0.3}Q${outer - sd * 4} ${ey - h * 0.58 + dy} ${outer + sd * 3} ${ey + dy - 5}" stroke="${lashC}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`;
+  s += `<path d="M${outer + sd * 1} ${ey + dy - 4}l${sd * 4.5} -2.5M${outer - sd * 1.5} ${ey + dy - 8}l${sd * 4} -4M${outer + sd * 1.5} ${ey + dy}l${sd * 4} 0" stroke="${lashC}" stroke-width="1.3" stroke-linecap="round"/>`;
+  s += `<path d="M${outer - sd * 1} ${ey + dy + 1}Q${ex + sd * 4} ${ey + h * 0.5} ${ex - sd * 1} ${ey + h * 0.5}" stroke="${lashC}" stroke-width="1" fill="none" opacity=".6" stroke-linecap="round"/>`;
+  if (!half) s += `<path d="M${inner + sd * 5} ${ey - h * 0.7}Q${ex} ${ey - h * 0.86} ${outer - sd * 3} ${ey - h * 0.6 + dy}" stroke="${lashC}" stroke-width=".8" fill="none" opacity=".35"/>`;
   return s;
 }
 function bangsSVG(type, cx, hw, eyeY, fillAttr, Hd) {
